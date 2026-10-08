@@ -1,0 +1,23 @@
+# Dependências
+node_modules/
+
+# Variáveis de ambiente
+.env
+**/.env
+!.env.example
+
+# Builds
+dist/
+build/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Arquivos enviados pelo sistema
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
