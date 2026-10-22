@@ -1,5 +1,6 @@
 const express = require("express");
 
+const authRoutes = require("./auth.routes");
 const teamsRoutes = require("./teams.routes");
 
 const router = express.Router();
@@ -17,6 +18,8 @@ router.get("/health", (req, res) => {
         service: "AGON Hub API"
     });
 });
+
+router.use("/auth", authRoutes);
 
 router.use("/teams", teamsRoutes);
 

@@ -8,21 +8,35 @@ const {
     deleteTeam
 } = require("../controllers/teamsController");
 
+const {
+    autenticarToken,
+    exigirPapel
+} = require("../middlewares/authMiddleware");
+
 const router = express.Router();
 
-// GET /api/teams
 router.get("/", getTeams);
-
-// GET /api/teams/:id
 router.get("/:id", getTeamById);
 
-// POST /api/teams
-router.post("/", createTeam);
+router.post(
+    "/",
+    autenticarToken,
+    exigirPapel("admin"),
+    createTeam
+);
 
-// PUT /api/teams/:id
-router.put("/:id", updateTeam);
+router.put(
+    "/:id",
+    autenticarToken,
+    exigirPapel("admin"),
+    updateTeam
+);
 
-// DELETE /api/teams/:id
-router.delete("/:id", deleteTeam);
+router.delete(
+    "/:id",
+    autenticarToken,
+    exigirPapel("admin"),
+    deleteTeam
+);
 
 module.exports = router;
