@@ -1,28 +1,9 @@
--- =============================================================
--- AGON HUB - SEED SQL
--- Dados iniciais demonstrativos para o schema.sql correspondente.
--- Compatível com execução repetida em um banco já inicializado.
---
--- IMPORTANTE:
--- * Os registros esportivos marcados como DEMO não são resultados canônicos.
--- * A idade dos atletas é um retrato da lista recebida em 2026-10-08;
---   não substitui a data de nascimento.
--- * Os handles recebidos não foram associados a um jogo específico porque
---   essa correspondência ainda não foi informada. game_id fica NULL até lá.
--- * Conta de demonstração local: agon.admin / senha: password
---   e agon.demo / senha: password. Trocar/remover antes de publicar o sistema.
--- =============================================================
-
 BEGIN;
 SET client_encoding = 'UTF8';
 
--- 1. ROLES
-INSERT INTO roles (name) VALUES ('user'), ('admin')
-ON CONFLICT (name) DO NOTHING;
+INSERT INTO roles (name) VALUES ('user'), ('admin') ON CONFLICT (name) DO NOTHING;
 
--- 2. ORGANIZATIONS
-INSERT INTO organizations (name, short_name, slug, description, logo_url, country, is_fictional)
-VALUES
+INSERT INTO organizations (name, short_name, slug, description, logo_url, country, is_fictional) VALUES
     ('Universo AGON', 'AGON', 'universo-agon', 'Central fictícia do Universo AGON; organizadora das competições próprias.', '/uploads/organizations/agon.png', 'Brasil', TRUE),
     ('Federação Universitária Paulista de Esportes', 'FUPE', 'fupe', 'Organização associada ao nível estadual no modelo do AGON Hub.', '/uploads/organizations/fupe.png', 'Brasil', FALSE),
     ('Novo Desporto Universitário', 'NDU', 'ndu', 'Organização nacional de desporto universitário indicada para o ecossistema competitivo.', '/uploads/organizations/ndu.png', 'Brasil', FALSE),
@@ -30,18 +11,14 @@ VALUES
     ('International University Sports Federation', 'FISU', 'fisu', 'Organização internacional do desporto universitário.', '/uploads/organizations/fisu.png', 'Internacional', FALSE)
 ON CONFLICT (slug) DO NOTHING;
 
--- 3. COMPETITION LEVELS
-INSERT INTO competition_levels (name, short_name, slug, sequence, description)
-VALUES
+INSERT INTO competition_levels (name, short_name, slug, sequence, description) VALUES
     ('AGON', 'AGON', 'agon', 1, 'Nível competitivo próprio do Universo AGON.'),
     ('Estadual', 'EST', 'estadual', 2, 'Competições de nível estadual.'),
     ('Nacional', 'NAC', 'nacional', 3, 'Competições de nível nacional.'),
     ('Mundial', 'MUN', 'mundial', 4, 'Competições de nível mundial.')
 ON CONFLICT (slug) DO NOTHING;
 
--- 4. INSTITUTIONS
-INSERT INTO institutions (name, short_name, slug, type, city, state, country, is_fictional)
-VALUES
+INSERT INTO institutions (name, short_name, slug, type, city, state, country, is_fictional) VALUES
     ('Instituto Federal de São Paulo - Campus São Paulo', 'IFSP São Paulo', 'ifsp-sao-paulo', 'INSTITUTE', 'São Paulo', 'SP', 'Brasil', FALSE),
     ('Universidade Presbiteriana Mackenzie', 'Mackenzie', 'mackenzie', 'UNIVERSITY', 'São Paulo', 'SP', 'Brasil', FALSE),
     ('Universidade de Mogi das Cruzes', 'UMC', 'umc', 'UNIVERSITY', 'Mogi das Cruzes', 'SP', 'Brasil', FALSE),
@@ -81,9 +58,7 @@ VALUES
     ('Universidade São Judas Tadeu', 'São Judas', 'sao-judas', 'UNIVERSITY', 'São Paulo', 'SP', 'Brasil', FALSE)
 ON CONFLICT (slug) DO NOTHING;
 
--- 5. TEAMS: seis equipes fictícias centrais
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional)
-VALUES
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional) VALUES
     ('Turquia', 'TUR', 'turquia', 'FICTIONAL', TRUE),
     ('Rússia', 'RUS', 'russia', 'FICTIONAL', TRUE),
     ('Holanda', 'HOL', 'holanda', 'FICTIONAL', TRUE),
@@ -92,274 +67,96 @@ VALUES
     ('Tropa dos Laranjas', 'N$', 'tropa-dos-laranjas', 'FICTIONAL', TRUE)
 ON CONFLICT (slug) DO NOTHING;
 
--- 6. TEAMS: instituições, atléticas e organizações reais da lista inicial
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'IFSP São Paulo', 'IFSP-SP', 'ifsp-sao-paulo-team', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'ifsp-sao-paulo')
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'ifsp-sao-paulo-team');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'Mackenzie', 'MACK', 'mackenzie-team', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'mackenzie')
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'mackenzie-team');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'UMC', 'UMC', 'umc-team', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'umc')
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'umc-team');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'Uni Sant’Anna', 'UNI-SANTANNA', 'uni-santanna-team', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'uni-santanna')
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'uni-santanna-team');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'LAAUSP', 'LAAUSP', 'laausp', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'usp')
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'laausp');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'CAASO', 'CAASO', 'caaso', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'usp-sao-carlos')
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'caaso');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'LAUNAERP', 'LAUNAERP', 'launaerp', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'unaerp')
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'launaerp');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'LAURP', 'LAURP', 'laurp', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'usp-ribeirao-preto')
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'laurp');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'UFSCar', 'UFSCAR', 'ufscar-team', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'ufscar')
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'ufscar-team');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'Anhanguera Piracicaba', 'ANH-PIR', 'anhanguera-piracicaba-team', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'anhanguera-piracicaba')
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'anhanguera-piracicaba-team');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'LAP PUCCAMP', 'LAP', 'lap-puccamp', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'puccamp')
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'lap-puccamp');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'UNESP Rio Claro', 'UNESP-RC', 'unesp-rio-claro-team', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'unesp-rio-claro')
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'unesp-rio-claro-team');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'Axis UFABC', 'AXIS', 'axis-ufabc', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'ufabc')
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'axis-ufabc');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'Metodista', 'METODISTA', 'metodista-team', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'metodista')
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'metodista-team');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'CAAP UFABC', 'CAAP', 'caap-ufabc', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'ufabc')
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'caap-ufabc');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'Engenharia Mackenzie', 'ENG-MACK', 'engenharia-mackenzie', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'mackenzie')
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'engenharia-mackenzie');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'LEU UNICAMP', 'LEU', 'leu-unicamp', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'unicamp')
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'leu-unicamp');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'PoliUSP', 'POLIUSP', 'poliusp', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'usp')
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'poliusp');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'Sanfran', 'SANFRAN', 'sanfran', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'usp')
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'sanfran');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'FFLCH USP', 'FFLCH', 'fflch-usp', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'usp')
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'fflch-usp');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'FGV', 'FGV', 'fgv-team', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'fgv')
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'fgv-team');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'Medicina Einstein', 'MED-EINSTEIN', 'medicina-einstein', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'einstein')
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'medicina-einstein');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'FAU Mackenzie', 'FAU-MACK', 'fau-mackenzie', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'mackenzie')
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'fau-mackenzie');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'FAU USP', 'FAU-USP', 'fau-usp', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'usp')
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'fau-usp');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'ICBio USP', 'ICBIO', 'icbio-usp', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'usp')
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'icbio-usp');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'EACH USP', 'EACH', 'each-usp', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'usp')
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'each-usp');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'LEP Mackenzie', 'LEP-MACK', 'lep-mackenzie', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'mackenzie')
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'lep-mackenzie');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'ESPM', 'ESPM', 'espm-team', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'espm')
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'espm-team');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'ECA USP', 'ECA', 'eca-usp', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'usp')
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'eca-usp');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'Insper', 'INSPER', 'insper-team', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'insper')
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'insper-team');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'Educa USP RP', 'EDUCA-RP', 'educa-usp-rp', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'usp-ribeirao-preto')
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'educa-usp-rp');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'Direito PUCCAMP', 'DIR-PUCCAMP', 'direito-puccamp', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'puccamp')
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'direito-puccamp');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'CEM UNICAMP', 'CEM', 'cem-unicamp', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'unicamp')
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'cem-unicamp');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'FEA USP', 'FEA', 'fea-usp', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'usp')
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'fea-usp');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'LEP PUCCAMP', 'LEP-PUCCAMP', 'lep-puccamp', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'puccamp')
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'lep-puccamp');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'Faceca PUCCAMP', 'FACECA', 'faceca-puccamp', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'puccamp')
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'faceca-puccamp');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'EEFE USP', 'EEFE', 'eefe-usp', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'usp')
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'eefe-usp');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'Cásper Líbero', 'CASPER', 'casper-libero-team', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'casper-libero')
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'casper-libero-team');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'IME USP', 'IME', 'ime-usp', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'usp')
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'ime-usp');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'Economia Mackenzie', 'ECON-MACK', 'economia-mackenzie', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'mackenzie')
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'economia-mackenzie');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'Fisioterapia Santa Casa', 'FISIO-SC', 'fisioterapia-santa-casa', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'santa-casa-sp')
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'fisioterapia-santa-casa');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'Comunicação PUCCAMP', 'COM-PUCCAMP', 'comunicacao-puccamp', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'puccamp')
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'comunicacao-puccamp');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'Direito Mackenzie', 'DIR-MACK', 'direito-mackenzie', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'mackenzie')
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'direito-mackenzie');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'FEF UNICAMP', 'FEF', 'fef-unicamp', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'unicamp')
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'fef-unicamp');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'Engenharia São Judas', 'ENG-SJ', 'engenharia-sao-judas', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'sao-judas')
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'engenharia-sao-judas');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'Medicina PUCCAMP', 'MED-PUCCAMP', 'medicina-puccamp', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'puccamp')
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'medicina-puccamp');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'Direito PUC SP', 'DIR-PUCSP', 'direito-puc-sp', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'puc-sp')
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'direito-puc-sp');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'ITA', 'ITA', 'ita-team', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'ita')
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'ita-team');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'Medicina Santa Casa', 'MED-SC', 'medicina-santa-casa', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'santa-casa-sp')
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'medicina-santa-casa');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'Medicina ABC', 'MED-ABC', 'medicina-abc', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'fmabc')
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'medicina-abc');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'Medicina USP', 'MED-USP', 'medicina-usp', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'usp')
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'medicina-usp');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'Geral USCS', 'GERAL-USCS', 'geral-uscs', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'uscs')
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'geral-uscs');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'Direito SBC', 'DIR-SBC', 'direito-sbc-team', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'direito-sbc')
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'direito-sbc-team');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'Medicina PUC SP', 'MED-PUCSP', 'medicina-puc-sp', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'puc-sp')
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'medicina-puc-sp');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'IBMEC', 'IBMEC', 'ibmec-team', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'ibmec')
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'ibmec-team');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'FEI', 'FEI', 'fei-team', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'fei')
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'fei-team');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'UNIP', 'UNIP', 'unip-team', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'unip')
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'unip-team');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'FECAP', 'FECAP', 'fecap-team', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'fecap')
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'fecap-team');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'Barão de Mauá', 'BARAO', 'barao-de-maua-team', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'barao-de-maua')
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'barao-de-maua-team');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'Arquitetura Mackenzie', 'ARQ-MACK', 'arquitetura-mackenzie', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'mackenzie')
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'arquitetura-mackenzie');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'Grifo', 'GRIFO', 'grifo', 'OTHER', FALSE, NULL
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'grifo');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'FEA PUC', 'FEA-PUC', 'fea-puc', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'puccamp')
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'fea-puc');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'Belas Artes', 'BELAS-ARTES', 'belas-artes-team', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'belas-artes')
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'belas-artes-team');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'FEA Odonto', 'FEA-ODONTO', 'fea-odonto', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'usp')
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'fea-odonto');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'EACH USP B', 'EACH-B', 'each-usp-b', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'usp')
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'each-usp-b');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'Unicesumar', 'UNICESUMAR', 'unicesumar-team', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'unicesumar')
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'unicesumar-team');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'Farma USP', 'FARMA-USP', 'farma-usp', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'usp')
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'farma-usp');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'UFU MG', 'UFU', 'ufu-mg', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'ufu')
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'ufu-mg');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'FGV B', 'FGV-B', 'fgv-b', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'fgv')
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'fgv-b');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'UFG GO', 'UFG', 'ufg-go', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'ufg')
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'ufg-go');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'Direito PUC SP B', 'DIR-PUCSP-B', 'direito-puc-sp-b', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'puc-sp')
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'direito-puc-sp-b');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'PoliUSP B', 'POLIUSP-B', 'poliusp-b', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'usp')
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'poliusp-b');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'Atena (UEMG)', 'ATENA', 'atena-uemg', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'uemg')
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'atena-uemg');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'Araras', 'ARARAS', 'araras', 'OTHER', FALSE, NULL
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'araras');
-INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id)
-SELECT 'IX Novembro', 'IX-NOV', 'ix-novembro', 'OTHER', FALSE, NULL
-WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'ix-novembro');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'IFSP São Paulo', 'IFSP-SP', 'ifsp-sao-paulo-team', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'ifsp-sao-paulo') WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'ifsp-sao-paulo-team');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'Mackenzie', 'MACK', 'mackenzie-team', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'mackenzie') WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'mackenzie-team');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'UMC', 'UMC', 'umc-team', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'umc') WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'umc-team');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'Uni Sant’Anna', 'UNI-SANTANNA', 'uni-santanna-team', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'uni-santanna') WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'uni-santanna-team');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'LAAUSP', 'LAAUSP', 'laausp', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'usp') WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'laausp');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'CAASO', 'CAASO', 'caaso', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'usp-sao-carlos') WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'caaso');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'LAUNAERP', 'LAUNAERP', 'launaerp', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'unaerp') WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'launaerp');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'LAURP', 'LAURP', 'laurp', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'usp-ribeirao-preto') WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'laurp');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'UFSCar', 'UFSCAR', 'ufscar-team', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'ufscar') WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'ufscar-team');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'Anhanguera Piracicaba', 'ANH-PIR', 'anhanguera-piracicaba-team', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'anhanguera-piracicaba') WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'anhanguera-piracicaba-team');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'LAP PUCCAMP', 'LAP', 'lap-puccamp', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'puccamp') WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'lap-puccamp');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'UNESP Rio Claro', 'UNESP-RC', 'unesp-rio-claro-team', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'unesp-rio-claro') WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'unesp-rio-claro-team');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'Axis UFABC', 'AXIS', 'axis-ufabc', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'ufabc') WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'axis-ufabc');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'Metodista', 'METODISTA', 'metodista-team', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'metodista') WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'metodista-team');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'CAAP UFABC', 'CAAP', 'caap-ufabc', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'ufabc') WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'caap-ufabc');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'Engenharia Mackenzie', 'ENG-MACK', 'engenharia-mackenzie', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'mackenzie') WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'engenharia-mackenzie');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'LEU UNICAMP', 'LEU', 'leu-unicamp', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'unicamp') WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'leu-unicamp');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'PoliUSP', 'POLIUSP', 'poliusp', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'usp') WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'poliusp');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'Sanfran', 'SANFRAN', 'sanfran', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'usp') WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'sanfran');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'FFLCH USP', 'FFLCH', 'fflch-usp', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'usp') WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'fflch-usp');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'FGV', 'FGV', 'fgv-team', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'fgv') WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'fgv-team');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'Medicina Einstein', 'MED-EINSTEIN', 'medicina-einstein', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'einstein') WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'medicina-einstein');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'FAU Mackenzie', 'FAU-MACK', 'fau-mackenzie', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'mackenzie') WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'fau-mackenzie');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'FAU USP', 'FAU-USP', 'fau-usp', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'usp') WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'fau-usp');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'ICBio USP', 'ICBIO', 'icbio-usp', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'usp') WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'icbio-usp');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'EACH USP', 'EACH', 'each-usp', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'usp') WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'each-usp');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'LEP Mackenzie', 'LEP-MACK', 'lep-mackenzie', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'mackenzie') WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'lep-mackenzie');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'ESPM', 'ESPM', 'espm-team', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'espm') WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'espm-team');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'ECA USP', 'ECA', 'eca-usp', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'usp') WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'eca-usp');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'Insper', 'INSPER', 'insper-team', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'insper') WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'insper-team');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'Educa USP RP', 'EDUCA-RP', 'educa-usp-rp', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'usp-ribeirao-preto') WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'educa-usp-rp');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'Direito PUCCAMP', 'DIR-PUCCAMP', 'direito-puccamp', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'puccamp') WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'direito-puccamp');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'CEM UNICAMP', 'CEM', 'cem-unicamp', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'unicamp') WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'cem-unicamp');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'FEA USP', 'FEA', 'fea-usp', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'usp') WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'fea-usp');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'LEP PUCCAMP', 'LEP-PUCCAMP', 'lep-puccamp', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'puccamp') WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'lep-puccamp');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'Faceca PUCCAMP', 'FACECA', 'faceca-puccamp', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'puccamp') WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'faceca-puccamp');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'EEFE USP', 'EEFE', 'eefe-usp', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'usp') WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'eefe-usp');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'Cásper Líbero', 'CASPER', 'casper-libero-team', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'casper-libero') WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'casper-libero-team');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'IME USP', 'IME', 'ime-usp', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'usp') WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'ime-usp');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'Economia Mackenzie', 'ECON-MACK', 'economia-mackenzie', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'mackenzie') WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'economia-mackenzie');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'Fisioterapia Santa Casa', 'FISIO-SC', 'fisioterapia-santa-casa', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'santa-casa-sp') WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'fisioterapia-santa-casa');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'Comunicação PUCCAMP', 'COM-PUCCAMP', 'comunicacao-puccamp', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'puccamp') WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'comunicacao-puccamp');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'Direito Mackenzie', 'DIR-MACK', 'direito-mackenzie', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'mackenzie') WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'direito-mackenzie');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'FEF UNICAMP', 'FEF', 'fef-unicamp', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'unicamp') WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'fef-unicamp');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'Engenharia São Judas', 'ENG-SJ', 'engenharia-sao-judas', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'sao-judas') WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'engenharia-sao-judas');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'Medicina PUCCAMP', 'MED-PUCCAMP', 'medicina-puccamp', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'puccamp') WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'medicina-puccamp');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'Direito PUC SP', 'DIR-PUCSP', 'direito-puc-sp', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'puc-sp') WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'direito-puc-sp');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'ITA', 'ITA', 'ita-team', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'ita') WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'ita-team');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'Medicina Santa Casa', 'MED-SC', 'medicina-santa-casa', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'santa-casa-sp') WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'medicina-santa-casa');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'Medicina ABC', 'MED-ABC', 'medicina-abc', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'fmabc') WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'medicina-abc');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'Medicina USP', 'MED-USP', 'medicina-usp', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'usp') WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'medicina-usp');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'Geral USCS', 'GERAL-USCS', 'geral-uscs', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'uscs') WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'geral-uscs');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'Direito SBC', 'DIR-SBC', 'direito-sbc-team', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'direito-sbc') WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'direito-sbc-team');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'Medicina PUC SP', 'MED-PUCSP', 'medicina-puc-sp', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'puc-sp') WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'medicina-puc-sp');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'IBMEC', 'IBMEC', 'ibmec-team', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'ibmec') WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'ibmec-team');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'FEI', 'FEI', 'fei-team', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'fei') WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'fei-team');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'UNIP', 'UNIP', 'unip-team', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'unip') WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'unip-team');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'FECAP', 'FECAP', 'fecap-team', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'fecap') WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'fecap-team');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'Barão de Mauá', 'BARAO', 'barao-de-maua-team', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'barao-de-maua') WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'barao-de-maua-team');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'Arquitetura Mackenzie', 'ARQ-MACK', 'arquitetura-mackenzie', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'mackenzie') WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'arquitetura-mackenzie');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'Grifo', 'GRIFO', 'grifo', 'OTHER', FALSE, NULL WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'grifo');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'FEA PUC', 'FEA-PUC', 'fea-puc', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'puccamp') WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'fea-puc');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'Belas Artes', 'BELAS-ARTES', 'belas-artes-team', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'belas-artes') WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'belas-artes-team');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'FEA Odonto', 'FEA-ODONTO', 'fea-odonto', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'usp') WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'fea-odonto');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'EACH USP B', 'EACH-B', 'each-usp-b', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'usp') WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'each-usp-b');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'Unicesumar', 'UNICESUMAR', 'unicesumar-team', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'unicesumar') WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'unicesumar-team');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'Farma USP', 'FARMA-USP', 'farma-usp', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'usp') WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'farma-usp');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'UFU MG', 'UFU', 'ufu-mg', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'ufu') WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'ufu-mg');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'FGV B', 'FGV-B', 'fgv-b', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'fgv') WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'fgv-b');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'UFG GO', 'UFG', 'ufg-go', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'ufg') WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'ufg-go');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'Direito PUC SP B', 'DIR-PUCSP-B', 'direito-puc-sp-b', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'puc-sp') WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'direito-puc-sp-b');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'PoliUSP B', 'POLIUSP-B', 'poliusp-b', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'usp') WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'poliusp-b');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'Atena (UEMG)', 'ATENA', 'atena-uemg', 'ATHLETIC', FALSE, (SELECT id FROM institutions WHERE slug = 'uemg') WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'atena-uemg');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'Araras', 'ARARAS', 'araras', 'OTHER', FALSE, NULL WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'araras');
+INSERT INTO teams (name, short_name, slug, team_type, is_fictional, institution_id) SELECT 'IX Novembro', 'IX-NOV', 'ix-novembro', 'OTHER', FALSE, NULL WHERE NOT EXISTS (SELECT 1 FROM teams WHERE slug = 'ix-novembro');
 
--- 7. TEAM IDENTIFIERS: siglas/aliases canônicos informados
-INSERT INTO team_identifiers (team_id, identifier, identifier_type, is_primary)
-SELECT t.id, 'TDT', 'COMPETITIVE', TRUE FROM teams t
-WHERE t.slug = 'turquia' AND NOT EXISTS (SELECT 1 FROM team_identifiers ti WHERE ti.team_id = t.id AND ti.identifier = 'TDT');
-INSERT INTO team_identifiers (team_id, identifier, identifier_type, is_primary)
-SELECT t.id, 'TUR', 'SHORT_NAME', FALSE FROM teams t
-WHERE t.slug = 'turquia' AND NOT EXISTS (SELECT 1 FROM team_identifiers ti WHERE ti.team_id = t.id AND ti.identifier = 'TUR');
-INSERT INTO team_identifiers (team_id, identifier, identifier_type, is_primary)
-SELECT t.id, 'TDR', 'COMPETITIVE', TRUE FROM teams t
-WHERE t.slug = 'russia' AND NOT EXISTS (SELECT 1 FROM team_identifiers ti WHERE ti.team_id = t.id AND ti.identifier = 'TDR');
-INSERT INTO team_identifiers (team_id, identifier, identifier_type, is_primary)
-SELECT t.id, 'RUS', 'SHORT_NAME', FALSE FROM teams t
-WHERE t.slug = 'russia' AND NOT EXISTS (SELECT 1 FROM team_identifiers ti WHERE ti.team_id = t.id AND ti.identifier = 'RUS');
-INSERT INTO team_identifiers (team_id, identifier, identifier_type, is_primary)
-SELECT t.id, 'TDH', 'COMPETITIVE', TRUE FROM teams t
-WHERE t.slug = 'holanda' AND NOT EXISTS (SELECT 1 FROM team_identifiers ti WHERE ti.team_id = t.id AND ti.identifier = 'TDH');
-INSERT INTO team_identifiers (team_id, identifier, identifier_type, is_primary)
-SELECT t.id, 'HOL', 'SHORT_NAME', FALSE FROM teams t
-WHERE t.slug = 'holanda' AND NOT EXISTS (SELECT 1 FROM team_identifiers ti WHERE ti.team_id = t.id AND ti.identifier = 'HOL');
-INSERT INTO team_identifiers (team_id, identifier, identifier_type, is_primary)
-SELECT t.id, 'TDF', 'COMPETITIVE', TRUE FROM teams t
-WHERE t.slug = 'franca' AND NOT EXISTS (SELECT 1 FROM team_identifiers ti WHERE ti.team_id = t.id AND ti.identifier = 'TDF');
-INSERT INTO team_identifiers (team_id, identifier, identifier_type, is_primary)
-SELECT t.id, 'FRA', 'SHORT_NAME', FALSE FROM teams t
-WHERE t.slug = 'franca' AND NOT EXISTS (SELECT 1 FROM team_identifiers ti WHERE ti.team_id = t.id AND ti.identifier = 'FRA');
-INSERT INTO team_identifiers (team_id, identifier, identifier_type, is_primary)
-SELECT t.id, 'JPD', 'ALIAS', FALSE FROM teams t
-WHERE t.slug = 'franca' AND NOT EXISTS (SELECT 1 FROM team_identifiers ti WHERE ti.team_id = t.id AND ti.identifier = 'JPD');
-INSERT INTO team_identifiers (team_id, identifier, identifier_type, is_primary)
-SELECT t.id, 'TDG', 'COMPETITIVE', TRUE FROM teams t
-WHERE t.slug = 'grota' AND NOT EXISTS (SELECT 1 FROM team_identifiers ti WHERE ti.team_id = t.id AND ti.identifier = 'TDG');
-INSERT INTO team_identifiers (team_id, identifier, identifier_type, is_primary)
-SELECT t.id, 'GRO', 'SHORT_NAME', FALSE FROM teams t
-WHERE t.slug = 'grota' AND NOT EXISTS (SELECT 1 FROM team_identifiers ti WHERE ti.team_id = t.id AND ti.identifier = 'GRO');
-INSERT INTO team_identifiers (team_id, identifier, identifier_type, is_primary)
-SELECT t.id, 'N$', 'COMPETITIVE', TRUE FROM teams t
-WHERE t.slug = 'tropa-dos-laranjas' AND NOT EXISTS (SELECT 1 FROM team_identifiers ti WHERE ti.team_id = t.id AND ti.identifier = 'N$');
+INSERT INTO team_identifiers (team_id, identifier, identifier_type, is_primary) SELECT t.id, 'TDT', 'COMPETITIVE', TRUE FROM teams t WHERE t.slug = 'turquia' AND NOT EXISTS (SELECT 1 FROM team_identifiers ti WHERE ti.team_id = t.id AND ti.identifier = 'TDT');
+INSERT INTO team_identifiers (team_id, identifier, identifier_type, is_primary) SELECT t.id, 'TUR', 'SHORT_NAME', FALSE FROM teams t WHERE t.slug = 'turquia' AND NOT EXISTS (SELECT 1 FROM team_identifiers ti WHERE ti.team_id = t.id AND ti.identifier = 'TUR');
+INSERT INTO team_identifiers (team_id, identifier, identifier_type, is_primary) SELECT t.id, 'TDR', 'COMPETITIVE', TRUE FROM teams t WHERE t.slug = 'russia' AND NOT EXISTS (SELECT 1 FROM team_identifiers ti WHERE ti.team_id = t.id AND ti.identifier = 'TDR');
+INSERT INTO team_identifiers (team_id, identifier, identifier_type, is_primary) SELECT t.id, 'RUS', 'SHORT_NAME', FALSE FROM teams t WHERE t.slug = 'russia' AND NOT EXISTS (SELECT 1 FROM team_identifiers ti WHERE ti.team_id = t.id AND ti.identifier = 'RUS');
+INSERT INTO team_identifiers (team_id, identifier, identifier_type, is_primary) SELECT t.id, 'TDH', 'COMPETITIVE', TRUE FROM teams t WHERE t.slug = 'holanda' AND NOT EXISTS (SELECT 1 FROM team_identifiers ti WHERE ti.team_id = t.id AND ti.identifier = 'TDH');
+INSERT INTO team_identifiers (team_id, identifier, identifier_type, is_primary) SELECT t.id, 'HOL', 'SHORT_NAME', FALSE FROM teams t WHERE t.slug = 'holanda' AND NOT EXISTS (SELECT 1 FROM team_identifiers ti WHERE ti.team_id = t.id AND ti.identifier = 'HOL');
+INSERT INTO team_identifiers (team_id, identifier, identifier_type, is_primary) SELECT t.id, 'TDF', 'COMPETITIVE', TRUE FROM teams t WHERE t.slug = 'franca' AND NOT EXISTS (SELECT 1 FROM team_identifiers ti WHERE ti.team_id = t.id AND ti.identifier = 'TDF');
+INSERT INTO team_identifiers (team_id, identifier, identifier_type, is_primary) SELECT t.id, 'FRA', 'SHORT_NAME', FALSE FROM teams t WHERE t.slug = 'franca' AND NOT EXISTS (SELECT 1 FROM team_identifiers ti WHERE ti.team_id = t.id AND ti.identifier = 'FRA');
+INSERT INTO team_identifiers (team_id, identifier, identifier_type, is_primary) SELECT t.id, 'JPD', 'ALIAS', FALSE FROM teams t WHERE t.slug = 'franca' AND NOT EXISTS (SELECT 1 FROM team_identifiers ti WHERE ti.team_id = t.id AND ti.identifier = 'JPD');
+INSERT INTO team_identifiers (team_id, identifier, identifier_type, is_primary) SELECT t.id, 'TDG', 'COMPETITIVE', TRUE FROM teams t WHERE t.slug = 'grota' AND NOT EXISTS (SELECT 1 FROM team_identifiers ti WHERE ti.team_id = t.id AND ti.identifier = 'TDG');
+INSERT INTO team_identifiers (team_id, identifier, identifier_type, is_primary) SELECT t.id, 'GRO', 'SHORT_NAME', FALSE FROM teams t WHERE t.slug = 'grota' AND NOT EXISTS (SELECT 1 FROM team_identifiers ti WHERE ti.team_id = t.id AND ti.identifier = 'GRO');
+INSERT INTO team_identifiers (team_id, identifier, identifier_type, is_primary) SELECT t.id, 'N$', 'COMPETITIVE', TRUE FROM teams t WHERE t.slug = 'tropa-dos-laranjas' AND NOT EXISTS (SELECT 1 FROM team_identifiers ti WHERE ti.team_id = t.id AND ti.identifier = 'N$');
 
--- 8. SPORTS (22 modalidades informadas pelo projeto)
-INSERT INTO sports (name, short_name, slug)
-VALUES
+INSERT INTO sports (name, short_name, slug) VALUES
     ('Atletismo', 'ATL', 'atletismo'),
     ('Basquete', 'BAS', 'basquete'),
     ('Beisebol', 'BEI', 'beisebol'),
@@ -384,9 +181,7 @@ VALUES
     ('Pique-bandeira', 'PIQ', 'pique-bandeira')
 ON CONFLICT (slug) DO NOTHING;
 
--- 9. CATEGORIES
-INSERT INTO categories (name, slug, category_type, gender, age_group, min_age, max_age, format, weight_class, description)
-VALUES
+INSERT INTO categories (name, slug, category_type, gender, age_group, min_age, max_age, format, weight_class, description) VALUES
     ('Masculino', 'masculino', 'GENDER', 'MALE', NULL, NULL, NULL, NULL, NULL, 'Categoria masculina.'),
     ('Feminino', 'feminino', 'GENDER', 'FEMALE', NULL, NULL, NULL, NULL, NULL, 'Categoria feminina.'),
     ('Misto', 'misto', 'GENDER', 'MIXED', NULL, NULL, NULL, NULL, NULL, 'Categoria mista.'),
@@ -395,9 +190,7 @@ VALUES
     ('Duplas', 'duplas', 'FORMAT', NULL, NULL, NULL, NULL, 'PAIR', NULL, 'Formato de duplas.')
 ON CONFLICT (slug) DO NOTHING;
 
--- 10. GAMES
-INSERT INTO games (name, short_name, slug)
-VALUES
+INSERT INTO games (name, short_name, slug) VALUES
     ('Mobile Legends: Bang Bang', 'MLBB', 'mobile-legends-bang-bang'),
     ('Counter-Strike', 'CS', 'counter-strike'),
     ('Counter-Strike 2', 'CS2', 'counter-strike-2'),
@@ -420,32 +213,10 @@ VALUES
     ('PES', 'PES', 'pes')
 ON CONFLICT (slug) DO NOTHING;
 
--- 11. USERS: contas locais de demonstração (senha hash de 'password')
-INSERT INTO users (name, username, email, password_hash, bio, role_id)
-SELECT v.name, v.username, v.email, v.password_hash, v.bio, r.id
-FROM (VALUES
-    ('Administrador AGON Hub','agon.admin','admin@agonhub.local','$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy','Conta de demonstração local; trocar credenciais antes da publicação.','admin'),
-    ('Usuário Demo','agon.demo','demo@agonhub.local','$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy','Conta de demonstração para testar interações.','user')
-) AS v(name, username, email, password_hash, bio, role_name)
-JOIN roles r ON r.name = v.role_name
-WHERE NOT EXISTS (SELECT 1 FROM users u WHERE u.username = v.username);
+INSERT INTO users (name, username, email, password_hash, bio, role_id) SELECT v.name, v.username, v.email, v.password_hash, v.bio, r.id FROM (VALUES ('Administrador AGON Hub','agon.admin','admin@agonhub.local','$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy','Conta de demonstração local; trocar credenciais antes da publicação.','admin'), ('Usuário Demo','agon.demo','demo@agonhub.local','$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy','Conta de demonstração para testar interações.','user')) AS v(name, username, email, password_hash, bio, role_name) JOIN roles r ON r.name = v.role_name WHERE NOT EXISTS (SELECT 1 FROM users u WHERE u.username = v.username);
 
--- 12. ATHLETES: 124 atletas fictícios informados pelo projeto.
--- A tabela temporária evita duplicar a lista entre os INSERTs subsequentes.
-CREATE TEMP TABLE seed_athletes (
-    slug TEXT PRIMARY KEY,
-    display_name TEXT NOT NULL,
-    team_slug TEXT NOT NULL,
-    age_at_reference INTEGER NOT NULL,
-    gamer_username TEXT,
-    generation TEXT,
-    group_name TEXT,
-    leadership_role TEXT,
-    bio TEXT
-) ON COMMIT DROP;
-
-INSERT INTO seed_athletes (slug, display_name, team_slug, age_at_reference, gamer_username, generation, group_name, leadership_role, bio)
-VALUES
+CREATE TEMP TABLE seed_athletes (slug TEXT PRIMARY KEY, display_name TEXT NOT NULL, team_slug TEXT NOT NULL, age_at_reference INTEGER NOT NULL, gamer_username TEXT, generation TEXT, group_name TEXT, leadership_role TEXT, bio TEXT) ON COMMIT DROP;
+INSERT INTO seed_athletes (slug, display_name, team_slug, age_at_reference, gamer_username, generation, group_name, leadership_role, bio) VALUES
     ('alicia-turquia', 'Alicia', 'turquia', 16, 'Tur_Alicia', NULL, NULL, NULL, NULL),
     ('anna-beatriz-turquia', 'Anna Beatriz', 'turquia', 16, 'Tur_ABeatriz', NULL, NULL, NULL, NULL),
     ('camila-turquia', 'Camila', 'turquia', 16, 'Tur_Camis', NULL, NULL, NULL, NULL),
@@ -569,135 +340,24 @@ VALUES
     ('ana-clara-tropa-dos-laranjas', 'Ana Clara', 'tropa-dos-laranjas', 15, 'Godlessyz', 'SECOND_GENERATION', 'AVI', NULL, NULL),
     ('sofia-tropa-dos-laranjas', 'Sofia', 'tropa-dos-laranjas', 15, 'iiysofia', 'SECOND_GENERATION', 'TII', NULL, NULL),
     ('otavio-macoppi-tropa-dos-laranjas', 'Otávio Macoppi', 'tropa-dos-laranjas', 15, 'Macoppi', 'SECOND_GENERATION', 'TII', NULL, NULL),
-    ('eloa-cristine-tropa-dos-laranjas', 'Eloá Cristine', 'tropa-dos-laranjas', 15, 'Loá', 'SECOND_GENERATION', 'AVI', NULL, NULL);
+    ('eloa-cristine-tropa-dos-laranjas', 'Eloá Cristine', 'tropa-dos-laranjas', 15, 'Loá', 'SECOND_GENERATION', 'AVI', NULL, NULL)
+;
+INSERT INTO athletes (display_name, slug, origin, age_at_reference, age_reference_date, nationality, birth_date, bio) SELECT display_name, slug, 'FICTIONAL', age_at_reference, DATE '2026-10-08', NULL, NULL, bio FROM seed_athletes ON CONFLICT (slug) DO UPDATE SET display_name = EXCLUDED.display_name, origin = 'FICTIONAL', age_at_reference = EXCLUDED.age_at_reference, age_reference_date = EXCLUDED.age_reference_date, bio = EXCLUDED.bio, updated_at = CURRENT_TIMESTAMP;
 
-INSERT INTO athletes (
-    display_name, slug, origin, age_at_reference, age_reference_date,
-    nationality, birth_date, bio
-)
-SELECT display_name, slug, 'FICTIONAL', age_at_reference, DATE '2026-10-08',
-       NULL, NULL, bio
-FROM seed_athletes
-ON CONFLICT (slug) DO UPDATE SET
-    display_name = EXCLUDED.display_name,
-    origin = 'FICTIONAL',
-    age_at_reference = EXCLUDED.age_at_reference,
-    age_reference_date = EXCLUDED.age_reference_date,
-    bio = EXCLUDED.bio,
-    updated_at = CURRENT_TIMESTAMP;
+INSERT INTO athlete_teams (athlete_id, team_id, sport_id, status, generation, group_name, leadership_role) SELECT a.id, t.id, NULL, 'ACTIVE', sa.generation, sa.group_name, sa.leadership_role FROM seed_athletes sa JOIN athletes a ON a.slug = sa.slug JOIN teams t ON t.slug = sa.team_slug WHERE NOT EXISTS (SELECT 1 FROM athlete_teams at WHERE at.athlete_id = a.id AND at.team_id = t.id AND at.sport_id IS NULL);
+UPDATE athlete_teams at SET generation = sa.generation, group_name = sa.group_name, leadership_role = sa.leadership_role, updated_at = CURRENT_TIMESTAMP FROM seed_athletes sa JOIN athletes a ON a.slug = sa.slug JOIN teams t ON t.slug = sa.team_slug WHERE at.athlete_id = a.id AND at.team_id = t.id AND at.sport_id IS NULL;
 
--- 13. ATHLETE_TEAMS: vínculo com as seis equipes. A modalidade fica NULL
--- até o usuário definir em quais esportes cada atleta compete.
-INSERT INTO athlete_teams (
-    athlete_id, team_id, sport_id, status, generation,
-    group_name, leadership_role
-)
-SELECT a.id, t.id, NULL, 'ACTIVE', sa.generation, sa.group_name, sa.leadership_role
-FROM seed_athletes sa
-JOIN athletes a ON a.slug = sa.slug
-JOIN teams t ON t.slug = sa.team_slug
-WHERE NOT EXISTS (
-    SELECT 1 FROM athlete_teams at
-    WHERE at.athlete_id = a.id AND at.team_id = t.id AND at.sport_id IS NULL
-);
+INSERT INTO athlete_game_accounts (athlete_team_id, game_id, username, display_name) SELECT at.id, NULL, sa.gamer_username, sa.gamer_username FROM seed_athletes sa JOIN athletes a ON a.slug = sa.slug JOIN teams t ON t.slug = sa.team_slug JOIN athlete_teams at ON at.athlete_id = a.id AND at.team_id = t.id AND at.sport_id IS NULL WHERE sa.gamer_username IS NOT NULL AND NOT EXISTS (SELECT 1 FROM athlete_game_accounts aga WHERE aga.athlete_team_id = at.id AND aga.game_id IS NULL AND LOWER(aga.username) = LOWER(sa.gamer_username));
 
--- Atualizar os metadados caso a seed seja executada novamente.
-UPDATE athlete_teams at
-SET generation = sa.generation,
-    group_name = sa.group_name,
-    leadership_role = sa.leadership_role,
-    updated_at = CURRENT_TIMESTAMP
-FROM seed_athletes sa
-JOIN athletes a ON a.slug = sa.slug
-JOIN teams t ON t.slug = sa.team_slug
-WHERE at.athlete_id = a.id AND at.team_id = t.id AND at.sport_id IS NULL;
+INSERT INTO championships (name, short_name, slug, description, championship_type, competition_level_id, is_fictional) SELECT v.name, v.short_name, v.slug, v.description, v.championship_type, cl.id, v.is_fictional FROM (VALUES ('AGON','AGON','agon-cup','Competição central do Universo AGON.','MULTI_SPORT',TRUE,'agon'), ('Estadual Universitário','Estadual','estadual-universitario','Registro-modelo para o nível estadual; regras específicas a definir.','MULTI_SPORT',FALSE,'estadual'), ('Nacional Universitário NDU','Nacional NDU','nacional-ndu','Registro-modelo para competições nacionais associadas à NDU.','MULTI_SPORT',FALSE,'nacional'), ('Jogos Universitários Brasileiros (JUBs)','JUBs','jubs','Campeonato nacional dos Jogos Universitários Brasileiros.','MULTI_SPORT',FALSE,'nacional'), ('Mundial Universitário','Mundial','mundial-universitario','Registro-modelo para o nível mundial universitário.','MULTI_SPORT',FALSE,'mundial')) AS v(name, short_name, slug, description, championship_type, is_fictional, level_slug) JOIN competition_levels cl ON cl.slug = v.level_slug WHERE NOT EXISTS (SELECT 1 FROM championships c WHERE c.slug = v.slug);
 
--- 14. ATHLETE_GAME_ACCOUNTS: usernames informados; o jogo específico ainda
--- não foi indicado, então game_id permanece NULL e poderá ser preenchido depois.
-INSERT INTO athlete_game_accounts (athlete_team_id, game_id, username, display_name)
-SELECT at.id, NULL, sa.gamer_username, sa.gamer_username
-FROM seed_athletes sa
-JOIN athletes a ON a.slug = sa.slug
-JOIN teams t ON t.slug = sa.team_slug
-JOIN athlete_teams at ON at.athlete_id = a.id AND at.team_id = t.id AND at.sport_id IS NULL
-WHERE sa.gamer_username IS NOT NULL
-  AND NOT EXISTS (
-      SELECT 1 FROM athlete_game_accounts aga
-      WHERE aga.athlete_team_id = at.id
-        AND aga.game_id IS NULL
-        AND LOWER(aga.username) = LOWER(sa.gamer_username)
-  );
+INSERT INTO championship_organizations (championship_id, organization_id, role) SELECT c.id, o.id, v.role FROM (VALUES ('agon-cup','universo-agon','ORGANIZER'), ('estadual-universitario','fupe','ORGANIZER'), ('nacional-ndu','ndu','ORGANIZER'), ('jubs','cbdu','ORGANIZER'), ('mundial-universitario','fisu','ORGANIZER')) AS v(championship_slug, organization_slug, role) JOIN championships c ON c.slug = v.championship_slug JOIN organizations o ON o.slug = v.organization_slug WHERE NOT EXISTS (SELECT 1 FROM championship_organizations co WHERE co.championship_id = c.id AND co.organization_id = o.id);
 
+INSERT INTO championship_editions (championship_id, name, year, edition_number, status, description) SELECT c.id, v.edition_name, 2026, 1, 'PLANNED', v.description FROM (VALUES ('agon-cup','AGON 2026','Edição demonstrativa; não representa resultados canônicos.'), ('estadual-universitario','Estadual Universitário 2026','Edição-modelo; calendário e regulamento a confirmar.'), ('nacional-ndu','Nacional Universitário NDU 2026','Edição-modelo; calendário e regulamento a confirmar.'), ('jubs','JUBs 2026','Edição-modelo; calendário e regulamento a confirmar.'), ('mundial-universitario','Mundial Universitário 2026','Edição-modelo; calendário e regulamento a confirmar.')) AS v(championship_slug, edition_name, description) JOIN championships c ON c.slug = v.championship_slug WHERE NOT EXISTS (SELECT 1 FROM championship_editions ce WHERE ce.championship_id = c.id AND ce.year = 2026 AND ce.name = v.edition_name);
 
--- 15. CHAMPIONSHIPS: exemplos de níveis AGON/Estadual/Nacional/Mundial.
-INSERT INTO championships (name, short_name, slug, description, championship_type, competition_level_id, is_fictional)
-SELECT v.name, v.short_name, v.slug, v.description, v.championship_type, cl.id, v.is_fictional
-FROM (VALUES
-    ('AGON','AGON','agon-cup','Competição central do Universo AGON.','MULTI_SPORT',TRUE,'agon'),
-    ('Estadual Universitário','Estadual','estadual-universitario','Registro-modelo para o nível estadual; regras específicas a definir.','MULTI_SPORT',FALSE,'estadual'),
-    ('Nacional Universitário NDU','Nacional NDU','nacional-ndu','Registro-modelo para competições nacionais associadas à NDU.','MULTI_SPORT',FALSE,'nacional'),
-    ('Jogos Universitários Brasileiros (JUBs)','JUBs','jubs','Campeonato nacional dos Jogos Universitários Brasileiros.','MULTI_SPORT',FALSE,'nacional'),
-    ('Mundial Universitário','Mundial','mundial-universitario','Registro-modelo para o nível mundial universitário.','MULTI_SPORT',FALSE,'mundial')
-) AS v(name, short_name, slug, description, championship_type, is_fictional, level_slug)
-JOIN competition_levels cl ON cl.slug = v.level_slug
-WHERE NOT EXISTS (SELECT 1 FROM championships c WHERE c.slug = v.slug);
+INSERT INTO edition_competitions (edition_id, sport_id, category_id, game_id, name, slug, tournament_format, status, description) SELECT ce.id, s.id, cat.id, g.id, v.name, v.slug, v.tournament_format, 'PLANNED', v.description FROM (VALUES ('agon-cup','futebol','masculino',NULL,'Futebol Masculino - AGON 2026','agon-2026-futebol-masculino','LEAGUE','Competição demonstrativa; formato final a confirmar.'), ('agon-cup','voleibol','feminino',NULL,'Voleibol Feminino - AGON 2026','agon-2026-voleibol-feminino','LEAGUE','Competição demonstrativa; formato final a confirmar.'), ('agon-cup','xadrez','absoluto',NULL,'Xadrez Absoluto - AGON 2026','agon-2026-xadrez-absoluto','SWISS','Competição demonstrativa; formato final a confirmar.'), ('agon-cup','jogos-eletronicos','misto','valorant','Valorant Misto - AGON 2026','agon-2026-valorant-misto','GROUPS_PLAYOFFS','Competição demonstrativa; formato final a confirmar.'), ('estadual-universitario','futebol','masculino',NULL,'Futebol Masculino - Estadual 2026','estadual-2026-futebol-masculino','LEAGUE','Registro de exemplo; regulamento canônico a confirmar.'), ('nacional-ndu','futebol','masculino',NULL,'Futebol Masculino - Nacional NDU 2026','nacional-ndu-2026-futebol-masculino','LEAGUE','Registro de exemplo; regulamento canônico a confirmar.'), ('jubs','atletismo','masculino',NULL,'Atletismo Masculino - JUBs 2026','jubs-2026-atletismo-masculino','EVENTS','Registro de exemplo; regulamento canônico a confirmar.'), ('mundial-universitario','futebol','masculino',NULL,'Futebol Masculino - Mundial 2026','mundial-2026-futebol-masculino','LEAGUE','Registro de exemplo; regulamento canônico a confirmar.')) AS v(championship_slug, sport_slug, category_slug, game_slug, name, slug, tournament_format, description) JOIN championships c ON c.slug = v.championship_slug JOIN championship_editions ce ON ce.championship_id = c.id AND ce.year = 2026 JOIN sports s ON s.slug = v.sport_slug LEFT JOIN categories cat ON cat.slug = v.category_slug LEFT JOIN games g ON g.slug = v.game_slug WHERE NOT EXISTS (SELECT 1 FROM edition_competitions ec WHERE ec.slug = v.slug);
 
--- 16. CHAMPIONSHIP_ORGANIZATIONS
-INSERT INTO championship_organizations (championship_id, organization_id, role)
-SELECT c.id, o.id, v.role
-FROM (VALUES
-    ('agon-cup','universo-agon','ORGANIZER'),
-    ('estadual-universitario','fupe','ORGANIZER'),
-    ('nacional-ndu','ndu','ORGANIZER'),
-    ('jubs','cbdu','ORGANIZER'),
-    ('mundial-universitario','fisu','ORGANIZER')
-) AS v(championship_slug, organization_slug, role)
-JOIN championships c ON c.slug = v.championship_slug
-JOIN organizations o ON o.slug = v.organization_slug
-WHERE NOT EXISTS (
-    SELECT 1 FROM championship_organizations co
-    WHERE co.championship_id = c.id AND co.organization_id = o.id
-);
-
--- 17. CHAMPIONSHIP EDITIONS (dates omitted where canonical dates are not confirmed)
-INSERT INTO championship_editions (championship_id, name, year, edition_number, status, description)
-SELECT c.id, v.edition_name, 2026, 1, 'PLANNED', v.description
-FROM (VALUES
-    ('agon-cup','AGON 2026','Edição demonstrativa; não representa resultados canônicos.'),
-    ('estadual-universitario','Estadual Universitário 2026','Edição-modelo; calendário e regulamento a confirmar.'),
-    ('nacional-ndu','Nacional Universitário NDU 2026','Edição-modelo; calendário e regulamento a confirmar.'),
-    ('jubs','JUBs 2026','Edição-modelo; calendário e regulamento a confirmar.'),
-    ('mundial-universitario','Mundial Universitário 2026','Edição-modelo; calendário e regulamento a confirmar.')
-) AS v(championship_slug, edition_name, description)
-JOIN championships c ON c.slug = v.championship_slug
-WHERE NOT EXISTS (
-    SELECT 1 FROM championship_editions ce
-    WHERE ce.championship_id = c.id AND ce.year = 2026 AND ce.name = v.edition_name
-);
-
--- 18. EDITION COMPETITIONS
-INSERT INTO edition_competitions (edition_id, sport_id, category_id, game_id, name, slug, tournament_format, status, description)
-SELECT ce.id, s.id, cat.id, g.id, v.name, v.slug, v.tournament_format, 'PLANNED', v.description
-FROM (VALUES
-    ('agon-cup','futebol','masculino',NULL,'Futebol Masculino - AGON 2026','agon-2026-futebol-masculino','LEAGUE','Competição demonstrativa; formato final a confirmar.'),
-    ('agon-cup','voleibol','feminino',NULL,'Voleibol Feminino - AGON 2026','agon-2026-voleibol-feminino','LEAGUE','Competição demonstrativa; formato final a confirmar.'),
-    ('agon-cup','xadrez','absoluto',NULL,'Xadrez Absoluto - AGON 2026','agon-2026-xadrez-absoluto','SWISS','Competição demonstrativa; formato final a confirmar.'),
-    ('agon-cup','jogos-eletronicos','misto','valorant','Valorant Misto - AGON 2026','agon-2026-valorant-misto','GROUPS_PLAYOFFS','Competição demonstrativa; formato final a confirmar.'),
-    ('estadual-universitario','futebol','masculino',NULL,'Futebol Masculino - Estadual 2026','estadual-2026-futebol-masculino','LEAGUE','Registro de exemplo; regulamento canônico a confirmar.'),
-    ('nacional-ndu','futebol','masculino',NULL,'Futebol Masculino - Nacional NDU 2026','nacional-ndu-2026-futebol-masculino','LEAGUE','Registro de exemplo; regulamento canônico a confirmar.'),
-    ('jubs','atletismo','masculino',NULL,'Atletismo Masculino - JUBs 2026','jubs-2026-atletismo-masculino','EVENTS','Registro de exemplo; regulamento canônico a confirmar.'),
-    ('mundial-universitario','futebol','masculino',NULL,'Futebol Masculino - Mundial 2026','mundial-2026-futebol-masculino','LEAGUE','Registro de exemplo; regulamento canônico a confirmar.')
-) AS v(championship_slug, sport_slug, category_slug, game_slug, name, slug, tournament_format, description)
-JOIN championships c ON c.slug = v.championship_slug
-JOIN championship_editions ce ON ce.championship_id = c.id AND ce.year = 2026
-JOIN sports s ON s.slug = v.sport_slug
-LEFT JOIN categories cat ON cat.slug = v.category_slug
-LEFT JOIN games g ON g.slug = v.game_slug
-WHERE NOT EXISTS (SELECT 1 FROM edition_competitions ec WHERE ec.slug = v.slug);
-
--- 19. QUALIFICATION METHODS
-INSERT INTO qualification_methods (name, slug, description)
-VALUES
+INSERT INTO qualification_methods (name, slug, description) VALUES
     ('Campeão','champion','Classificação por título de campeão.'),
     ('Posicionamento','top-placement','Classificação conforme posição final.'),
     ('Ranking','ranking','Classificação por ranking.'),
@@ -706,214 +366,41 @@ VALUES
     ('Outro / a definir','other','Método que ainda será especificado no regulamento.')
 ON CONFLICT (slug) DO NOTHING;
 
--- 20. QUALIFICATION RULES (apenas exemplos técnicos; não são regras canônicas)
-INSERT INTO qualification_rules (source_competition_id, target_competition_id, method_id, position_from, position_to, description)
-SELECT src.id, dst.id, qm.id, v.position_from, v.position_to, v.description
-FROM (VALUES
-    ('estadual-2026-futebol-masculino','nacional-ndu-2026-futebol-masculino','champion',1,1,'Exemplo técnico: campeão estadual poderia avançar; confirmar regulamento.'),
-    ('nacional-ndu-2026-futebol-masculino','mundial-2026-futebol-masculino','top-placement',1,1,'Exemplo técnico: classificado nacional poderia avançar; confirmar regulamento.')
-) AS v(source_slug, target_slug, method_slug, position_from, position_to, description)
-JOIN edition_competitions src ON src.slug = v.source_slug
-JOIN edition_competitions dst ON dst.slug = v.target_slug
-JOIN qualification_methods qm ON qm.slug = v.method_slug
-WHERE NOT EXISTS (
-    SELECT 1 FROM qualification_rules qr
-    WHERE qr.source_competition_id = src.id AND qr.target_competition_id = dst.id AND qr.method_id = qm.id
-);
+INSERT INTO qualification_rules (source_competition_id, target_competition_id, method_id, position_from, position_to, description) SELECT src.id, dst.id, qm.id, v.position_from, v.position_to, v.description FROM (VALUES ('estadual-2026-futebol-masculino','nacional-ndu-2026-futebol-masculino','champion',1,1,'Exemplo técnico: campeão estadual poderia avançar; confirmar regulamento.'), ('nacional-ndu-2026-futebol-masculino','mundial-2026-futebol-masculino','top-placement',1,1,'Exemplo técnico: classificado nacional poderia avançar; confirmar regulamento.')) AS v(source_slug, target_slug, method_slug, position_from, position_to, description) JOIN edition_competitions src ON src.slug = v.source_slug JOIN edition_competitions dst ON dst.slug = v.target_slug JOIN qualification_methods qm ON qm.slug = v.method_slug WHERE NOT EXISTS (SELECT 1 FROM qualification_rules qr WHERE qr.source_competition_id = src.id AND qr.target_competition_id = dst.id AND qr.method_id = qm.id);
 
--- 21. COMPETITION PARTICIPANTS
-INSERT INTO competition_participants (competition_id, participant_type, team_id, status)
-SELECT ec.id, 'TEAM', t.id, 'ACTIVE'
-FROM (VALUES
-    ('agon-2026-futebol-masculino','turquia'),('agon-2026-futebol-masculino','franca'),('agon-2026-futebol-masculino','holanda'),('agon-2026-futebol-masculino','grota'),
-    ('agon-2026-voleibol-feminino','turquia'),('agon-2026-voleibol-feminino','russia'),('agon-2026-voleibol-feminino','holanda'),
-    ('agon-2026-valorant-misto','tropa-dos-laranjas'),('agon-2026-valorant-misto','turquia'),
-    ('estadual-2026-futebol-masculino','caaso'),('estadual-2026-futebol-masculino','engenharia-mackenzie'),
-    ('nacional-ndu-2026-futebol-masculino','caaso'),('nacional-ndu-2026-futebol-masculino','leu-unicamp'),
-    ('mundial-2026-futebol-masculino','turquia'),('mundial-2026-futebol-masculino','franca')
-) AS v(competition_slug, team_slug)
-JOIN edition_competitions ec ON ec.slug = v.competition_slug
-JOIN teams t ON t.slug = v.team_slug
-WHERE NOT EXISTS (
-    SELECT 1 FROM competition_participants cp
-    WHERE cp.competition_id = ec.id AND cp.team_id = t.id AND cp.participant_type = 'TEAM'
-);
+INSERT INTO competition_participants (competition_id, participant_type, team_id, status) SELECT ec.id, 'TEAM', t.id, 'ACTIVE' FROM (VALUES ('agon-2026-futebol-masculino','turquia'),('agon-2026-futebol-masculino','franca'),('agon-2026-futebol-masculino','holanda'),('agon-2026-futebol-masculino','grota'), ('agon-2026-voleibol-feminino','turquia'),('agon-2026-voleibol-feminino','russia'),('agon-2026-voleibol-feminino','holanda'), ('agon-2026-valorant-misto','tropa-dos-laranjas'),('agon-2026-valorant-misto','turquia'), ('estadual-2026-futebol-masculino','caaso'),('estadual-2026-futebol-masculino','engenharia-mackenzie'), ('nacional-ndu-2026-futebol-masculino','caaso'),('nacional-ndu-2026-futebol-masculino','leu-unicamp'), ('mundial-2026-futebol-masculino','turquia'),('mundial-2026-futebol-masculino','franca')) AS v(competition_slug, team_slug) JOIN edition_competitions ec ON ec.slug = v.competition_slug JOIN teams t ON t.slug = v.team_slug WHERE NOT EXISTS (SELECT 1 FROM competition_participants cp WHERE cp.competition_id = ec.id AND cp.team_id = t.id AND cp.participant_type = 'TEAM');
+INSERT INTO competition_participants (competition_id, participant_type, athlete_id, status) SELECT ec.id, 'ATHLETE', a.id, 'ACTIVE' FROM (VALUES ('agon-2026-xadrez-absoluto','levi-franca'), ('agon-2026-xadrez-absoluto','isabella-russia'), ('agon-2026-xadrez-absoluto','arianne-grota')) AS v(competition_slug, athlete_slug) JOIN edition_competitions ec ON ec.slug = v.competition_slug JOIN athletes a ON a.slug = v.athlete_slug WHERE NOT EXISTS (SELECT 1 FROM competition_participants cp WHERE cp.competition_id = ec.id AND cp.athlete_id = a.id AND cp.participant_type = 'ATHLETE');
 
-INSERT INTO competition_participants (competition_id, participant_type, athlete_id, status)
-SELECT ec.id, 'ATHLETE', a.id, 'ACTIVE'
-FROM (VALUES
-    ('agon-2026-xadrez-absoluto','levi-franca'),
-    ('agon-2026-xadrez-absoluto','isabella-russia'),
-    ('agon-2026-xadrez-absoluto','arianne-grota')
-) AS v(competition_slug, athlete_slug)
-JOIN edition_competitions ec ON ec.slug = v.competition_slug
-JOIN athletes a ON a.slug = v.athlete_slug
-WHERE NOT EXISTS (
-    SELECT 1 FROM competition_participants cp
-    WHERE cp.competition_id = ec.id AND cp.athlete_id = a.id AND cp.participant_type = 'ATHLETE'
-);
+INSERT INTO stages (competition_id, name, stage_type, sequence, start_date, end_date) SELECT ec.id, 'Fase de grupos (demo)', 'GROUP_STAGE', 1, NULL, NULL FROM edition_competitions ec WHERE ec.slug = 'agon-2026-futebol-masculino' AND NOT EXISTS (SELECT 1 FROM stages s WHERE s.competition_id = ec.id AND s.sequence = 1);
+INSERT INTO stages (competition_id, name, stage_type, sequence) SELECT ec.id, 'Fase de classificação (demo)', 'QUALIFICATION', 1 FROM edition_competitions ec WHERE ec.slug = 'agon-2026-valorant-misto' AND NOT EXISTS (SELECT 1 FROM stages s WHERE s.competition_id = ec.id AND s.sequence = 1);
+INSERT INTO competition_groups (stage_id, name, slug) SELECT s.id, 'Grupo A (demo)', 'grupo-a-demo' FROM stages s JOIN edition_competitions ec ON ec.id = s.competition_id WHERE ec.slug = 'agon-2026-futebol-masculino' AND NOT EXISTS (SELECT 1 FROM competition_groups g WHERE g.stage_id = s.id AND g.slug = 'grupo-a-demo');
 
--- 22. STAGES & GROUPS
-INSERT INTO stages (competition_id, name, stage_type, sequence, start_date, end_date)
-SELECT ec.id, 'Fase de grupos (demo)', 'GROUP_STAGE', 1, NULL, NULL
-FROM edition_competitions ec
-WHERE ec.slug = 'agon-2026-futebol-masculino'
-  AND NOT EXISTS (SELECT 1 FROM stages s WHERE s.competition_id = ec.id AND s.sequence = 1);
+INSERT INTO matches (competition_id, stage_id, group_id, round_name, match_number, scheduled_at, venue, status, notes) SELECT ec.id, s.id, g.id, 'Partida de demonstração', 1, TIMESTAMPTZ '2026-11-01 16:00:00-03', 'Local demonstrativo', 'SCHEDULED', 'Registro técnico para demonstrar o schema; não é calendário ou confronto canônico.' FROM edition_competitions ec LEFT JOIN stages s ON s.competition_id = ec.id AND s.sequence = 1 LEFT JOIN competition_groups g ON g.stage_id = s.id AND g.slug = 'grupo-a-demo' WHERE ec.slug = 'agon-2026-futebol-masculino' AND NOT EXISTS (SELECT 1 FROM matches m WHERE m.competition_id = ec.id AND m.match_number = 1 AND m.round_name = 'Partida de demonstração');
+INSERT INTO match_participants (match_id, competition_participant_id, side, score, result) SELECT m.id, cp.id, v.side, NULL, 'PENDING' FROM matches m JOIN edition_competitions ec ON ec.id = m.competition_id JOIN (VALUES ('turquia','HOME'),('franca','AWAY')) AS v(team_slug, side) ON TRUE JOIN teams t ON t.slug = v.team_slug JOIN competition_participants cp ON cp.competition_id = ec.id AND cp.team_id = t.id AND cp.participant_type = 'TEAM' WHERE ec.slug = 'agon-2026-futebol-masculino' AND m.round_name = 'Partida de demonstração' ON CONFLICT (match_id, competition_participant_id) DO NOTHING;
 
-INSERT INTO stages (competition_id, name, stage_type, sequence)
-SELECT ec.id, 'Fase de classificação (demo)', 'QUALIFICATION', 1
-FROM edition_competitions ec
-WHERE ec.slug = 'agon-2026-valorant-misto'
-  AND NOT EXISTS (SELECT 1 FROM stages s WHERE s.competition_id = ec.id AND s.sequence = 1);
+INSERT INTO standings (competition_id, competition_participant_id, played, wins, draws, losses, points) SELECT ec.id, cp.id, 0, 0, 0, 0, 0 FROM edition_competitions ec JOIN competition_participants cp ON cp.competition_id = ec.id AND cp.participant_type = 'TEAM' WHERE ec.slug = 'agon-2026-futebol-masculino' ON CONFLICT (competition_id, competition_participant_id) DO NOTHING;
 
-INSERT INTO competition_groups (stage_id, name, slug)
-SELECT s.id, 'Grupo A (demo)', 'grupo-a-demo'
-FROM stages s JOIN edition_competitions ec ON ec.id = s.competition_id
-WHERE ec.slug = 'agon-2026-futebol-masculino'
-  AND NOT EXISTS (SELECT 1 FROM competition_groups g WHERE g.stage_id = s.id AND g.slug = 'grupo-a-demo');
+INSERT INTO match_events (match_id, event_type, description) SELECT m.id, 'NOTE', 'Evento de demonstração; sem resultado ou estatística oficial.' FROM matches m JOIN edition_competitions ec ON ec.id = m.competition_id WHERE ec.slug = 'agon-2026-futebol-masculino' AND m.round_name = 'Partida de demonstração' AND NOT EXISTS (SELECT 1 FROM match_events me WHERE me.match_id = m.id AND me.event_type = 'NOTE');
 
--- 23. MATCHES & MATCH PARTICIPANTS
-INSERT INTO matches (competition_id, stage_id, group_id, round_name, match_number, scheduled_at, venue, status, notes)
-SELECT ec.id, s.id, g.id, 'Partida de demonstração', 1,
-       TIMESTAMPTZ '2026-11-01 16:00:00-03', 'Local demonstrativo', 'SCHEDULED',
-       'Registro técnico para demonstrar o schema; não é calendário ou confronto canônico.'
-FROM edition_competitions ec
-LEFT JOIN stages s ON s.competition_id = ec.id AND s.sequence = 1
-LEFT JOIN competition_groups g ON g.stage_id = s.id AND g.slug = 'grupo-a-demo'
-WHERE ec.slug = 'agon-2026-futebol-masculino'
-  AND NOT EXISTS (SELECT 1 FROM matches m WHERE m.competition_id = ec.id AND m.match_number = 1 AND m.round_name = 'Partida de demonstração');
+INSERT INTO calendar_events (title, description, event_type, starts_at, ends_at, location, championship_edition_id, competition_id, match_id, created_by) SELECT 'Evento demonstrativo do AGON Hub', 'Registro técnico para testar a agenda. Substituir por calendário canônico.', 'DEMO', TIMESTAMPTZ '2026-11-01 16:00:00-03', NULL, 'Local demonstrativo', ce.id, ec.id, m.id, u.id FROM edition_competitions ec JOIN championship_editions ce ON ce.id = ec.edition_id JOIN championships c ON c.id = ce.championship_id JOIN matches m ON m.competition_id = ec.id AND m.round_name = 'Partida de demonstração' JOIN users u ON u.username = 'agon.admin' WHERE ec.slug = 'agon-2026-futebol-masculino' AND NOT EXISTS (SELECT 1 FROM calendar_events ev WHERE ev.title = 'Evento demonstrativo do AGON Hub');
 
-INSERT INTO match_participants (match_id, competition_participant_id, side, score, result)
-SELECT m.id, cp.id, v.side, NULL, 'PENDING'
-FROM matches m
-JOIN edition_competitions ec ON ec.id = m.competition_id
-JOIN (VALUES ('turquia','HOME'),('franca','AWAY')) AS v(team_slug, side) ON TRUE
-JOIN teams t ON t.slug = v.team_slug
-JOIN competition_participants cp ON cp.competition_id = ec.id AND cp.team_id = t.id AND cp.participant_type = 'TEAM'
-WHERE ec.slug = 'agon-2026-futebol-masculino' AND m.round_name = 'Partida de demonstração'
-ON CONFLICT (match_id, competition_participant_id) DO NOTHING;
+INSERT INTO titles (name, title_type, description, championship_id, sport_id, category_id) SELECT 'Título demonstrativo (não canônico)', 'DEMO', 'Registro de teste para demonstrar a relação equipe-título; não é uma conquista oficial do Universo AGON.', c.id, s.id, cat.id FROM championships c JOIN sports s ON s.slug = 'futebol' JOIN categories cat ON cat.slug = 'masculino' WHERE c.slug = 'agon-cup' AND NOT EXISTS (SELECT 1 FROM titles t WHERE t.name = 'Título demonstrativo (não canônico)');
+INSERT INTO team_titles (team_id, title_id, championship_edition_id, won_at) SELECT tm.id, ti.id, ce.id, NULL FROM teams tm JOIN titles ti ON ti.name = 'Título demonstrativo (não canônico)' JOIN championships c ON c.slug = 'agon-cup' JOIN championship_editions ce ON ce.championship_id = c.id AND ce.year = 2026 WHERE tm.slug = 'turquia' AND NOT EXISTS (SELECT 1 FROM team_titles tt WHERE tt.team_id = tm.id AND tt.title_id = ti.id AND tt.championship_edition_id = ce.id);
 
--- 24. STANDINGS: linhas iniciais sem placares/pontuação canônicos
-INSERT INTO standings (competition_id, competition_participant_id, played, wins, draws, losses, points)
-SELECT ec.id, cp.id, 0, 0, 0, 0, 0
-FROM edition_competitions ec
-JOIN competition_participants cp ON cp.competition_id = ec.id AND cp.participant_type = 'TEAM'
-WHERE ec.slug = 'agon-2026-futebol-masculino'
-ON CONFLICT (competition_id, competition_participant_id) DO NOTHING;
+INSERT INTO news (title, slug, subtitle, content, cover_image, author_id, status, published_at) SELECT 'Bem-vindo ao AGON Hub - conteúdo demonstrativo', 'bem-vindo-agon-hub-demo', 'Primeiro conteúdo de exemplo da plataforma.', 'Este é um texto de demonstração para validar notícias e relacionamentos. Não representa notícia canônica do Universo AGON.', '/uploads/news/agon-hub-demo.jpg', u.id, 'PUBLISHED', CURRENT_TIMESTAMP FROM users u WHERE u.username = 'agon.admin' ON CONFLICT (slug) DO NOTHING;
+INSERT INTO news_teams (news_id, team_id) SELECT n.id, t.id FROM news n JOIN teams t ON t.slug = 'turquia' WHERE n.slug = 'bem-vindo-agon-hub-demo' ON CONFLICT (news_id, team_id) DO NOTHING;
+INSERT INTO news_championships (news_id, championship_id) SELECT n.id, c.id FROM news n JOIN championships c ON c.slug = 'agon-cup' WHERE n.slug = 'bem-vindo-agon-hub-demo' ON CONFLICT (news_id, championship_id) DO NOTHING;
+INSERT INTO news_matches (news_id, match_id) SELECT n.id, m.id FROM news n JOIN edition_competitions ec ON ec.slug = 'agon-2026-futebol-masculino' JOIN matches m ON m.competition_id = ec.id AND m.round_name = 'Partida de demonstração' WHERE n.slug = 'bem-vindo-agon-hub-demo' ON CONFLICT (news_id, match_id) DO NOTHING;
 
--- 25. MATCH EVENTS (nota técnica demonstrativa)
-INSERT INTO match_events (match_id, event_type, description)
-SELECT m.id, 'NOTE', 'Evento de demonstração; sem resultado ou estatística oficial.'
-FROM matches m JOIN edition_competitions ec ON ec.id = m.competition_id
-WHERE ec.slug = 'agon-2026-futebol-masculino' AND m.round_name = 'Partida de demonstração'
-  AND NOT EXISTS (SELECT 1 FROM match_events me WHERE me.match_id = m.id AND me.event_type = 'NOTE');
+INSERT INTO newspapers (title, edition, description, cover_image, file_url, published_at, created_by) SELECT 'Jornal AGON - edição demonstrativa', 'DEMO-001', 'Registro inicial de teste. Substituir por uma edição editorial real do Universo AGON.', '/uploads/newspapers/jornal-agon-demo.jpg', '/uploads/newspapers/jornal-agon-demo.pdf', CURRENT_TIMESTAMP, u.id FROM users u WHERE u.username = 'agon.admin' AND NOT EXISTS (SELECT 1 FROM newspapers n WHERE n.edition = 'DEMO-001');
 
--- 26. CALENDAR EVENTS (marcado como demo; datas canônicas ainda não fornecidas)
-INSERT INTO calendar_events (title, description, event_type, starts_at, ends_at, location, championship_edition_id, competition_id, match_id, created_by)
-SELECT 'Evento demonstrativo do AGON Hub',
-       'Registro técnico para testar a agenda. Substituir por calendário canônico.',
-       'DEMO', TIMESTAMPTZ '2026-11-01 16:00:00-03', NULL,
-       'Local demonstrativo', ce.id, ec.id, m.id, u.id
-FROM edition_competitions ec
-JOIN championship_editions ce ON ce.id = ec.edition_id
-JOIN championships c ON c.id = ce.championship_id
-JOIN matches m ON m.competition_id = ec.id AND m.round_name = 'Partida de demonstração'
-JOIN users u ON u.username = 'agon.admin'
-WHERE ec.slug = 'agon-2026-futebol-masculino'
-  AND NOT EXISTS (SELECT 1 FROM calendar_events ev WHERE ev.title = 'Evento demonstrativo do AGON Hub');
+INSERT INTO highlights (title, description, media_url, thumbnail_url, match_id, created_by) SELECT 'Highlight demonstrativo', 'Arquivo de exemplo; nenhum vídeo real foi fornecido.', '/uploads/highlights/demo.mp4', '/uploads/highlights/demo-thumbnail.jpg', m.id, u.id FROM users u JOIN edition_competitions ec ON ec.slug = 'agon-2026-futebol-masculino' JOIN matches m ON m.competition_id = ec.id AND m.round_name = 'Partida de demonstração' WHERE u.username = 'agon.admin' AND NOT EXISTS (SELECT 1 FROM highlights h WHERE h.title = 'Highlight demonstrativo');
 
--- 27. TITLES + TEAM_TITLES: registro técnico, NÃO canônico
-INSERT INTO titles (name, title_type, description, championship_id, sport_id, category_id)
-SELECT 'Título demonstrativo (não canônico)', 'DEMO',
-       'Registro de teste para demonstrar a relação equipe-título; não é uma conquista oficial do Universo AGON.',
-       c.id, s.id, cat.id
-FROM championships c
-JOIN sports s ON s.slug = 'futebol'
-JOIN categories cat ON cat.slug = 'masculino'
-WHERE c.slug = 'agon-cup'
-  AND NOT EXISTS (SELECT 1 FROM titles t WHERE t.name = 'Título demonstrativo (não canônico)');
+INSERT INTO comments (user_id, news_id, content) SELECT u.id, n.id, 'Comentário demonstrativo para testar as interações do AGON Hub.' FROM users u CROSS JOIN news n WHERE u.username = 'agon.demo' AND n.slug = 'bem-vindo-agon-hub-demo' AND NOT EXISTS (SELECT 1 FROM comments c WHERE c.user_id = u.id AND c.news_id = n.id);
 
-INSERT INTO team_titles (team_id, title_id, championship_edition_id, won_at)
-SELECT tm.id, ti.id, ce.id, NULL
-FROM teams tm
-JOIN titles ti ON ti.name = 'Título demonstrativo (não canônico)'
-JOIN championships c ON c.slug = 'agon-cup'
-JOIN championship_editions ce ON ce.championship_id = c.id AND ce.year = 2026
-WHERE tm.slug = 'turquia'
-  AND NOT EXISTS (SELECT 1 FROM team_titles tt WHERE tt.team_id = tm.id AND tt.title_id = ti.id AND tt.championship_edition_id = ce.id);
+INSERT INTO reactions (user_id, news_id, reaction_type) SELECT u.id, n.id, 'LIKE' FROM users u CROSS JOIN news n WHERE u.username = 'agon.demo' AND n.slug = 'bem-vindo-agon-hub-demo' ON CONFLICT (user_id, news_id) DO NOTHING;
 
--- 28. NEWS + LINKS
-INSERT INTO news (title, slug, subtitle, content, cover_image, author_id, status, published_at)
-SELECT 'Bem-vindo ao AGON Hub - conteúdo demonstrativo',
-       'bem-vindo-agon-hub-demo',
-       'Primeiro conteúdo de exemplo da plataforma.',
-       'Este é um texto de demonstração para validar notícias e relacionamentos. Não representa notícia canônica do Universo AGON.',
-       '/uploads/news/agon-hub-demo.jpg', u.id, 'PUBLISHED', CURRENT_TIMESTAMP
-FROM users u WHERE u.username = 'agon.admin'
-ON CONFLICT (slug) DO NOTHING;
+INSERT INTO follows (user_id, team_id) SELECT u.id, t.id FROM users u JOIN teams t ON t.slug = 'turquia' WHERE u.username = 'agon.demo' ON CONFLICT (user_id, team_id) DO NOTHING;
 
-INSERT INTO news_teams (news_id, team_id)
-SELECT n.id, t.id FROM news n JOIN teams t ON t.slug = 'turquia'
-WHERE n.slug = 'bem-vindo-agon-hub-demo'
-ON CONFLICT (news_id, team_id) DO NOTHING;
-
-INSERT INTO news_championships (news_id, championship_id)
-SELECT n.id, c.id FROM news n JOIN championships c ON c.slug = 'agon-cup'
-WHERE n.slug = 'bem-vindo-agon-hub-demo'
-ON CONFLICT (news_id, championship_id) DO NOTHING;
-
-INSERT INTO news_matches (news_id, match_id)
-SELECT n.id, m.id FROM news n
-JOIN edition_competitions ec ON ec.slug = 'agon-2026-futebol-masculino'
-JOIN matches m ON m.competition_id = ec.id AND m.round_name = 'Partida de demonstração'
-WHERE n.slug = 'bem-vindo-agon-hub-demo'
-ON CONFLICT (news_id, match_id) DO NOTHING;
-
--- 29. NEWSPAPERS
-INSERT INTO newspapers (title, edition, description, cover_image, file_url, published_at, created_by)
-SELECT 'Jornal AGON - edição demonstrativa', 'DEMO-001',
-       'Registro inicial de teste. Substituir por uma edição editorial real do Universo AGON.',
-       '/uploads/newspapers/jornal-agon-demo.jpg', '/uploads/newspapers/jornal-agon-demo.pdf',
-       CURRENT_TIMESTAMP, u.id
-FROM users u WHERE u.username = 'agon.admin'
-  AND NOT EXISTS (SELECT 1 FROM newspapers n WHERE n.edition = 'DEMO-001');
-
--- 30. HIGHLIGHTS
-INSERT INTO highlights (title, description, media_url, thumbnail_url, match_id, created_by)
-SELECT 'Highlight demonstrativo',
-       'Arquivo de exemplo; nenhum vídeo real foi fornecido.',
-       '/uploads/highlights/demo.mp4', '/uploads/highlights/demo-thumbnail.jpg', m.id, u.id
-FROM users u
-JOIN edition_competitions ec ON ec.slug = 'agon-2026-futebol-masculino'
-JOIN matches m ON m.competition_id = ec.id AND m.round_name = 'Partida de demonstração'
-WHERE u.username = 'agon.admin'
-  AND NOT EXISTS (SELECT 1 FROM highlights h WHERE h.title = 'Highlight demonstrativo');
-
--- 31. COMMENTS
-INSERT INTO comments (user_id, news_id, content)
-SELECT u.id, n.id, 'Comentário demonstrativo para testar as interações do AGON Hub.'
-FROM users u CROSS JOIN news n
-WHERE u.username = 'agon.demo' AND n.slug = 'bem-vindo-agon-hub-demo'
-  AND NOT EXISTS (SELECT 1 FROM comments c WHERE c.user_id = u.id AND c.news_id = n.id);
-
--- 32. REACTIONS
-INSERT INTO reactions (user_id, news_id, reaction_type)
-SELECT u.id, n.id, 'LIKE'
-FROM users u CROSS JOIN news n
-WHERE u.username = 'agon.demo' AND n.slug = 'bem-vindo-agon-hub-demo'
-ON CONFLICT (user_id, news_id) DO NOTHING;
-
--- 33. FOLLOWS
-INSERT INTO follows (user_id, team_id)
-SELECT u.id, t.id FROM users u JOIN teams t ON t.slug = 'turquia'
-WHERE u.username = 'agon.demo'
-ON CONFLICT (user_id, team_id) DO NOTHING;
-
--- 34. MEDIA
-INSERT INTO media (uploaded_by, file_name, file_path, mime_type, file_size, entity_type, entity_id)
-SELECT u.id, 'demo-placeholder.txt', '/uploads/demo/demo-placeholder.txt', 'text/plain', 0, 'NEWS', n.id
-FROM users u JOIN news n ON n.slug = 'bem-vindo-agon-hub-demo'
-WHERE u.username = 'agon.admin'
-  AND NOT EXISTS (SELECT 1 FROM media m WHERE m.file_path = '/uploads/demo/demo-placeholder.txt');
-
+INSERT INTO media (uploaded_by, file_name, file_path, mime_type, file_size, entity_type, entity_id) SELECT u.id, 'demo-placeholder.txt', '/uploads/demo/demo-placeholder.txt', 'text/plain', 0, 'NEWS', n.id FROM users u JOIN news n ON n.slug = 'bem-vindo-agon-hub-demo' WHERE u.username = 'agon.admin' AND NOT EXISTS (SELECT 1 FROM media m WHERE m.file_path = '/uploads/demo/demo-placeholder.txt');
 COMMIT;
