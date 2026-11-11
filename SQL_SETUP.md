@@ -1,12 +1,23 @@
-# AGON Hub — arquivos SQL
+# AGON Hub 2.0 — Inicialização do PostgreSQL
 
-## Arquivos
-- `schema.sql`: cria as tabelas e restrições. Execute uma vez em um banco vazio.
-- `seed.sql`: insere registros de demonstração para as tabelas. Pode ser reexecutado para complementar/atualizar os dados iniciais.
+O modelo desta versão utiliza 10 tabelas e uma view de classificação derivada das partidas.
+
+## Importante
+O arquivo schema.sql deve ser executado em um banco PostgreSQL novo e vazio. Ele substitui conceitualmente o schema legado de 39 tabelas; não execute os dois no mesmo banco.
 
 ## Ordem de execução
-1. Criar um banco vazio chamado `agon_hub`.
-2. Executar `schema.sql`.
-3. Executar `seed.sql`.
+1. Crie o banco agon_hub no PostgreSQL.
+2. Execute backend/database/schema.sql.
+3. Execute backend/database/seed.sql.
+4. Configure o backend em backend/.env.
+5. Crie o primeiro administrador com npm run admin:create.
 
-**Avisos:** os eventos, partidas e títulos marcados como DEMO são registros técnicos, não fatos canônicos do Universo AGON. Os handles foram carregados sem game associado porque a lista não especifica qual jogo corresponde a cada username. As contas `agon.admin` e `agon.demo` têm a senha de desenvolvimento `password`; altere/remova essas credenciais antes de qualquer publicação.
+## Classificações
+A view competition_standings calcula partidas, vitórias, empates, derrotas, gols/pontos marcados e sofridos, saldo e pontos. O cálculo considera apenas partidas com status COMPLETED. Partidas agendadas, adiadas ou canceladas não alteram a classificação.
+
+O critério inicial de desempate é: pontos, vitórias, saldo, gols marcados e nome do participante. Critérios específicos de modalidades ou regulamentos poderão ser adicionados sem duplicar a tabela de classificação.
+
+## Dados de demonstração
+Os registros relacionados à Liga de Demonstração AGON estão marcados com is_demo = TRUE. Eles servem para testar a integração e não devem ser tratados como resultados canônicos.
+
+O seed pode ser reexecutado e utiliza chaves únicas e verificações de existência para evitar duplicação dos registros demonstrativos.
