@@ -108,18 +108,88 @@ Para **zerar o banco** e começar de novo, basta repetir os passos 3 e 4 (o `sch
 
 ### Usuários de teste
 
+O seed traz três contas **fictícias** de usuário comum:
+
 | E-mail | Senha | Papel |
 |---|---|---|
-| `admin@agonhub.example` | `Admin@123` | Administrador |
 | `maria@agonhub.example` | `Senha@123` | Usuário comum |
 | `joao@agonhub.example` | `Senha@123` | Usuário comum |
 | `ana@agonhub.example` | `Senha@123` | Usuário comum |
 
 Essas senhas existem **apenas para desenvolvimento**. No banco ficam guardados somente os hashes bcrypt.
 
+O seed **não cria nenhum administrador**, para que não exista senha de admin escrita no repositório. A conta de administrador é criada com o seu próprio e-mail e senha, pelo comando `npm run criar-admin` (veja a seção Backend).
+
 ## Backend
 
-*Em desenvolvimento — as instruções de execução e a documentação das rotas serão adicionadas aqui e em `docs/API.md`.*
+API REST em Node.js + Express. A documentação de todas as rotas (método, caminho, acesso, parâmetros e exemplos de resposta) está em [`docs/API.md`](docs/API.md).
+
+### Pré-requisitos
+
+- **Node.js 18 ou mais novo** (confira com `node --version`).
+- **PostgreSQL** com o banco `agon_hub` já criado e preenchido (seção *Banco de dados*, acima).
+
+### Como executar
+
+Todos os comandos abaixo são na pasta `backend`.
+
+1. Entre na pasta e instale as dependências:
+
+   ```bash
+   cd backend
+   npm install
+   ```
+
+2. Crie o arquivo de configuração `.env` a partir do exemplo:
+
+   ```bash
+   cp .env.example .env        # Windows (Prompt de Comando): copy .env.example .env
+   ```
+
+   Abra o `.env` e preencha:
+   - `DB_PASSWORD`: a senha do seu usuário do PostgreSQL;
+   - `JWT_SECRET`: um segredo longo e aleatório. Para gerar um:
+     ```bash
+     node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"
+     ```
+   - `ADMIN_EMAIL` e `ADMIN_SENHA`: o e-mail e a senha (mínimo 8 caracteres) que você quer para o administrador.
+
+   > O arquivo `.env` contém segredos e **não vai para o GitHub** (está no `.gitignore`).
+
+3. Crie a conta de administrador (usa o `ADMIN_EMAIL` e a `ADMIN_SENHA` do `.env`):
+
+   ```bash
+   npm run criar-admin
+   ```
+
+4. Inicie o servidor:
+
+   ```bash
+   npm run dev
+   ```
+
+   Deve aparecer `Conectado ao PostgreSQL.` e `API do AGON Hub rodando em http://localhost:3000`.
+
+5. Confira no navegador: <http://localhost:3000/api/saude> deve mostrar `{"status":"ok","banco":"ok"}`.
+
+### Testes
+
+Com o servidor rodando (passo 4), abra **outro terminal** na pasta `backend` e execute:
+
+```bash
+npm test
+```
+
+Os testes conferem cadastro, login, token JWT e a proteção das rotas de administrador. Os testes de administrador só rodam se o `ADMIN_EMAIL` e a `ADMIN_SENHA` estiverem no `.env` e o passo 3 tiver sido feito.
+
+### Problemas comuns
+
+| Sintoma | O que fazer |
+|---|---|
+| `Não foi possível conectar ao PostgreSQL` | Confira se o PostgreSQL está ligado e se `DB_USER`, `DB_PASSWORD`, `DB_HOST`, `DB_PORT` e `DB_NAME` do `.env` estão certos. |
+| `defina um JWT_SECRET forte` | Gere e cole um segredo no `.env` (comando do passo 2). |
+| `npm install` falha ao instalar o `bcrypt` | Use uma versão LTS do Node.js (18, 20 ou 22) e tente de novo. |
+| `EADDRINUSE` (porta em uso) | Outra aplicação usa a porta 3000. Mude `PORT` no `.env`. |
 
 ## Frontend
 
@@ -127,7 +197,5 @@ Essas senhas existem **apenas para desenvolvimento**. No banco ficam guardados s
 
 ## Integrantes
 
-<!-- Preencha com os nomes dos membros do grupo -->
-- Nome 1
-- Nome 2
-- Nome 3
+<!-- Preencha com o nome do(s) autor(es) do projeto -->
+- (nome)

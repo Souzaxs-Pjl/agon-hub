@@ -11,12 +11,21 @@
 -- Os campos de imagem (logo_url, foto_url, imagem_url) ficam NULL porque
 -- as imagens reais entram depois, pelo upload do sistema.
 --
--- USUÁRIOS DE TESTE (as senhas abaixo valem só para desenvolvimento):
---   admin@agonhub.example   senha: Admin@123   (administrador)
+-- USUÁRIOS DE TESTE (contas fictícias; as senhas valem só para desenvolvimento):
 --   maria@agonhub.example   senha: Senha@123   (usuário comum)
 --   joao@agonhub.example    senha: Senha@123   (usuário comum)
 --   ana@agonhub.example     senha: Senha@123   (usuário comum)
 -- No banco ficam guardados apenas os HASHES bcrypt das senhas.
+--
+-- ADMINISTRADOR: este arquivo NÃO cria nenhuma conta de administrador,
+-- para que não exista senha de admin escrita no repositório. O admin é
+-- criado depois, com o e-mail e a senha do seu arquivo .env:
+--   cd backend && npm run criar-admin
+--
+-- O usuário 1 ("Redação AGON") é uma conta editorial usada apenas como
+-- autora das notícias de exemplo. Ninguém consegue entrar nela: o valor
+-- '!' no lugar do hash não é um hash bcrypt válido, então nenhuma senha
+-- confere com ele.
 -- =====================================================================
 
 BEGIN;  -- tudo ou nada: se algum INSERT falhar, nada é gravado
@@ -25,8 +34,8 @@ BEGIN;  -- tudo ou nada: se algum INSERT falhar, nada é gravado
 -- USUARIOS
 -- ---------------------------------------------------------------------
 INSERT INTO usuarios (id, nome, email, senha_hash, papel) VALUES
-(1, 'Administrador AGON', 'admin@agonhub.example', '$2a$10$6EPJZo5203va/0/IkQ89OONzHyziNzpc/y2BBUJDN1gOMoMSA5c.S', 'admin'),
-(2, 'Maria Souza',        'maria@agonhub.example', '$2a$10$aBa8oKoweHxLHsDVi7nHdOko/MYnE2H50KyULe59BTHelRJ4QlIKS', 'usuario'),
+(1, 'Redação AGON',       'redacao@agonhub.example', '!', 'usuario'),
+(2, 'Maria Souza',        'maria@agonhub.example','$2a$10$aBa8oKoweHxLHsDVi7nHdOko/MYnE2H50KyULe59BTHelRJ4QlIKS', 'usuario'),
 (3, 'João Lima',          'joao@agonhub.example',  '$2a$10$qafIna878Jve/UhK.GKTPuTebgabpwQGFlrox/RFvi1YDD5KHhGwa', 'usuario'),
 (4, 'Ana Costa',          'ana@agonhub.example',   '$2a$10$bXZoCTPIxDMiR8lHndbLTeYqbx4cCYg1ypI3pUg0X5R/yoqGvqWwe', 'usuario');
 
@@ -134,7 +143,7 @@ INSERT INTO partidas (id, campeonato_id, equipe_casa_id, equipe_visitante_id, da
 (9, 3, 7, 8, '2027-01-16 21:00', 'Fase de grupos', NULL, NULL, 'agendada',   TRUE);
 
 -- ---------------------------------------------------------------------
--- NOTICIAS (conteúdo demonstrativo), escritas pelo administrador (id 1)
+-- NOTICIAS (conteúdo demonstrativo), escritas pela conta "Redação AGON" (id 1)
 -- ---------------------------------------------------------------------
 INSERT INTO noticias (id, titulo, resumo, conteudo, imagem_url, autor_id, publicado_em) VALUES
 (1, 'Bem-vindo ao AGON Hub',
