@@ -1,0 +1,182 @@
+-- =====================================================================
+-- AGON Hub - schema.sql
+-- Cria a estrutura (tabelas) do banco de dados PostgreSQL.
+--
+-- COMO USAR (com o banco "agon_hub" já criado):
+--   psql -U postgres -d agon_hub -f database/schema.sql
+--
+-- ATENÇÃO: este script APAGA as tabelas existentes antes de recriá-las.
+-- Isso permite rodá-lo de novo para "zerar" o banco durante o desenvolvimento.
+-- Depois de rodar este arquivo, rode o seed.sql para preencher os dados.
+-- =====================================================================
+
+-- ---------------------------------------------------------------------
+-- 1) Apaga as tabelas antigas (ordem inversa das dependências).
+--    Tabelas que têm chave estrangeira vêm primeiro.
+-- ---------------------------------------------------------------------
+DROP TABLE IF EXISTS partidas            CASCADE;
+DROP TABLE IF EXISTS campeonato_equipes  CASCADE;
+DROP TABLE IF EXISTS campeonatos         CASCADE;
+DROP TABLE IF EXISTS equipe_atletas      CASCADE;
+DROP TABLE IF EXISTS atletas             CASCADE;
+DROP TABLE IF EXISTS equipes             CASCADE;
+DROP TABLE IF EXISTS noticias            CASCADE;
+DROP TABLE IF EXISTS modalidades         CASCADE;
+DROP TABLE IF EXISTS usuarios            CASCADE;
+
+-- ---------------------------------------------------------------------
+-- 2) USUARIOS
+--    Quem tem conta na plataforma (login).
+--    O campo "papel" define a permissão: 'admin' ou 'usuario'.
+--    O cadastro público sempre grava 'usuario' (regra aplicada no backend).
+--    A senha NUNCA é guardada em texto puro: só o hash gerado pelo bcrypt.
+-- ---------------------------------------------------------------------
+CREATE TABLE usuarios (
+    id          SERIAL        PRIMARY KEY,
+    nome        VARCHAR(100)  NOT NULL,
+    email       VARCHAR(150)  NOT NULL UNIQUE,
+    senha_hash  VARCHAR(255)  NOT NULL,
+    papel       VARCHAR(10)   NOT NULL DEFAULT 'usuario'
+                CHECK (papel IN ('admin', 'usuario')),
+    criado_em   TIMESTAMP     NOT NULL DEFAULT NOW()
+);
+
+-- ---------------------------------------------------------------------
+-- 3) MODALIDADES
+--    Esportes tradicionais e jogos eletrônicos na mesma tabela.
+--    "tipo" diferencia: 'esporte' (ex.: Futsal) ou 'esport' (ex.: Valorant).
+-- ---------------------------------------------------------------------
+CREATE TABLE modalidades (
+    id         SERIAL       PRIMARY KEY,
+    nome       VARCHAR(80)  NOT NULL UNIQUE,
+    tipo       VARCHAR(10)  NOT NULL
+               CHECK (tipo IN ('esporte', 'esport')),
+    descricao  TEXT
+);
+
+-- ---------------------------------------------------------------------
+-- 4) EQUIPES
+--    Relação 1:N com modalidades (uma modalidade tem várias equipes;
+--    cada equipe tem uma modalidade principal).
+--    "tipo" distingue equipes reais de fictícias.
+--    "logo_url" guarda o caminho do arquivo enviado por upload.
+-- ---------------------------------------------------------------------
+CREATE TABLE equipes (
+    id             SERIAL        PRIMARY KEY,
+    nome           VARCHAR(100)  NOT NULL UNIQUE,
+    sigla          VARCHAR(10)   NOT NULL UNIQUE,
+    tipo           VARCHAR(10)   NOT NULL
+                   CHECK (tipo IN ('real', 'ficticia')),
+    instituicao    VARCHAR(150),
+    descricao      TEXT,
+    logo_url       VARCHAR(255),
+    modalidade_id  INTEGER       NOT NULL
+                   REFERENCES modalidades (id) ON DELETE RESTRICT,
+    criado_em      TIMESTAMP     NOT NULL DEFAULT NOW()
+);
+
+-- ---------------------------------------------------------------------
+-- 5) ATLETAS
+--    Representa a PESSOA. Nem todo atleta tem conta na plataforma,
+--    por isso "usuario_id" é opcional (pode ser NULL).
+--    UNIQUE garante que um usuário esteja ligado a no máximo um atleta.
+--    "foto_url" guarda o caminho do arquivo enviado por upload.
+-- ---------------------------------------------------------------------
+CREATE TABLE atletas (
+    id          SERIAL        PRIMARY KEY,
+    nome        VARCHAR(100)  NOT NULL,
+    apelido     VARCHAR(50),
+    bio         TEXT,
+    foto_url    VARCHAR(255),
+    usuario_id  INTEGER       UNIQUE
+                REFERENCES usuarios (id) ON DELETE SET NULL,
+    criado_em   TIMESTAMP     NOT NULL DEFAULT NOW()
+);
+
+-- ---------------------------------------------------------------------
+-- 6) EQUIPE_ATLETAS  (relação N:N entre equipes e atletas)
+--    Uma equipe tem vários atletas e um atleta pode estar em várias equipes.
+--    A chave primária composta impede o mesmo atleta duas vezes na mesma equipe.
+-- ---------------------------------------------------------------------
+CREATE TABLE equipe_atletas (
+    equipe_id  INTEGER      NOT NULL
+               REFERENCES equipes (id) ON DELETE CASCADE,
+    atleta_id  INTEGER      NOT NULL
+               REFERENCES atletas (id) ON DELETE CASCADE,
+    funcao     VARCHAR(50),
+    PRIMARY KEY (equipe_id, atleta_id)
+);
+
+-- ---------------------------------------------------------------------
+-- 7) CAMPEONATOS
+--    Cada linha é uma EDIÇÃO de um campeonato (ex.: "Copa AGON" 2026).
+--    Relação 1:N com modalidades.
+-- ---------------------------------------------------------------------
+CREATE TABLE campeonatos (
+    id             SERIAL        PRIMARY KEY,
+    nome           VARCHAR(120)  NOT NULL,
+    edicao         INTEGER       NOT NULL,
+    modalidade_id  INTEGER       NOT NULL
+                   REFERENCES modalidades (id) ON DELETE RESTRICT,
+    data_inicio    DATE,
+    data_fim       DATE,
+    status         VARCHAR(15)   NOT NULL DEFAULT 'planejado'
+                   CHECK (status IN ('planejado', 'em_andamento', 'encerrado')),
+    descricao      TEXT,
+    UNIQUE (nome, edicao),
+    CHECK (data_fim IS NULL OR data_inicio IS NULL OR data_fim >= data_inicio)
+);
+
+-- ---------------------------------------------------------------------
+-- 8) CAMPEONATO_EQUIPES  (relação N:N entre campeonatos e equipes)
+--    Define quais equipes participam de cada campeonato.
+-- ---------------------------------------------------------------------
+CREATE TABLE campeonato_equipes (
+    campeonato_id  INTEGER  NOT NULL
+                   REFERENCES campeonatos (id) ON DELETE CASCADE,
+    equipe_id      INTEGER  NOT NULL
+                   REFERENCES equipes (id) ON DELETE CASCADE,
+    PRIMARY KEY (campeonato_id, equipe_id)
+);
+
+-- ---------------------------------------------------------------------
+-- 9) PARTIDAS
+--    Relação 1:N com campeonatos. Cada partida tem duas equipes.
+--    "fase" é um texto livre (ex.: 'Fase de grupos', 'Semifinal', 'Final').
+--    Placar fica NULL enquanto a partida não aconteceu.
+--    "demonstrativo" = TRUE marca resultados fictícios de exemplo,
+--    para não confundi-los com resultados oficiais.
+-- ---------------------------------------------------------------------
+CREATE TABLE partidas (
+    id                   SERIAL       PRIMARY KEY,
+    campeonato_id        INTEGER      NOT NULL
+                         REFERENCES campeonatos (id) ON DELETE CASCADE,
+    equipe_casa_id       INTEGER      NOT NULL
+                         REFERENCES equipes (id) ON DELETE RESTRICT,
+    equipe_visitante_id  INTEGER      NOT NULL
+                         REFERENCES equipes (id) ON DELETE RESTRICT,
+    data_hora            TIMESTAMP,
+    fase                 VARCHAR(50),
+    placar_casa          INTEGER      CHECK (placar_casa >= 0),
+    placar_visitante     INTEGER      CHECK (placar_visitante >= 0),
+    status               VARCHAR(15)  NOT NULL DEFAULT 'agendada'
+                         CHECK (status IN ('agendada', 'em_andamento', 'finalizada')),
+    demonstrativo        BOOLEAN      NOT NULL DEFAULT FALSE,
+    CHECK (equipe_casa_id <> equipe_visitante_id)
+);
+
+-- ---------------------------------------------------------------------
+-- 10) NOTICIAS
+--     Relação 1:N com usuarios (um usuário/admin escreve várias notícias).
+--     Se o autor for apagado, a notícia continua (autor_id vira NULL).
+-- ---------------------------------------------------------------------
+CREATE TABLE noticias (
+    id            SERIAL        PRIMARY KEY,
+    titulo        VARCHAR(200)  NOT NULL,
+    resumo        VARCHAR(300),
+    conteudo      TEXT          NOT NULL,
+    imagem_url    VARCHAR(255),
+    autor_id      INTEGER
+                  REFERENCES usuarios (id) ON DELETE SET NULL,
+    publicado_em  TIMESTAMP     NOT NULL DEFAULT NOW()
+);

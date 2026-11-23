@@ -1,0 +1,25 @@
+# Dependências
+node_modules/
+
+# Variáveis de ambiente (contêm senhas e chaves secretas!)
+.env
+.env.*
+!.env.example
+
+# Arquivos enviados por upload (mantém só a pasta no Git)
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+# Build do frontend
+frontend/dist/
+frontend/build/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Sistema operacional e editores
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
