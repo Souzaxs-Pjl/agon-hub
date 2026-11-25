@@ -3,16 +3,19 @@
 // POST /api/auth/login (via AuthContext) e, se der certo, vai para a home.
 // =====================================================================
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { useAuth } from '../AuthContext.jsx';
 
 export default function Login() {
-  const { entrar } = useAuth();
+  const { entrar, usuario, carregando } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [erro, setErro] = useState('');
   const [enviando, setEnviando] = useState(false);
+
+  if (carregando) return <p className="aviso">Verificando sua sessão...</p>;
+  if (usuario) return <Navigate to={usuario.papel === 'admin' ? '/admin' : '/perfil'} replace />;
 
   async function handleSubmit(evento) {
     evento.preventDefault(); // impede a página de recarregar ao enviar o formulário
