@@ -27,6 +27,7 @@ const CONFIGS = {
       { nome: 'nome', rotulo: 'Nome completo', obrigatorio: true },
       { nome: 'apelido', rotulo: 'Apelido' },
       { nome: 'bio', rotulo: 'Biografia', tipo: 'textarea' },
+      { nome: 'foto_url', rotulo: 'Foto atual', tipo: 'hidden' },
       { nome: 'usuario_id', rotulo: 'Conta vinculada (opcional)', tipo: 'select', fonte: 'usuarios', vazio: 'Sem conta vinculada' },
     ],
     upload: 'foto',
@@ -295,7 +296,7 @@ export default function AdminRecursos() {
       <div className="admin-colunas">
         <form onSubmit={salvar} className="formulario cartao-form">
           <h2>{editandoId ? 'Editar registro' : 'Novo registro'}</h2>
-          {config.campos.map((campo) => (
+          {config.campos.filter((campo) => campo.tipo !== 'hidden').map((campo) => (
             <label key={campo.nome}>
               {campo.rotulo}
               {campo.tipo === 'textarea' ? (
