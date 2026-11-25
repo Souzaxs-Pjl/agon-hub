@@ -24,7 +24,7 @@ const FROM_CAMPEONATO = `
       AND p.placar_casa IS NOT NULL
       AND p.placar_visitante IS NOT NULL
       AND p.placar_casa <> p.placar_visitante
-      AND p.fase ILIKE '%final%'
+      AND p.fase ~* '(^|[^[:alpha:]])final([^[:alpha:]]|$)'
     ORDER BY p.data_hora DESC NULLS LAST, p.id DESC
     LIMIT 1
   ) vencedor ON TRUE
