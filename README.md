@@ -12,24 +12,24 @@ O projeto foi desenvolvido individualmente como parte do curso Técnico em Infor
 
 | Área | Situação no código |
 |---|---|
-| Banco PostgreSQL | Estrutura inicial com 9 tabelas e dados demonstrativos |
+| Banco PostgreSQL | 9 tabelas, relações 1:N e N:N e seed demonstrativo |
 | API e conexão com o banco | Implementadas |
-| Cadastro, login e autenticação JWT | Implementados |
-| Permissões de administrador | Implementadas no backend |
-| CRUD de modalidades | Implementado |
-| CRUD de equipes | Implementado |
-| Consulta pública de equipes e detalhes | Implementada |
-| Painel administrativo de equipes | Implementado |
-| CRUD de atletas (API) | Implementado; interface administrativa pendente |
-| Vínculo de atletas com equipes (API) | Implementado; interface administrativa pendente |
-| CRUD de campeonatos (API) | Implementado; interface administrativa pendente |
-| Inscrição de equipes em campeonatos (API) | Implementada; interface administrativa pendente |
-| CRUD de partidas (API) | Implementado; interface administrativa pendente |
-| CRUD de notícias (API) | Implementado; interface administrativa pendente |
-| Upload de logos e fotos (API) | Implementado; interface de envio no frontend pendente |
-| Testes ponta a ponta | Ainda precisam ser executados no ambiente com PostgreSQL |
+| Cadastro, login, JWT e recuperação de sessão | Implementados |
+| Permissões de administrador no backend | Implementadas |
+| CRUD de modalidades | API e tela administrativa implementadas |
+| CRUD de equipes | API e painel administrativo implementados |
+| CRUD de atletas | API e tela administrativa implementadas |
+| Vínculo atleta-equipe com função | API e controles de vínculo implementados |
+| CRUD de campeonatos | API e tela administrativa implementadas |
+| Inscrição de equipes em campeonatos | API e controles de inscrição implementados |
+| CRUD de partidas | API e tela administrativa implementadas |
+| CRUD de notícias | API e tela administrativa implementadas |
+| Upload de logos e fotos | API e campos de envio no painel implementados |
+| Consultas públicas | Equipes, atletas, campeonatos, partidas e notícias |
+| Testes automatizados | Testes existentes; execução pelo GitHub Actions ainda precisa ser conferida |
 
-Esta tabela é a referência para não apresentar como concluído algo que ainda está em desenvolvimento.
+A existência do código não significa que a execução foi validada. Os testes e a demonstração no navegador ainda precisam ser conferidos e registrados.
+
 
 ## 2. Objetivo
 
@@ -78,10 +78,20 @@ agon-hub/
 │   ├── src/
 │   │   ├── middlewares/
 │   │   ├── routes/
+│   │   │   ├── auth.js
+│   │   │   ├── usuarios.js
+│   │   │   ├── modalidades.js
+│   │   │   ├── equipes.js
+│   │   │   ├── atletas.js
+│   │   │   ├── campeonatos.js
+│   │   │   ├── partidas.js
+│   │   │   ├── noticias.js
+│   │   │   └── uploads.js
 │   │   ├── db.js
 │   │   ├── server.js
 │   │   └── validacao.js
 │   ├── tests/
+│   ├── uploads/
 │   ├── .env.example
 │   └── package.json
 ├── frontend/
@@ -95,16 +105,20 @@ agon-hub/
 │   ├── index.html
 │   ├── vite.config.js
 │   └── package.json
-└── docs/
-    ├── API.md
-    ├── APRESENTACAO.md
-    ├── FIGMA_BRIEF.md
-    ├── LOVABLE_PROMPTS.md
-    ├── PLANO_DE_TESTES.md
-    └── RELATORIO_ACADEMICO.md
+├── docs/
+│   ├── API.md
+│   ├── PLANO_DE_TESTES.md
+│   ├── RELATORIO_ACADEMICO.md
+│   ├── APRESENTACAO.md
+│   ├── FIGMA_BRIEF.md
+│   └── LOVABLE_PROMPTS.md
+└── .github/
+    └── workflows/
+        └── ci.yml
 ```
 
-A estrutura acima representa os principais arquivos e documentos do projeto. As rotas CRUD de atletas, campeonatos, partidas e notícias e o módulo de upload já existem no backend; as interfaces correspondentes ainda precisam ser concluídas.
+O backend contém rotas para autenticação, usuários, modalidades, equipes, atletas, campeonatos, partidas, notícias e uploads. O frontend possui páginas públicas, autenticação, painel administrativo de equipes e um painel reutilizável para os demais módulos.
+
 
 ## 5. Modelagem do banco de dados
 
@@ -244,37 +258,68 @@ A aplicação fica disponível em `http://localhost:5173`. Durante o desenvolvim
 
 - Cadastro público de conta comum.
 - Login com e-mail e senha.
-- Senha armazenada como hash bcrypt, não em texto puro.
+- Senhas armazenadas com hash bcrypt.
 - Emissão e validação de token JWT.
-- Consulta do usuário autenticado em `GET /api/auth/me`.
+- Recuperação da sessão por `GET /api/auth/me`.
 - Autorização administrativa no backend.
-- Cadastro público não permite escolher o papel de administrador.
-- O logout atual remove o token do armazenamento local do navegador e limpa o usuário do estado do React. Não existe endpoint de logout no backend nesta versão.
+- O cadastro público não permite escolher o papel de administrador.
+- O logout remove o token do armazenamento local do navegador e limpa o estado do React. Não existe endpoint de logout no backend nesta versão.
 
-### Modalidades
+### Modalidades e equipes
 
-A API possui operações de consulta, criação, edição e exclusão. Os tipos aceitos no banco são `esporte` e `esport` (valor interno utilizado para jogos eletrônicos).
+- CRUD completo de modalidades na API e no painel administrativo.
+- CRUD completo de equipes na API e no painel administrativo.
+- Cada equipe possui uma modalidade principal obrigatória.
+- Consulta pública de equipes e detalhe com nome, apelido e função dos atletas vinculados.
 
-### Equipes
+### Atletas e relacionamentos
 
-A API possui operações de consulta, criação, edição e exclusão. Cada equipe precisa estar vinculada a uma modalidade existente. O painel administrativo atual permite administrar equipes.
+- CRUD de atletas na API e no painel administrativo.
+- Associação opcional entre atleta e conta de usuário.
+- Vínculo N:N entre atletas e equipes, com função registrada por equipe.
+- A consulta pública de detalhe da equipe exibe nome, apelido e função.
 
-### Consulta pública
+### Campeonatos, inscrições e partidas
 
-Visitantes podem consultar a lista de equipes e abrir o detalhe de cada equipe. A página de detalhe apresenta os atletas vinculados, com nome, apelido e função.
+- CRUD de campeonatos na API e no painel.
+- Inscrição e remoção de equipes por meio de `campeonato_equipes`.
+- O backend impede inscrições entre modalidades diferentes.
+- CRUD de partidas na API e no painel.
+- As equipes de uma partida precisam estar inscritas no campeonato e pertencer à modalidade correspondente.
+- Validação de equipes diferentes, placares não negativos e placar completo para partida finalizada.
+- Partidas podem ser marcadas como demonstrativas.
 
-## 8. Funcionalidades planejadas para conclusão do MVP
+### Notícias e imagens
 
-As estruturas das tabelas já existem no banco, mas a presença de uma tabela não significa que a funcionalidade esteja pronta no sistema. As próximas entregas são:
+- CRUD de notícias na API e no painel administrativo.
+- Consultas públicas para atletas, campeonatos, partidas e notícias.
+- Upload de logos de equipes e fotos de atletas por administradores.
+- O upload aceita JPEG, PNG e WebP, até 5 MB, e grava o arquivo em `backend/uploads`.
+- Os campos de imagem também podem receber uma URL HTTP/HTTPS.
 
-- Interfaces administrativas e públicas para atletas, campeonatos, partidas e notícias.
-- Gerenciamento visual dos vínculos entre atletas/equipes e inscrições em campeonatos.
-- Interface para envio de logos e fotos usando os endpoints de upload já disponíveis.
-- Execução dos testes de integração e revisão final.
+### Interface
+
+- Página inicial com atalhos para as áreas públicas.
+- Navegação entre equipes, atletas, campeonatos, partidas e notícias.
+- Formulários e listagens administrativas.
+- Estados de carregamento, erro e confirmação em fluxos principais.
+- Estilos próprios com adaptação para telas menores.
+
+## 8. Pendências para conclusão da entrega
+
+O código já contém os CRUDs e telas principais dos módulos previstos. As tarefas restantes concentram-se em validação e acabamento:
+
+- Conferir a execução do GitHub Actions e corrigir eventuais falhas.
+- Fazer revisão manual no navegador de todos os fluxos administrativos e públicos.
+- Conferir os uploads com imagens reais e validar a exibição das imagens armazenadas.
+- Ajustar eventuais problemas visuais e responsivos encontrados na revisão.
+- Registrar evidências de testes e completar os campos do relatório acadêmico.
+- Preparar o banco de demonstração e ensaiar a apresentação.
+
 
 ## 9. Testes
 
-Os testes automatizados usam o módulo nativo `node:test` do Node.js. Existem testes de autenticação, equipes e um conjunto de integração para atletas, campeonatos, partidas, notícias e uploads. Os testes de integração fazem requisições HTTP à API e precisam de PostgreSQL e servidor ativos. O GitHub Actions possui um workflow que prepara PostgreSQL temporário e executa os testes e o build.
+Os testes automatizados usam o módulo nativo `node:test` do Node.js. Os arquivos cobrem autenticação, CRUD de equipes e os novos recursos de atletas, campeonatos, partidas, notícias e uploads. Os testes de integração fazem requisições HTTP à API e precisam de PostgreSQL e servidor ativos. O workflow `.github/workflows/ci.yml` foi criado para preparar PostgreSQL temporário, executar os testes e gerar o build do frontend. A execução desse workflow ainda precisa ser conferida na aba Actions do GitHub.
 
 Dentro da pasta `backend`:
 
