@@ -9,6 +9,7 @@
 // avisa e sai da sessão.
 // =====================================================================
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { api } from '../api.js';
 import { useAuth } from '../AuthContext.jsx';
 
@@ -31,6 +32,7 @@ export default function Admin() {
   const [editandoId, setEditandoId] = useState(null); // null = criando
   const [mensagem, setMensagem] = useState({ tipo: '', texto: '' });
   const [carregando, setCarregando] = useState(true);
+  const [logoArquivo, setLogoArquivo] = useState(null);
 
   // Trata erros de forma única: sessão expirada sai do sistema;
   // os demais aparecem na tela.
@@ -76,6 +78,7 @@ export default function Admin() {
 
   function iniciarEdicao(equipe) {
     setEditandoId(equipe.id);
+    setLogoArquivo(null);
     setMensagem({ tipo: '', texto: '' });
     setForm({
       nome: equipe.nome,
@@ -90,6 +93,7 @@ export default function Admin() {
 
   function cancelarEdicao() {
     setEditandoId(null);
+    setLogoArquivo(null);
     setForm({ ...FORM_VAZIO, modalidade_id: modalidades[0]?.id ?? '' });
     setMensagem({ tipo: '', texto: '' });
   }
@@ -102,14 +106,25 @@ export default function Admin() {
     const corpo = { ...form, modalidade_id: Number(form.modalidade_id) };
 
     try {
-      if (editandoId) {
-        await api(`/equipes/${editandoId}`, { metodo: 'PUT', corpo });
-        setMensagem({ tipo: 'ok', texto: 'Equipe atualizada e salva no banco de dados.' });
-      } else {
-        await api('/equipes', { metodo: 'POST', corpo });
-        setMensagem({ tipo: 'ok', texto: 'Equipe cadastrada e salva no banco de dados.' });
+      const equipeSalva = editandoId
+        ? await api(`/equipes/${editandoId}`, { metodo: 'PUT', corpo })
+        : await api('/equipes', { metodo: 'POST', corpo });
+
+      if (logoArquivo) {
+        const dadosArquivo = new FormData();
+        dadosArquivo.append('imagem', logoArquivo);
+        await api(`/uploads/equipes/${equipeSalva.id}/logo`, {
+          metodo: 'POST',
+          corpo: dadosArquivo,
+        });
       }
+
+      setMensagem({
+        tipo: 'ok',
+        texto: editandoId ? 'Equipe atualizada e salva no banco de dados.' : 'Equipe cadastrada e salva no banco de dados.',
+      });
       setEditandoId(null);
+      setLogoArquivo(null);
       setForm({ ...FORM_VAZIO, modalidade_id: modalidades[0]?.id ?? '' });
       setEquipes(await api('/equipes'));
     } catch (erro) {
@@ -138,6 +153,14 @@ export default function Admin() {
     <section className="admin">
       <h1>Administração</h1>
       <p className="nota">Você está no painel de administrador. Dados salvos vão para o PostgreSQL.</p>
+      <nav className="admin-menu" aria-label="Módulos administrativos">
+        <Link className="selecionado" to="/admin">Equipes</Link>
+        <Link to="/admin/modalidades">Modalidades</Link>
+        <Link to="/admin/atletas">Atletas</Link>
+        <Link to="/admin/campeonatos">Campeonatos</Link>
+        <Link to="/admin/partidas">Partidas</Link>
+        <Link to="/admin/noticias">Notícias</Link>
+      </nav>
 
       {mensagem.texto && (
         <p className={`aviso ${mensagem.tipo === 'erro' ? 'aviso-erro' : 'aviso-ok'}`}>
@@ -181,8 +204,12 @@ export default function Admin() {
             <textarea name="descricao" value={form.descricao} onChange={alterarCampo} rows={3} />
           </label>
           <label>
-            URL do logo (opcional, começa com https://)
-            <input name="logo_url" value={form.logo_url} onChange={alterarCampo} />
+            URL externa do logo (opcional)
+            <input name="logo_url" value={form.logo_url} onChange={alterarCampo} placeholder="https://..." />
+          </label>
+          <label>
+            Enviar arquivo de logo (JPEG, PNG ou WebP; até 5 MB)
+            <input type="file" accept="image/jpeg,image/png,image/webp" onChange={(e) => setLogoArquivo(e.target.files?.[0] || null)} />
           </label>
 
           <div className="acoes">
