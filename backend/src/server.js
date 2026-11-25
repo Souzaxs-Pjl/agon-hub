@@ -19,7 +19,22 @@ if (segredo.length < 32 || segredo.startsWith('troque-')) {
 }
 
 const app = express();
-app.use(cors({ origin: process.env.FRONTEND_URL || 'http://localhost:5173' }));
+const origensConfiguradas = [
+  process.env.FRONTEND_URL,
+  ...(process.env.FRONTEND_URLS || '').split(','),
+].map((origem) => origem.trim()).filter(Boolean);
+const origensPermitidas = new Set([
+  'http://localhost:5173',
+  ...origensConfiguradas,
+]);
+
+app.use(cors({
+  origin: (origem, callback) => {
+    // Requisições sem Origin (ex.: health checks) são permitidas.
+    if (!origem || origensPermitidas.has(origem)) return callback(null, true);
+    return callback(new Error('Origem não permitida pelo CORS.'));
+  },
+}));
 app.use(express.json({ limit: '1mb' }));
 
 // Imagens enviadas por administradores ficam disponíveis em /uploads.
@@ -54,7 +69,7 @@ async function iniciar() {
   } catch (erro) {
     console.error(
       'ERRO: não foi possível conectar ao PostgreSQL.\n' +
-      'Confira se o PostgreSQL está rodando e se as variáveis DB_* do arquivo backend/.env estão corretas.\n' +
+      'Confira as variáveis de conexão do banco.\n' +
       'Detalhe: ' + erro.message
     );
     process.exit(1);
@@ -62,7 +77,7 @@ async function iniciar() {
 
   const porta = Number(process.env.PORT) || 3000;
   app.listen(porta, () => {
-    console.log(`API do AGON Hub rodando em http://localhost:${porta}`);
+    console.log(`API do AGON Hub rodando na porta ${porta}`);
   });
 }
 
