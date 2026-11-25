@@ -22,10 +22,13 @@ const router = express.Router();
 // SELECT base: traz a equipe junto com o nome e o tipo da modalidade.
 // O JOIN ("juntar tabelas") evita o frontend ter de buscar a modalidade à parte.
 const SQL_EQUIPE = `
-  SELECT e.id, e.nome, e.sigla, e.tipo, e.instituicao, e.descricao, e.logo_url,
+  SELECT e.id, e.nome, e.sigla, e.sigla_oficial, e.codigo_fonte,
+         e.tipo, e.instituicao, e.descricao, e.logo_url, e.slogan,
+         e.instagram_url, e.titulos, e.cidade, e.responsavel, e.cores,
          e.modalidade_id, m.nome AS modalidade_nome, m.tipo AS modalidade_tipo
   FROM equipes e
-  JOIN modalidades m ON m.id = e.modalidade_id`;
+  JOIN modalidades m ON m.id = e.modalidade_id
+  WHERE e.demonstrativo = FALSE`;
 
 // Busca UMA equipe com seus atletas. Devolve null se não existir.
 // Usada pelo GET /:id e também pelo POST e PUT, para responder sempre
@@ -35,10 +38,11 @@ async function buscarEquipe(id) {
   if (rows.length === 0) return null;
 
   const atletas = await db.query(
-    `SELECT a.id, a.nome, a.apelido, ea.funcao
+    `SELECT a.id, a.nome, a.apelido, a.geracao, a.instagram_url, a.titulos,
+            a.bio, a.foto_url, ea.funcao
      FROM equipe_atletas ea
      JOIN atletas a ON a.id = ea.atleta_id
-     WHERE ea.equipe_id = $1
+     WHERE ea.equipe_id = $1 AND a.demonstrativo = FALSE
      ORDER BY a.nome`,
     [id]
   );
@@ -71,10 +75,14 @@ router.post('/', autenticar, exigirAdmin, async (req, res) => {
   // Se a sigla ou o nome já existir, o banco recusa (UNIQUE) e o
   // tratador de erros responde 409 com a mensagem certa.
   const { rows } = await db.query(
-    `INSERT INTO equipes (nome, sigla, tipo, instituicao, descricao, logo_url, modalidade_id)
-     VALUES ($1, $2, $3, $4, $5, $6, $7)
+    `INSERT INTO equipes
+       (nome, sigla, tipo, instituicao, descricao, logo_url, modalidade_id,
+        slogan, instagram_url, titulos, cidade, responsavel, cores)
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)
      RETURNING id`,
-    [dados.nome, dados.sigla, dados.tipo, dados.instituicao, dados.descricao, dados.logo_url, dados.modalidade_id]
+    [dados.nome, dados.sigla, dados.tipo, dados.instituicao, dados.descricao,
+      dados.logo_url, dados.modalidade_id, dados.slogan, dados.instagram_url,
+      dados.titulos, dados.cidade, dados.responsavel, dados.cores]
   );
 
   const equipe = await buscarEquipe(rows[0].id);
@@ -95,10 +103,14 @@ router.put('/:id', autenticar, exigirAdmin, async (req, res) => {
   const { rows } = await db.query(
     `UPDATE equipes
      SET nome = $1, sigla = $2, tipo = $3, instituicao = $4,
-         descricao = $5, logo_url = $6, modalidade_id = $7
-     WHERE id = $8
+         descricao = $5, logo_url = $6, modalidade_id = $7,
+         slogan = $8, instagram_url = $9, titulos = $10,
+         cidade = $11, responsavel = $12, cores = $13
+     WHERE id = $14
      RETURNING id`,
-    [dados.nome, dados.sigla, dados.tipo, dados.instituicao, dados.descricao, dados.logo_url, dados.modalidade_id, id]
+    [dados.nome, dados.sigla, dados.tipo, dados.instituicao, dados.descricao,
+      dados.logo_url, dados.modalidade_id, dados.slogan, dados.instagram_url,
+      dados.titulos, dados.cidade, dados.responsavel, dados.cores, id]
   );
   if (rows.length === 0) return res.status(404).json({ erro: 'Equipe não encontrada.' });
 
