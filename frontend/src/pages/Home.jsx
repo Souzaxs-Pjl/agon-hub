@@ -9,6 +9,7 @@ const atalhos = [
   { to: '/campeonatos', titulo: 'Campeonatos', texto: 'Veja competições e inscrições.' },
   { to: '/partidas', titulo: 'Partidas', texto: 'Acompanhe partidas e placares.' },
   { to: '/noticias', titulo: 'Notícias', texto: 'Leia os conteúdos publicados.' },
+  { to: '/comunidade', titulo: 'Comunidade', texto: 'Publique, curta e comente.' },
 ];
 
 export default function Home() {
