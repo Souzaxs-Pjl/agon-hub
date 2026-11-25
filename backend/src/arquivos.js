@@ -8,7 +8,7 @@ const path = require('node:path');
 const db = require('./db');
 
 const PASTA_UPLOADS = path.join(__dirname, '..', 'uploads');
-const REGEX_UPLOAD_AGON = /^\/uploads\/((?:equipe|atleta)-[0-9a-f-]+\.(?:jpg|png|webp))$/i;
+const REGEX_UPLOAD_AGON = /^\/uploads\/((?:equipe|atleta|perfil)-[0-9a-f-]+\.(?:jpg|png|webp))$/i;
 
 async function limparImagemSeNaoUtilizada(url) {
   if (typeof url !== 'string') return false;
@@ -20,6 +20,7 @@ async function limparImagemSeNaoUtilizada(url) {
       `SELECT
          EXISTS (SELECT 1 FROM equipes WHERE logo_url = $1)
          OR EXISTS (SELECT 1 FROM atletas WHERE foto_url = $1)
+         OR EXISTS (SELECT 1 FROM usuarios WHERE foto_url = $1)
          AS em_uso`,
       [url]
     );
