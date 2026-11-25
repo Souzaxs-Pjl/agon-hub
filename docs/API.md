@@ -90,7 +90,23 @@ Resposta 201: objeto `usuario` e token. Erros: 400 dados inválidos; 409 e-mail 
 ### `GET /api/auth/me`
 
 - Acesso: usuário autenticado.
-- Devolve os dados do usuário associado ao token.
+- Devolve os dados privados da conta associada ao token, incluindo nome, e-mail, biografia, foto e configuração de visibilidade.
+
+### `PUT /api/auth/me`
+
+- Acesso: usuário autenticado.
+- Atualiza somente a própria conta; o ID do usuário vem do token.
+- Corpo: `{ "nome": "Nome", "bio": "Sobre mim", "foto_url": null, "perfil_publico": false }`.
+- Nome: 2–100 caracteres; biografia: até 3.000 caracteres.
+- Foto: URL HTTP/HTTPS ou caminho de imagem retornado pelo upload.
+- A visibilidade pública deve ser informada como booleano. Perfis começam privados.
+- O e-mail e o papel da conta não podem ser alterados por esta rota.
+
+### `GET /api/usuarios/:id/publico`
+
+- Acesso: público.
+- Retorna somente nome, biografia, foto, data de cadastro e eventual vínculo com cadastro de atleta.
+- Não retorna e-mail ou papel. Responde 404 quando o perfil está privado ou não existe.
 
 ### `GET /api/usuarios`
 
@@ -264,12 +280,13 @@ Uma partida precisa referenciar campeonato, equipe mandante e equipe visitante e
 
 ## 11. Upload de imagens
 
-Os endpoints recebem arquivo em `multipart/form-data`, no campo `imagem`, e exigem administrador autenticado.
+Os endpoints recebem arquivo em `multipart/form-data`, no campo `imagem`. Upload de equipe e atleta exige administrador; o upload de perfil exige autenticação e só altera a foto da própria conta.
 
 | Endpoint | Campo atualizado |
 |---|---|
 | `POST /api/uploads/equipes/:id/logo` | `equipes.logo_url` |
 | `POST /api/uploads/atletas/:id/foto` | `atletas.foto_url` |
+| `POST /api/uploads/perfil` | `usuarios.foto_url` da conta autenticada |
 
 Regras:
 - Formatos: JPEG, PNG e WebP.
