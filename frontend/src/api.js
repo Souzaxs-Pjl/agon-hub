@@ -28,9 +28,14 @@ export async function api(caminho, { metodo = 'GET', corpo, comToken = true } = 
   const metodoNormalizado = String(metodo).toUpperCase();
   const modoDemonstrativo = import.meta.env.PROD;
 
-  // A versão publicada de main usa atletas fictícios e não grava no banco oficial.
-  if (modoDemonstrativo && metodoNormalizado !== 'GET' && !(metodoNormalizado === 'POST' && caminho === '/auth/login')) {
-    throw new Error('Modo demonstrativo: cadastros, edições e exclusões estão desativados nesta versão.');
+  // Em main, somente autenticação e edição do próprio perfil são permitidas.
+  // Operações administrativas e publicações continuam desativadas para preservar a base oficial.
+  const rota = String(caminho).split('?')[0];
+  const operacaoDeContaPermitida =
+    (metodoNormalizado === 'POST' && ['/auth/login', '/auth/register', '/uploads/perfil'].includes(rota)) ||
+    (metodoNormalizado === 'PUT' && rota === '/auth/me');
+  if (modoDemonstrativo && metodoNormalizado !== 'GET' && !operacaoDeContaPermitida) {
+    throw new Error('Modo demonstrativo: alterações de dados esportivos e publicações estão desativadas nesta versão.');
   }
   const ehFormData = typeof FormData !== 'undefined' && corpo instanceof FormData;
 
