@@ -5,7 +5,7 @@ const path = require('path');
 
 module.exports = async function aplicarBaseReal(db) {
   const raiz = path.resolve(__dirname, '..', '..', '..');
-  const arquivoDados = path.join(raiz, 'database', 'data', 'agon_real_data_2026.json');
+  const arquivoDados = path.join(raiz, 'database', 'data', 'agon_demo_data_2026.json');
   const dados = JSON.parse(fs.readFileSync(arquivoDados, 'utf8'));
 
   const client = await db.pool.connect();
