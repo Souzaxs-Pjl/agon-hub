@@ -22,10 +22,10 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/equipes" element={<Equipes />} />
           <Route path="/equipes/:id" element={<EquipeDetalhe />} />
-          <Route path="/atletas" element={<ConsultaPublica />} />
-          <Route path="/campeonatos" element={<ConsultaPublica />} />
-          <Route path="/partidas" element={<ConsultaPublica />} />
-          <Route path="/noticias" element={<ConsultaPublica />} />
+          <Route path="/atletas" element={<ConsultaPublica tipo="atletas" />} />
+          <Route path="/campeonatos" element={<ConsultaPublica tipo="campeonatos" />} />
+          <Route path="/partidas" element={<ConsultaPublica tipo="partidas" />} />
+          <Route path="/noticias" element={<ConsultaPublica tipo="noticias" />} />
           <Route path="/login" element={<Login />} />
           <Route path="/cadastro" element={<Cadastro />} />
           <Route path="/admin" element={<RotaAdmin><Admin /></RotaAdmin>} />
