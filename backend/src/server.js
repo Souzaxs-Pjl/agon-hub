@@ -57,6 +57,7 @@ app.use('/api/atletas', require('./routes/atletas'));
 app.use('/api/campeonatos', require('./routes/campeonatos'));
 app.use('/api/partidas', require('./routes/partidas'));
 app.use('/api/noticias', require('./routes/noticias'));
+app.use('/api/comunidade', require('./routes/comunidade'));
 app.use('/api/uploads', require('./routes/uploads'));
 
 app.use(rotaNaoEncontrada);
@@ -69,8 +70,10 @@ async function prepararBanco() {
   const raizRepositorio = path.resolve(__dirname, '..', '..');
   const schema = fs.readFileSync(path.join(raizRepositorio, 'database', 'schema.sql'), 'utf8');
   const seed = fs.readFileSync(path.join(raizRepositorio, 'database', 'seed.sql'), 'utf8');
+  const comunidade = fs.readFileSync(path.join(raizRepositorio, 'database', 'migrations', '001_comunidade.sql'), 'utf8');
 
   await db.pool.query(schema);
+  await db.pool.query(comunidade);
 
   const { rows } = await db.query('SELECT COUNT(*)::int AS total FROM usuarios');
   if (rows[0].total === 0) {
