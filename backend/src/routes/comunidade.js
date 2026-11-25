@@ -52,7 +52,7 @@ router.post('/', autenticar, async (req, res) => {
   let atleta = null, equipe = null;
   if (tipo === 'atleta') {
     if (!Number.isInteger(atletaId) || atletaId < 1) return res.status(400).json({ erro: 'Atleta inválido.' });
-    const r = await db.query('SELECT id FROM atletas WHERE id=$1 AND usuario_id=$2 AND demonstrativo=FALSE AND perfil_publico=TRUE', [atletaId, req.usuario.id]);
+    const r = await db.query('SELECT id FROM atletas WHERE id=$1 AND usuario_id=$2 AND demonstrativo=FALSE AND perfil_publico=TRUE AND demonstrativo=FALSE AND perfil_publico=TRUE', [atletaId, req.usuario.id]);
     if (!r.rows.length) return res.status(403).json({ erro: 'Só é possível publicar como seu próprio perfil de atleta.' });
     atleta = atletaId;
   }
