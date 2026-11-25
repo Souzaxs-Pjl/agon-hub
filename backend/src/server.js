@@ -20,18 +20,24 @@ if (segredo.length < 32 || segredo.startsWith('troque-')) {
 
 const app = express();
 const origensConfiguradas = [
+  'https://agon-hub-frontend.vercel.app',
   process.env.FRONTEND_URL,
   ...(process.env.FRONTEND_URLS || '').split(','),
 ].map((origem) => (origem || '').trim()).filter(Boolean);
 const origensPermitidas = new Set([
   'http://localhost:5173',
   ...origensConfiguradas,
-]);
+].map((origem) => {
+  try { return new URL(origem).origin; } catch { return ''; }
+}).filter(Boolean));
 
 app.use(cors({
   origin: (origem, callback) => {
     // Requisições sem Origin (ex.: health checks) são permitidas.
-    if (!origem || origensPermitidas.has(origem)) return callback(null, true);
+    const origemNormalizada = (() => {
+      try { return new URL(origem).origin; } catch { return ''; }
+    })();
+    if (!origem || origensPermitidas.has(origemNormalizada)) return callback(null, true);
     console.warn('CORS rejeitou a origem:', origem);
     return callback(new Error('Origem não permitida pelo CORS.'));
   },
