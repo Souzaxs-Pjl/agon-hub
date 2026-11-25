@@ -10,7 +10,7 @@ const FORM_INICIAL = {
   nome: '',
   bio: '',
   foto_url: '',
-  perfil_publico: true,
+  perfil_publico: false,
 };
 
 export default function Perfil() {
@@ -33,7 +33,7 @@ export default function Perfil() {
           nome: dados.usuario.nome || '',
           bio: dados.usuario.bio || '',
           foto_url: dados.usuario.foto_url || '',
-          perfil_publico: dados.usuario.perfil_publico !== false,
+          perfil_publico: dados.usuario.perfil_publico === true,
         });
       })
       .catch((erro) => {
