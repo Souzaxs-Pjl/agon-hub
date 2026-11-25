@@ -54,6 +54,7 @@ export default function Equipes() {
         />
       </label>
       <p className="nota">Base inicial: 81 equipes identificadas. Uma equipe adicional esperada permanece pendente de identificação.</p>
+      <p className="nota">Versão demonstrativa: os cadastros das equipes foram preservados; os perfis individuais de atletas são fictícios.</p>
       {filtradas.length === 0 ? (
         <p className="aviso">Nenhuma equipe encontrada para essa busca.</p>
       ) : (
