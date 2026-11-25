@@ -1,5 +1,7 @@
 // =====================================================================
 // routes/partidas.js - CRUD de partidas e placares.
+// Uma partida só pode usar equipes inscritas no campeonato e da mesma
+// modalidade da competição.
 // =====================================================================
 const express = require('express');
 const db = require('../db');
@@ -25,6 +27,39 @@ async function buscarPartida(id) {
   return rows[0] || null;
 }
 
+async function validarParticipantes(dados) {
+  const resultado = await db.query(
+    `SELECT c.modalidade_id AS modalidade_campeonato,
+            ec.modalidade_id AS modalidade_casa,
+            ev.modalidade_id AS modalidade_visitante,
+            EXISTS (
+              SELECT 1 FROM campeonato_equipes ce
+              WHERE ce.campeonato_id = c.id AND ce.equipe_id = ec.id
+            ) AS casa_inscrita,
+            EXISTS (
+              SELECT 1 FROM campeonato_equipes ce
+              WHERE ce.campeonato_id = c.id AND ce.equipe_id = ev.id
+            ) AS visitante_inscrita
+     FROM campeonatos c
+     JOIN equipes ec ON ec.id = $2
+     JOIN equipes ev ON ev.id = $3
+     WHERE c.id = $1`,
+    [dados.campeonato_id, dados.equipe_casa_id, dados.equipe_visitante_id]
+  );
+  if (!resultado.rowCount) return 'Campeonato ou equipe não encontrado.';
+  const r = resultado.rows[0];
+  if (
+    r.modalidade_campeonato !== r.modalidade_casa ||
+    r.modalidade_campeonato !== r.modalidade_visitante
+  ) {
+    return 'As duas equipes precisam pertencer à modalidade do campeonato.';
+  }
+  if (!r.casa_inscrita || !r.visitante_inscrita) {
+    return 'As duas equipes precisam estar inscritas no campeonato antes da partida.';
+  }
+  return null;
+}
+
 router.get('/', async (req, res) => {
   const campeonatoId = req.query.campeonato_id ? parseId(req.query.campeonato_id) : null;
   if (req.query.campeonato_id && campeonatoId === null) {
@@ -47,6 +82,8 @@ router.get('/:id', async (req, res) => {
 router.post('/', autenticar, exigirAdmin, async (req, res) => {
   const { erros, dados } = validarPartida(req.body);
   if (erros.length) return res.status(400).json({ erro: 'Dados inválidos.', detalhes: erros });
+  const erroParticipantes = await validarParticipantes(dados);
+  if (erroParticipantes) return res.status(400).json({ erro: erroParticipantes });
   const { rows } = await db.query(
     `INSERT INTO partidas
        (campeonato_id, equipe_casa_id, equipe_visitante_id, data_hora, fase,
@@ -64,6 +101,8 @@ router.put('/:id', autenticar, exigirAdmin, async (req, res) => {
   if (id === null) return res.status(400).json({ erro: 'ID inválido.' });
   const { erros, dados } = validarPartida(req.body);
   if (erros.length) return res.status(400).json({ erro: 'Dados inválidos.', detalhes: erros });
+  const erroParticipantes = await validarParticipantes(dados);
+  if (erroParticipantes) return res.status(400).json({ erro: erroParticipantes });
   const resultado = await db.query(
     `UPDATE partidas
      SET campeonato_id = $1, equipe_casa_id = $2, equipe_visitante_id = $3,
