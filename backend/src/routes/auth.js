@@ -23,6 +23,7 @@ const CUSTO_BCRYPT = 10;
 // não existe: assim a resposta demora o mesmo tempo nos dois casos e
 // ninguém consegue descobrir, pelo tempo, quais e-mails estão cadastrados.
 const HASH_FALSO = bcrypt.hashSync('senha-que-ninguem-usa', CUSTO_BCRYPT);
+const REGEX_URL_IMAGEM = /^(https?:\/\/\S+|\/uploads\/[A-Za-z0-9._-]+)$/;
 
 // ---------------------------------------------------------------------
 // POST /api/auth/register
