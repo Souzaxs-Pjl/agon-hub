@@ -22,7 +22,7 @@ const app = express();
 const origensConfiguradas = [
   process.env.FRONTEND_URL,
   ...(process.env.FRONTEND_URLS || '').split(','),
-].map((origem) => origem.trim()).filter(Boolean);
+].map((origem) => (origem || '').trim()).filter(Boolean);
 const origensPermitidas = new Set([
   'http://localhost:5173',
   ...origensConfiguradas,
