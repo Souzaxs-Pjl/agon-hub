@@ -27,7 +27,9 @@ export default function Navbar() {
       <div className="sessao">
         {carregando ? null : usuario ? (
           <>
-            <span className="usuario-logado">{usuario.nome}</span>
+            <NavLink to="/perfil" className="usuario-logado">
+              {usuario.nome} · Meu perfil
+            </NavLink>
             <button type="button" className="botao-secundario" onClick={handleSair}>Sair</button>
           </>
         ) : (
