@@ -1,376 +1,296 @@
 # Documentação da API — AGON Hub
 
-API REST em Node.js + Express. Todas as rotas começam com `/api` e trocam dados em **JSON**.
+API REST desenvolvida com Node.js e Express. As rotas usam o prefixo `/api` e retornam JSON, exceto os endpoints de envio de imagem, que recebem `multipart/form-data`.
 
-> Esta documentação cresce a cada etapa. Rotas ainda não implementadas (equipes, atletas, campeonatos, partidas, notícias, modalidades) serão adicionadas aqui.
+**URL local:** `http://localhost:3000`  
+**Frontend local:** `http://localhost:5173`
 
-- **URL base (desenvolvimento):** `http://localhost:3000`
-- **Formato:** requisições com corpo devem enviar o cabeçalho `Content-Type: application/json`.
+## 1. Autenticação e permissões
 
-## Autenticação
+As rotas administrativas exigem o cabeçalho:
 
-As rotas marcadas com 🔒 exigem um token JWT, obtido em `/api/auth/login` ou `/api/auth/register`, enviado em todas as requisições no cabeçalho:
-
-```
+```http
 Authorization: Bearer <token>
 ```
 
-O token expira (padrão: 2 horas). Depois disso, é preciso fazer login de novo.
+O token JWT é obtido por `POST /api/auth/login` ou `POST /api/auth/register`. A validade padrão é de duas horas e pode ser configurada por `JWT_EXPIRES_IN`.
 
-### Níveis de acesso
-
-| Símbolo | Significado |
+| Acesso | Significado |
 |---|---|
-| 🌐 Pública | Qualquer pessoa pode chamar |
-| 🔒 Logado | Exige token válido (qualquer usuário) |
-| 🔒👑 Admin | Exige token válido **e** papel `admin` |
+| Público | Pode ser chamado sem login |
+| Administrador | Exige token válido e papel `admin` |
 
-### Códigos de resposta e formato de erro
+O backend valida o token e consulta o papel atual do usuário no banco. O campo de papel enviado pelo cliente não concede privilégios.
 
-| Código | Quando acontece |
+## 2. Respostas HTTP
+
+| HTTP | Significado |
 |---|---|
-| 200 | Sucesso |
-| 201 | Registro criado |
-| 400 | Dados inválidos ou ausentes |
-| 401 | Não autenticado (sem token, token inválido ou expirado) |
-| 403 | Autenticado, mas sem permissão (não é admin) |
-| 404 | Rota ou registro não encontrado |
-| 409 | Conflito (ex.: e-mail já cadastrado; excluir algo que está em uso) |
-| 500 | Erro interno do servidor |
+| 200 | Operação concluída |
+| 201 | Registro criado ou imagem recebida |
+| 400 | Dados ou identificadores inválidos |
+| 401 | Token ausente, inválido ou expirado |
+| 403 | Usuário autenticado sem permissão administrativa |
+| 404 | Registro ou rota não encontrado |
+| 409 | Conflito de unicidade ou integridade |
+| 413 | Arquivo ou corpo maior que o limite |
+| 500 | Erro interno não previsto |
 
-Todo erro tem este formato:
-
-```json
-{ "erro": "Mensagem explicando o problema." }
-```
-
-Erros de validação podem trazer também a lista `detalhes`:
+Exemplo de erro:
 
 ```json
 {
   "erro": "Dados inválidos.",
-  "detalhes": ["A senha deve ter no mínimo 8 caracteres."]
+  "detalhes": ["O nome deve ter entre 2 e 100 caracteres."]
 }
 ```
 
----
-
-## Saúde
+## 3. Saúde
 
 ### `GET /api/saude`
 
-- **Acesso:** 🌐 Pública
-- **Finalidade:** confirmar que o servidor e o banco de dados estão funcionando.
-- **Parâmetros:** nenhum.
+- Acesso: público.
+- Verifica a API e a conexão com PostgreSQL.
 
-**Resposta 200**
+Resposta 200:
+
 ```json
 { "status": "ok", "banco": "ok" }
 ```
 
-**Resposta 503** (banco fora do ar)
+Resposta 503 quando a consulta ao banco falhar:
+
 ```json
 { "status": "erro", "banco": "indisponivel" }
 ```
 
----
-
-## Autenticação
+## 4. Autenticação e usuários
 
 ### `POST /api/auth/register`
 
-- **Acesso:** 🌐 Pública
-- **Finalidade:** cadastrar uma nova conta. **A conta é sempre criada com papel `usuario`.** Qualquer campo `papel` enviado no corpo é ignorado.
+- Acesso: público.
+- Cria sempre uma conta com papel `usuario`.
 
-**Corpo da requisição**
+Corpo:
 
-| Campo | Tipo | Obrigatório | Regras |
+| Campo | Tipo | Obrigatório | Regra |
 |---|---|---|---|
-| `nome` | texto | sim | 2 a 100 caracteres |
-| `email` | texto | sim | e-mail válido, até 150 caracteres. Guardado em minúsculas |
-| `senha` | texto | sim | 8 a 72 caracteres |
+| `nome` | texto | Sim | 2–100 caracteres |
+| `email` | texto | Sim | e-mail válido, até 150 caracteres |
+| `senha` | texto | Sim | mínimo 8 caracteres e máximo de 72 bytes |
 
-```json
-{ "nome": "Maria Souza", "email": "maria@exemplo.com", "senha": "minhasenha123" }
-```
-
-**Resposta 201**
-```json
-{
-  "usuario": {
-    "id": 5,
-    "nome": "Maria Souza",
-    "email": "maria@exemplo.com",
-    "papel": "usuario",
-    "criado_em": "2026-11-23T10:15:00.000Z"
-  },
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-}
-```
-
-**Erros:** `400` dados inválidos · `409` e-mail já cadastrado.
-
----
+Resposta 201: objeto `usuario` e token. Erros: 400 dados inválidos; 409 e-mail já cadastrado.
 
 ### `POST /api/auth/login`
 
-- **Acesso:** 🌐 Pública
-- **Finalidade:** autenticar com e-mail e senha e receber o token JWT.
-
-**Corpo da requisição**
-
-| Campo | Tipo | Obrigatório | Observação |
-|---|---|---|---|
-| `email` | texto | sim | não diferencia maiúsculas de minúsculas |
-| `senha` | texto | sim | |
-
-```json
-{ "email": "maria@agonhub.example", "senha": "Senha@123" }
-```
-
-**Resposta 200**
-```json
-{
-  "usuario": { "id": 2, "nome": "Maria Souza", "email": "maria@agonhub.example", "papel": "usuario" },
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-}
-```
-
-**Erros:** `400` faltou e-mail ou senha · `401` e-mail ou senha inválidos (a mesma mensagem nos dois casos, de propósito).
-
----
+- Acesso: público.
+- Confere e-mail e senha e devolve usuário e token JWT.
+- Erros: 400 quando faltam dados; 401 quando as credenciais não conferem.
 
 ### `GET /api/auth/me`
 
-- **Acesso:** 🔒 Logado
-- **Finalidade:** devolver os dados do usuário dono do token (usado pelo frontend para saber quem está logado).
-- **Parâmetros:** nenhum.
-
-**Resposta 200**
-```json
-{
-  "usuario": { "id": 2, "nome": "Maria Souza", "email": "maria@agonhub.example", "papel": "usuario" }
-}
-```
-
-**Erros:** `401` token ausente, inválido ou expirado.
-
----
-
-## Usuários
+- Acesso: usuário autenticado.
+- Devolve os dados do usuário associado ao token.
 
 ### `GET /api/usuarios`
 
-- **Acesso:** 🔒👑 Admin
-- **Finalidade:** listar todas as contas cadastradas. O hash da senha nunca é devolvido.
-- **Parâmetros:** nenhum.
+- Acesso: administrador.
+- Lista contas sem expor `senha_hash`.
 
-**Resposta 200**
-```json
-[
-  { "id": 1, "nome": "Redação AGON", "email": "redacao@agonhub.example", "papel": "usuario", "criado_em": "2026-11-23T10:00:00.000Z" },
-  { "id": 2, "nome": "Maria Souza", "email": "maria@agonhub.example", "papel": "usuario", "criado_em": "2026-11-23T10:00:00.000Z" }
-]
-```
+## 5. Modalidades
 
-**Erros:** `401` não autenticado · `403` usuário logado, mas não é administrador.
-
----
-
-## Modalidades
-
-Esportes (`tipo: esporte`) e jogos eletrônicos (`tipo: esport`).
+Os valores aceitos em `tipo` são `esporte` e `esport` (valor interno utilizado para jogos eletrônicos).
 
 ### `GET /api/modalidades`
-
-- **Acesso:** 🌐 Pública
-- **Finalidade:** listar as modalidades, em ordem alfabética.
-- **Parâmetros:** nenhum.
-
-**Resposta 200**
-```json
-[
-  { "id": 2, "nome": "Futsal", "tipo": "esporte", "descricao": "Futebol de salão..." },
-  { "id": 11, "nome": "Valorant", "tipo": "esport", "descricao": "Jogo eletrônico..." }
-]
-```
+- Acesso: público. Lista todas as modalidades.
 
 ### `GET /api/modalidades/:id`
-
-- **Acesso:** 🌐 Pública
-- **Parâmetros de URL:** `id` (número inteiro).
-
-**Resposta 200**
-```json
-{ "id": 2, "nome": "Futsal", "tipo": "esporte", "descricao": "Futebol de salão..." }
-```
-
-**Erros:** `400` id inválido · `404` modalidade não encontrada.
+- Acesso: público. Consulta uma modalidade pelo ID.
 
 ### `POST /api/modalidades`
-
-- **Acesso:** 🔒👑 Admin
-- **Corpo da requisição**
-
-| Campo | Tipo | Obrigatório | Regras |
-|---|---|---|---|
-| `nome` | texto | sim | 2 a 80 caracteres, único |
-| `tipo` | texto | sim | `esporte` ou `esport` |
-| `descricao` | texto | não | até 500 caracteres |
-
-```json
-{ "nome": "Xadrez", "tipo": "esporte", "descricao": "Jogo de estratégia." }
-```
-
-**Resposta 201**
-```json
-{ "id": 15, "nome": "Xadrez", "tipo": "esporte", "descricao": "Jogo de estratégia." }
-```
-
-**Erros:** `400` dados inválidos (com `detalhes`) · `401` · `403` · `409` nome já existe.
+- Acesso: administrador.
+- Campos: `nome` (2–80), `tipo` (`esporte` ou `esport`) e `descricao` (opcional, até 500).
 
 ### `PUT /api/modalidades/:id`
-
-- **Acesso:** 🔒👑 Admin
-- **Corpo:** os mesmos campos do POST (todos).
-- **Resposta 200:** a modalidade já alterada.
-- **Erros:** `400` · `401` · `403` · `404` · `409`.
+- Acesso: administrador.
+- Atualiza nome, tipo e descrição; envie os campos completos.
 
 ### `DELETE /api/modalidades/:id`
+- Acesso: administrador.
+- Exclui uma modalidade sem equipes ou campeonatos dependentes. Se estiver em uso, a API responde 409.
 
-- **Acesso:** 🔒👑 Admin
-- **Finalidade:** excluir a modalidade. Não é possível se houver equipes usando-a.
+## 6. Equipes
 
-**Resposta 200**
-```json
-{ "mensagem": "Modalidade excluída." }
-```
-
-**Erros:** `401` · `403` · `404` · `409` modalidade em uso por equipes.
-
----
-
-## Equipes
-
-Equipes reais (`tipo: real`) ou fictícias (`tipo: ficticia`). Cada equipe pertence a uma modalidade.
+Cada equipe possui uma modalidade principal obrigatória.
 
 ### `GET /api/equipes`
-
-- **Acesso:** 🌐 Pública
-- **Finalidade:** listar todas as equipes, com o nome e o tipo da modalidade.
-- **Parâmetros:** nenhum.
-
-**Resposta 200**
-```json
-[
-  {
-    "id": 1,
-    "nome": "Falcões do Norte",
-    "sigla": "FDN",
-    "tipo": "ficticia",
-    "instituicao": null,
-    "descricao": "Equipe fictícia de futsal...",
-    "logo_url": null,
-    "modalidade_id": 2,
-    "modalidade_nome": "Futsal",
-    "modalidade_tipo": "esporte"
-  }
-]
-```
+- Acesso: público. Lista equipes com dados da modalidade.
 
 ### `GET /api/equipes/:id`
-
-- **Acesso:** 🌐 Pública
-- **Finalidade:** uma equipe, com a modalidade e a lista de atletas (tabela `equipe_atletas`).
-- **Parâmetros de URL:** `id` (número inteiro).
-
-**Resposta 200**
-```json
-{
-  "id": 1,
-  "nome": "Falcões do Norte",
-  "sigla": "FDN",
-  "tipo": "ficticia",
-  "instituicao": null,
-  "descricao": "Equipe fictícia de futsal...",
-  "logo_url": null,
-  "modalidade_id": 2,
-  "modalidade_nome": "Futsal",
-  "modalidade_tipo": "esporte",
-  "atletas": [
-    { "id": 1, "nome": "Maria Souza", "apelido": "Mari", "funcao": "Ala" },
-    { "id": 2, "nome": "Bruno Teles", "apelido": "Brunão", "funcao": "Fixo" }
-  ]
-}
-```
-
-**Erros:** `400` id inválido · `404` equipe não encontrada.
+- Acesso: público. Consulta a equipe e os atletas vinculados.
+- Cada atleta contém `id`, `nome`, `apelido` e `funcao`.
 
 ### `POST /api/equipes`
-
-- **Acesso:** 🔒👑 Admin
-- **Finalidade:** cadastrar uma equipe. Grava no PostgreSQL e devolve a equipe já com a modalidade.
-
-**Corpo da requisição**
-
-| Campo | Tipo | Obrigatório | Regras |
-|---|---|---|---|
-| `nome` | texto | sim | 2 a 100 caracteres, único |
-| `sigla` | texto | sim | 2 a 10 letras ou números, sem espaços; é guardada em maiúsculas; única |
-| `tipo` | texto | sim | `real` ou `ficticia` |
-| `modalidade_id` | número | sim | id de uma modalidade existente |
-| `instituicao` | texto | não | até 150 caracteres |
-| `descricao` | texto | não | até 1000 caracteres |
-| `logo_url` | texto | não | URL que começa com `http://` ou `https://` (até 255 caracteres) |
-
-```json
-{
-  "nome": "Equipe Exemplo",
-  "sigla": "EXE",
-  "tipo": "real",
-  "modalidade_id": 2,
-  "instituicao": "Instituto Federal",
-  "descricao": "Equipe criada pela banca.",
-  "logo_url": null
-}
-```
-
-**Resposta 201**
-```json
-{
-  "id": 9,
-  "nome": "Equipe Exemplo",
-  "sigla": "EXE",
-  "tipo": "real",
-  "instituicao": "Instituto Federal",
-  "descricao": "Equipe criada pela banca.",
-  "logo_url": null,
-  "modalidade_id": 2,
-  "modalidade_nome": "Futsal",
-  "modalidade_tipo": "esporte",
-  "atletas": []
-}
-```
-
-**Erros:** `400` dados inválidos (com `detalhes`), ou modalidade inexistente · `401` sem token · `403` não é admin · `409` nome ou sigla já existem (com mensagem dizendo qual).
+- Acesso: administrador.
+- Obrigatórios: `nome`, `sigla`, `tipo`, `modalidade_id`.
+- Opcionais: `instituicao`, `descricao`, `logo_url`.
+- `tipo`: `real` ou `ficticia`.
+- `sigla`: de 2 a 10 letras ou números; gravada em maiúsculas.
+- `logo_url`: URL HTTP/HTTPS ou caminho local retornado pelo upload.
 
 ### `PUT /api/equipes/:id`
-
-- **Acesso:** 🔒👑 Admin
-- **Corpo:** os mesmos campos do POST (todos).
-- **Resposta 200:** a equipe já alterada, no mesmo formato do GET /:id.
-- **Erros:** `400` · `401` · `403` · `404` · `409`.
+- Acesso: administrador. Atualiza os dados da equipe; envie os campos completos.
 
 ### `DELETE /api/equipes/:id`
+- Acesso: administrador.
+- Exclui a equipe quando não há partidas que impeçam a operação. Vínculos associativos são removidos por cascata.
 
-- **Acesso:** 🔒👑 Admin
-- **Finalidade:** excluir a equipe. Os vínculos com atletas e campeonatos são removidos junto. Se a equipe já tiver partidas, a exclusão é recusada.
+## 7. Atletas
 
-**Resposta 200**
-```json
-{ "mensagem": "Equipe excluída." }
+A tabela `atletas` representa pessoas. O vínculo com uma conta em `usuarios` é opcional.
+
+### `GET /api/atletas`
+- Acesso: público. Lista atletas e, quando houver, o nome da conta associada.
+
+### `GET /api/atletas/:id`
+- Acesso: público. Devolve o atleta e as equipes vinculadas, incluindo função.
+
+### `POST /api/atletas`
+- Acesso: administrador.
+- Obrigatório: `nome` (2–100).
+- Opcionais: `apelido` (até 50), `bio` (até 5.000), `foto_url`, `usuario_id`.
+
+### `PUT /api/atletas/:id`
+- Acesso: administrador. Atualiza os campos do atleta.
+
+### `DELETE /api/atletas/:id`
+- Acesso: administrador. Exclui o atleta e seus vínculos em `equipe_atletas`.
+
+### `POST /api/atletas/:id/equipes`
+- Acesso: administrador.
+- Cria vínculo N:N entre atleta e equipe.
+- Corpo: `{ "equipe_id": 1, "funcao": "Ala" }`.
+- Resposta 201: atleta atualizado, incluindo a lista de equipes.
+
+### `PUT /api/atletas/:id/equipes/:equipeId`
+- Acesso: administrador.
+- Atualiza a função do atleta naquela equipe.
+- Corpo: `{ "funcao": "Pivô" }`.
+
+### `DELETE /api/atletas/:id/equipes/:equipeId`
+- Acesso: administrador. Remove somente aquele vínculo.
+
+## 8. Campeonatos
+
+### `GET /api/campeonatos`
+- Acesso: público. Lista campeonatos com modalidade e total de equipes inscritas.
+
+### `GET /api/campeonatos/:id`
+- Acesso: público. Consulta campeonato e equipes inscritas.
+
+### `POST /api/campeonatos`
+- Acesso: administrador.
+- Campos: `nome` (2–120), `edicao` (ano de 1900 a 2200), `modalidade_id`, `data_inicio`, `data_fim`, `status`, `descricao`.
+- Datas: `AAAA-MM-DD`.
+- Status: `planejado`, `em_andamento`, `encerrado`.
+- A data final não pode anteceder a data inicial.
+
+### `PUT /api/campeonatos/:id`
+- Acesso: administrador. Atualiza os campos do campeonato.
+
+### `DELETE /api/campeonatos/:id`
+- Acesso: administrador. Exclui o campeonato; partidas e inscrições associadas são removidas por cascata no banco.
+
+### `POST /api/campeonatos/:id/equipes`
+- Acesso: administrador.
+- Inscreve equipe no campeonato.
+- Corpo: `{ "equipe_id": 1 }`.
+- A equipe precisa existir e pertencer à mesma modalidade do campeonato.
+- Resposta 201: campeonato atualizado com suas equipes.
+
+### `DELETE /api/campeonatos/:id/equipes/:equipeId`
+- Acesso: administrador. Remove a inscrição da equipe.
+
+## 9. Partidas
+
+Uma partida precisa referenciar campeonato, equipe mandante e equipe visitante existentes. As equipes devem estar inscritas no campeonato e pertencer à mesma modalidade da competição.
+
+### `GET /api/partidas`
+- Acesso: público. Lista partidas.
+- Filtro opcional: `?campeonato_id=1`.
+
+### `GET /api/partidas/:id`
+- Acesso: público. Consulta uma partida.
+
+### `POST /api/partidas`
+- Acesso: administrador.
+- Campos: `campeonato_id`, `equipe_casa_id`, `equipe_visitante_id`, `data_hora`, `fase`, `placar_casa`, `placar_visitante`, `status`, `demonstrativo`.
+- Status: `agendada`, `em_andamento`, `finalizada`.
+- As equipes mandante e visitante devem ser diferentes.
+- Placares: inteiros entre 0 e 999; informe os dois ou deixe ambos vazios.
+- Partida finalizada exige os dois placares.
+- `demonstrativo` é booleano e, quando omitido, assume `false`.
+
+### `PUT /api/partidas/:id`
+- Acesso: administrador. Atualiza os campos da partida, mantendo as regras de validação.
+
+### `DELETE /api/partidas/:id`
+- Acesso: administrador. Exclui a partida.
+
+## 10. Notícias
+
+### `GET /api/noticias`
+- Acesso: público. Lista notícias da mais recente para a mais antiga.
+
+### `GET /api/noticias/:id`
+- Acesso: público. Consulta uma notícia.
+
+### `POST /api/noticias`
+- Acesso: administrador.
+- Campos: `titulo` (3–200), `resumo` (opcional, até 300), `conteudo` (1–20.000) e `imagem_url` (opcional).
+- O autor é definido pelo administrador autenticado, não pelo cliente.
+
+### `PUT /api/noticias/:id`
+- Acesso: administrador. Atualiza título, resumo, conteúdo e imagem.
+
+### `DELETE /api/noticias/:id`
+- Acesso: administrador. Exclui a notícia.
+
+## 11. Upload de imagens
+
+Os endpoints recebem arquivo em `multipart/form-data`, no campo `imagem`, e exigem administrador autenticado.
+
+| Endpoint | Campo atualizado |
+|---|---|
+| `POST /api/uploads/equipes/:id/logo` | `equipes.logo_url` |
+| `POST /api/uploads/atletas/:id/foto` | `atletas.foto_url` |
+
+Regras:
+- Formatos: JPEG, PNG e WebP.
+- Limite: 5 MB por arquivo.
+- O backend confere a assinatura binária do arquivo.
+- Os arquivos são gravados em `backend/uploads`.
+- A URL retornada começa com `/uploads/` e pode ser aberta por HTTP.
+
+Exemplo:
+
+```js
+const formulario = new FormData();
+formulario.append('imagem', arquivoSelecionado);
+
+const resposta = await fetch('/api/uploads/equipes/1/logo', {
+  method: 'POST',
+  headers: { Authorization: `Bearer ${token}` },
+  body: formulario,
+});
 ```
 
-**Erros:** `401` · `403` · `404` · `409` equipe usada em partidas.
+Não defina manualmente `Content-Type` ao enviar `FormData`; o navegador inclui o boundary multipart. Os campos de imagem também aceitam URLs HTTP/HTTPS.
 
-> **Ainda não implementado nesta versão:** atletas (CRUD e vínculo com equipes), campeonatos, partidas, notícias, upload de imagens (por enquanto o logo é informado como URL) e o cadastro de equipes em campeonatos.
+## 12. Observações
+
+- As rotas de escrita são administrativas.
+- As rotas de consulta listadas como públicas não exigem token.
+- O frontend deve tratar erros HTTP e falhas de comunicação separadamente.
+- Não há endpoint de logout no backend; o frontend encerra a sessão removendo o token local.
+- Esta documentação descreve os contratos atuais da API. As telas devem ser integradas a esses caminhos e campos.
