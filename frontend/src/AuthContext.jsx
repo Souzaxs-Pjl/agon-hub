@@ -62,6 +62,10 @@ export function AuthProvider({ children }) {
     return dados.usuario;
   }, []);
 
+  const atualizarUsuario = useCallback((dados) => {
+    setUsuario((atual) => atual ? { ...atual, ...dados } : dados);
+  }, []);
+
   const sair = useCallback(() => {
     setToken(null);
     setUsuario(null);
@@ -73,6 +77,7 @@ export function AuthProvider({ children }) {
     ehAdmin: usuario?.papel === 'admin',
     entrar,
     cadastrar,
+    atualizarUsuario,
     sair,
   };
 
