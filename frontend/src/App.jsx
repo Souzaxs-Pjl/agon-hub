@@ -3,6 +3,7 @@
 // =====================================================================
 import { Route, Routes } from 'react-router-dom';
 import Navbar from './components/Navbar.jsx';
+import Footer from './components/Footer.jsx';
 import RotaAdmin from './components/RotaAdmin.jsx';
 import Home from './pages/Home.jsx';
 import Comunidade from './pages/Comunidade.jsx';
@@ -52,6 +53,7 @@ export default function App() {
           <Route path="*" element={<p className="aviso">Página não encontrada.</p>} />
         </Routes>
       </main>
+      <Footer />
     </>
   );
 }
