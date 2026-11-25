@@ -181,7 +181,7 @@ export default function Admin() {
   return (
     <section className="admin">
       <h1>Administração</h1>
-      <p className="nota">Você está no painel de administrador. Dados salvos vão para o PostgreSQL.</p>
+      <p className="nota">Painel em modo demonstrativo: os dados podem ser consultados, mas cadastros, edições e exclusões estão desativados nesta versão.</p>
       <nav className="admin-menu" aria-label="Módulos administrativos">
         <Link className="selecionado" to="/admin">Equipes</Link>
         <Link to="/admin/modalidades">Modalidades</Link>
