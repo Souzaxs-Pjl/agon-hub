@@ -61,7 +61,7 @@ async function autenticar(req, res, next) {
 
   // Busca o usuário e o papel ATUAL no banco.
   const { rows } = await db.query(
-    'SELECT id, nome, email, papel FROM usuarios WHERE id = $1',
+    'SELECT id, nome, email, papel, bio, foto_url, perfil_publico, criado_em FROM usuarios WHERE id = $1',
     [id]
   );
   if (rows.length === 0) {
