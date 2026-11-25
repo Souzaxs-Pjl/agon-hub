@@ -20,13 +20,13 @@ O projeto foi desenvolvido individualmente como parte do curso Técnico em Infor
 | CRUD de equipes | Implementado |
 | Consulta pública de equipes e detalhes | Implementada |
 | Painel administrativo de equipes | Implementado |
-| CRUD de atletas | Pendente |
-| Vínculo de atletas com equipes pela interface/API | Pendente |
-| CRUD de campeonatos | Pendente |
-| Inscrição de equipes em campeonatos | Pendente |
-| CRUD de partidas | Pendente |
-| CRUD de notícias | Pendente |
-| Upload de arquivos de imagem | Pendente; atualmente são aceitas URLs de imagem |
+| CRUD de atletas (API) | Implementado; interface administrativa pendente |
+| Vínculo de atletas com equipes (API) | Implementado; interface administrativa pendente |
+| CRUD de campeonatos (API) | Implementado; interface administrativa pendente |
+| Inscrição de equipes em campeonatos (API) | Implementada; interface administrativa pendente |
+| CRUD de partidas (API) | Implementado; interface administrativa pendente |
+| CRUD de notícias (API) | Implementado; interface administrativa pendente |
+| Upload de logos e fotos (API) | Implementado; interface de envio no frontend pendente |
 | Testes ponta a ponta | Ainda precisam ser executados no ambiente com PostgreSQL |
 
 Esta tabela é a referência para não apresentar como concluído algo que ainda está em desenvolvimento.
@@ -62,7 +62,7 @@ Construir uma plataforma web integrada que permita consultar informações espor
 | Configuração | dotenv | Leitura de variáveis de ambiente |
 | Versionamento | Git e GitHub | Histórico e armazenamento do código |
 
-**Observação:** a versão atual utiliza CSS próprio. Tailwind CSS e Multer não fazem parte das dependências atualmente registradas. Upload de arquivos está previsto para uma etapa posterior.
+**Observação:** a versão atual utiliza CSS próprio; Tailwind CSS não está instalado. Multer é utilizado pelo backend para receber arquivos de imagem.
 
 ## 4. Estrutura do repositório
 
@@ -104,7 +104,7 @@ agon-hub/
     └── RELATORIO_ACADEMICO.md
 ```
 
-A estrutura acima representa os principais arquivos já identificados e os documentos de apoio do projeto. Novos arquivos de rotas, telas, uploads e testes serão acrescentados conforme a implementação evoluir.
+A estrutura acima representa os principais arquivos e documentos do projeto. As rotas CRUD de atletas, campeonatos, partidas e notícias e o módulo de upload já existem no backend; as interfaces correspondentes ainda precisam ser concluídas.
 
 ## 5. Modelagem do banco de dados
 
@@ -173,7 +173,7 @@ psql -U postgres -d agon_hub -f database/schema.sql
 psql -U postgres -d agon_hub -f database/seed.sql
 ```
 
-> **Cuidado com o schema.sql:** a versão atual contém comandos `DROP TABLE ... CASCADE`. Executá-lo em um banco existente apaga as tabelas e os dados nelas contidos. Use-o somente para a instalação inicial ou em um banco de teste que possa ser recriado. Faça backup antes de qualquer reinicialização. Não execute esse script em um banco com dados que deseja preservar.
+> **Segurança do banco:** o `schema.sql` usa `CREATE TABLE IF NOT EXISTS` e não apaga tabelas existentes. Ele cria tabelas ausentes, mas não altera automaticamente colunas ou restrições de tabelas já criadas; mudanças estruturais futuras devem ser feitas por migrações SQL específicas. O `seed.sql` insere dados demonstrativos e deve ser executado uma única vez em cada banco novo.
 
 ### 6.3. Configurar o backend
 
@@ -267,19 +267,14 @@ Visitantes podem consultar a lista de equipes e abrir o detalhe de cada equipe. 
 
 As estruturas das tabelas já existem no banco, mas a presença de uma tabela não significa que a funcionalidade esteja pronta no sistema. As próximas entregas são:
 
-- CRUD de atletas.
-- Gerenciamento dos vínculos entre atletas e equipes.
-- CRUD de campeonatos.
-- Gerenciamento das equipes inscritas em campeonatos.
-- CRUD de partidas e resultados.
-- CRUD de notícias.
-- Upload de logos das equipes e imagens dos atletas, com validação de formato e tamanho.
-- Interfaces administrativas e consultas públicas para esses recursos.
-- Testes de integração e revisão final.
+- Interfaces administrativas e públicas para atletas, campeonatos, partidas e notícias.
+- Gerenciamento visual dos vínculos entre atletas/equipes e inscrições em campeonatos.
+- Interface para envio de logos e fotos usando os endpoints de upload já disponíveis.
+- Execução dos testes de integração e revisão final.
 
 ## 9. Testes
 
-Os testes automatizados existentes usam o módulo nativo `node:test` do Node.js. Parte deles é de unidade e não depende do banco; os testes de integração fazem requisições HTTP à API e precisam de PostgreSQL e servidor ativos.
+Os testes automatizados usam o módulo nativo `node:test` do Node.js. Existem testes de autenticação, equipes e um conjunto de integração para atletas, campeonatos, partidas, notícias e uploads. Os testes de integração fazem requisições HTTP à API e precisam de PostgreSQL e servidor ativos. O GitHub Actions possui um workflow que prepara PostgreSQL temporário e executa os testes e o build.
 
 Dentro da pasta `backend`:
 
