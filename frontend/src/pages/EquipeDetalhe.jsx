@@ -82,7 +82,7 @@ export default function EquipeDetalhe() {
           <div><h2>Elenco</h2><p className="pequeno">{atletas.length} integrante(s) cadastrado(s)</p></div>
         </div>
         {atletas.length === 0 ? (
-          <p className="aviso">Elenco ainda não cadastrado para esta equipe.</p>
+          <p className="aviso">Nenhum perfil individual está público no momento. O elenco só aparece aqui após a autorização de publicação ser confirmada e registrada.</p>
         ) : (
           <div className="grade elenco-grade">
             {atletas.map((atleta) => (

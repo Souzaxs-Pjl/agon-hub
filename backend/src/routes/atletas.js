@@ -10,12 +10,13 @@ const { limparImagemSeNaoUtilizada } = require('../arquivos');
 const router = express.Router();
 
 async function buscarAtleta(id, incluirUsuario = false) {
-  const camposPrivados = incluirUsuario ? ', a.usuario_id' : '';
+  const camposPrivados = incluirUsuario ? ', a.usuario_id, a.perfil_publico' : '';
+  const filtroPublico = incluirUsuario ? '' : 'AND a.perfil_publico = TRUE';
   const resultado = await db.query(
     `SELECT a.id, a.nome, a.apelido, a.bio, a.foto_url,
             a.instagram_url, a.titulos, a.geracao, a.divisao${camposPrivados}
      FROM atletas a
-     WHERE a.id = $1 AND a.demonstrativo = FALSE`,
+     WHERE a.id = $1 AND a.demonstrativo = FALSE ${filtroPublico}`,
     [id]
   );
   if (resultado.rows.length === 0) return null;
@@ -37,6 +38,25 @@ router.get('/admin/:id', autenticar, exigirAdmin, async (req, res) => {
   const atleta = await buscarAtleta(id, true);
   if (!atleta) return res.status(404).json({ erro: 'Atleta não encontrado.' });
   res.json(atleta);
+});
+
+router.get('/admin', autenticar, exigirAdmin, async (req, res) => {
+  const { rows } = await db.query(
+    `SELECT a.id, a.nome, a.apelido, a.bio, a.foto_url,
+            a.instagram_url, a.titulos, a.geracao, a.divisao, a.perfil_publico,
+            COALESCE(
+              json_agg(json_build_object('id', e.id, 'nome', e.nome, 'sigla', e.sigla, 'funcao', ea.funcao)
+                ORDER BY e.nome) FILTER (WHERE e.id IS NOT NULL),
+              '[]'::json
+            ) AS equipes
+     FROM atletas a
+     LEFT JOIN equipe_atletas ea ON ea.atleta_id = a.id
+     LEFT JOIN equipes e ON e.id = ea.equipe_id AND e.demonstrativo = FALSE
+     WHERE a.demonstrativo = FALSE AND a.perfil_publico = TRUE
+     GROUP BY a.id
+     ORDER BY a.nome`
+  );
+  res.json(rows);
 });
 
 router.get('/', async (req, res) => {
@@ -77,10 +97,10 @@ router.post('/', autenticar, exigirAdmin, async (req, res) => {
   if (erros.length) return res.status(400).json({ erro: 'Dados inválidos.', detalhes: erros });
   const { rows } = await db.query(
     `INSERT INTO atletas
-       (nome, apelido, bio, foto_url, usuario_id, instagram_url, titulos, geracao, divisao)
-     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING id`,
+       (nome, apelido, bio, foto_url, usuario_id, instagram_url, titulos, geracao, divisao, perfil_publico)
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING id`,
     [dados.nome, dados.apelido, dados.bio, dados.foto_url, dados.usuario_id,
-      dados.instagram_url, dados.titulos, dados.geracao, dados.divisao]
+      dados.instagram_url, dados.titulos, dados.geracao, dados.divisao, dados.perfil_publico]
   );
   res.status(201).json(await buscarAtleta(rows[0].id, true));
 });
@@ -97,10 +117,10 @@ router.put('/:id', autenticar, exigirAdmin, async (req, res) => {
   const resultado = await db.query(
     `UPDATE atletas
      SET nome = $1, apelido = $2, bio = $3, foto_url = $4, usuario_id = $5,
-         instagram_url = $6, titulos = $7, geracao = $8, divisao = $9
-     WHERE id = $10 RETURNING id`,
+         instagram_url = $6, titulos = $7, geracao = $8, divisao = $9, perfil_publico = $10
+     WHERE id = $11 RETURNING id`,
     [dados.nome, dados.apelido, dados.bio, dados.foto_url, dados.usuario_id,
-      dados.instagram_url, dados.titulos, dados.geracao, dados.divisao, id]
+      dados.instagram_url, dados.titulos, dados.geracao, dados.divisao, dados.perfil_publico, id]
   );
   if (!resultado.rowCount) return res.status(404).json({ erro: 'Atleta não encontrado.' });
 

@@ -30,6 +30,7 @@ const CONFIGS = {
       { nome: 'instagram_url', rotulo: 'Instagram (URL completa)' },
       { nome: 'titulos', rotulo: 'Títulos e conquistas (um por linha)', tipo: 'textarea' },
       { nome: 'geracao', rotulo: 'Geração (quando informada na fonte)' },
+      { nome: 'perfil_publico', rotulo: 'Perfil público autorizado (confirmar consentimento)', tipo: 'checkbox' },
       { nome: 'foto_url', rotulo: 'Foto atual', tipo: 'hidden' },
       { nome: 'usuario_id', rotulo: 'Conta vinculada (opcional)', tipo: 'select', fonte: 'usuarios', vazio: 'Sem conta vinculada' },
     ],
@@ -136,7 +137,7 @@ export default function AdminRecursos() {
       setCarregando(true);
       try {
         const [lista, ...listasFontes] = await Promise.all([
-          api(config.endpoint),
+          (recurso === 'atletas' ? api('/atletas/admin') : api(config.endpoint)),
           ...(config.fontes || []).map((fonte) => api(`/${fonte}`)),
         ]);
         setRegistros(lista);
@@ -239,7 +240,7 @@ export default function AdminRecursos() {
         ? `/atletas/admin/${id}`
         : `${config.endpoint}/${id}`;
       const [lista, detalhe] = await Promise.all([
-        api(config.endpoint),
+        (recurso === 'atletas' ? api('/atletas/admin') : api(config.endpoint)),
         api(caminhoDetalhe),
       ]);
       setRegistros(lista);
