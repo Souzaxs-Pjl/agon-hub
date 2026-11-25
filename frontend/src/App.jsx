@@ -26,7 +26,7 @@ export default function App() {
       <Navbar />
       {import.meta.env.PROD && (
         <p className="nota" role="status">
-          Ambiente demonstrativo de apresentação: os perfis de atletas são fictícios e as operações de cadastro, edição e exclusão estão desativadas. Os registros das equipes são consultados na API oficial.
+          Ambiente demonstrativo: atletas fictícios. Login, cadastro e edição do próprio perfil estão disponíveis; alterações de dados esportivos e publicações administrativas ficam desativadas. Os registros das equipes são consultados na API principal.
         </p>
       )}
       <main className="conteudo">
