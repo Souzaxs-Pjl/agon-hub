@@ -7,6 +7,9 @@ export default function Comunidade() {
   const { usuario } = useAuth();
   const [feed, setFeed] = useState([]);
   const [texto, setTexto] = useState('');
+  const [opcoesAutoria, setOpcoesAutoria] = useState({ atleta: null, equipes: [] });
+  const [tipoAutor, setTipoAutor] = useState('usuario');
+  const [equipeAutor, setEquipeAutor] = useState('');
   const [erro, setErro] = useState('');
   const [carregando, setCarregando] = useState(true);
   const [comentarios, setComentarios] = useState({});
@@ -19,11 +22,19 @@ export default function Comunidade() {
   }, []);
   useEffect(() => { carregar(); }, [carregar]);
 
+  useEffect(() => {
+    if (!usuario) { setOpcoesAutoria({ atleta: null, equipes: [] }); setTipoAutor('usuario'); return; }
+    api('/comunidade/opcoes-autoria').then(setOpcoesAutoria).catch(e => setErro(e.message));
+  }, [usuario]);
+
   async function publicar(e) {
     e.preventDefault(); setErro('');
     if (!usuario) { setErro('Entre na sua conta para publicar.'); return; }
     try {
-      await api('/comunidade', { metodo: 'POST', corpo: { texto, tipo_autor: 'usuario' } });
+      const corpo = { texto, tipo_autor: tipoAutor };
+      if (tipoAutor === 'atleta') corpo.atleta_id = opcoesAutoria.atleta?.id;
+      if (tipoAutor === 'equipe') corpo.equipe_id = Number(equipeAutor);
+      await api('/comunidade', { metodo: 'POST', corpo });
       setTexto(''); await carregar();
     } catch (e) { setErro(e.message); }
   }
@@ -59,9 +70,21 @@ export default function Comunidade() {
     </div>
     {erro && <p className="aviso" role="alert">{erro}</p>}
     <form className="cartao" onSubmit={publicar}>
+      <label htmlFor="tipo-autor"><strong>Publicar como</strong></label>
+      <select id="tipo-autor" value={tipoAutor} onChange={e => setTipoAutor(e.target.value)} disabled={!usuario}>
+        <option value="usuario">Meu perfil</option>
+        {opcoesAutoria.atleta && <option value="atleta">Atleta: {opcoesAutoria.atleta.apelido || opcoesAutoria.atleta.nome}</option>}
+        {opcoesAutoria.equipes.map(eq => )}
+      </select>
+      {tipoAutor === 'equipe' && <label htmlFor="equipe-autor">Equipe
+        <select id="equipe-autor" value={equipeAutor} onChange={e => setEquipeAutor(e.target.value)} required>
+          <option value="">Selecione a equipe</option>
+          {opcoesAutoria.equipes.map(eq => <option key={eq.id} value={eq.id}>{eq.nome} ({eq.sigla})</option>)}
+        </select>
+      </label>}
       <label htmlFor="texto-publicacao"><strong>O que está acontecendo?</strong></label>
       <textarea id="texto-publicacao" value={texto} onChange={e => setTexto(e.target.value)} maxLength={2000} rows={4} placeholder={usuario ? 'Compartilhe com a comunidade...' : 'Entre para publicar no feed.'} disabled={!usuario} />
-      <div className="acoes"><small>{texto.length}/2000</small><button className="botao-primario" disabled={!usuario || !texto.trim()}>Publicar</button></div>
+      <div className="acoes"><small>{texto.length}/2000</small><button className="botao-primario" disabled={!usuario || !texto.trim() || (tipoAutor === 'equipe' && !equipeAutor)}>Publicar</button></div>
       {!usuario && <p className="pequeno"><Link to="/login">Entrar</Link> ou <Link to="/cadastro">criar conta</Link> para participar.</p>}
     </form>
     {carregando ? <p>Carregando feed...</p> : feed.length === 0 ? <p className="aviso">Ainda não há publicações. Seja o primeiro a participar.</p> :
