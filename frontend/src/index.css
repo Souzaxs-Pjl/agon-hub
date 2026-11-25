@@ -277,3 +277,134 @@ textarea { resize: vertical; }
   .atleta-foto-grande { width: 104px; height: 104px; }
   .equipe-capa { align-items: flex-start; }
 }
+
+
+/* Estrutura global: mantém o rodapé no fim da página mesmo em telas curtas. */
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+.conteudo {
+  flex: 1 0 auto;
+  width: 100%;
+}
+
+/* Marca AGON: símbolo geométrico próprio e wordmark sem bloco tipográfico confuso. */
+.marca {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.62rem;
+  line-height: 1;
+}
+.marca-simbolo {
+  display: inline-flex;
+  width: 2.2rem;
+  height: 2.2rem;
+  align-items: center;
+  justify-content: center;
+  color: var(--verde-lima);
+  background: rgba(199, 244, 100, 0.08);
+  border: 1px solid rgba(199, 244, 100, 0.42);
+  border-radius: 8px;
+}
+.marca-simbolo svg { width: 1.65rem; height: 1.65rem; }
+.marca-simbolo path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.marca-wordmark {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.38rem;
+}
+.marca .marca-nome {
+  color: var(--branco-gelo);
+  font-size: 1.18rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+}
+.marca .marca-hub {
+  color: var(--verde-lima);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.22em;
+}
+.sessao-status {
+  padding: 0.2rem 0.48rem;
+  border: 1px solid rgba(199, 244, 100, 0.42);
+  border-radius: 999px;
+  color: var(--verde-lima);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* Rodapé compartilhado por todas as páginas. */
+.rodape {
+  flex: 0 0 auto;
+  margin-top: 2rem;
+  padding: 2rem max(1rem, calc((100% - 1200px) / 2));
+  background: var(--preto);
+  border-top: 1px solid var(--borda);
+}
+.rodape-conteudo {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 2rem;
+}
+.rodape-identidade { max-width: 390px; }
+.rodape-marca {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: var(--branco-gelo);
+  font-size: 1.12rem;
+  font-weight: 850;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+}
+.rodape-marca strong { color: var(--verde-lima); font-size: 0.72rem; letter-spacing: 0.2em; }
+.rodape-simbolo {
+  display: inline-flex;
+  width: 2rem;
+  height: 2rem;
+  align-items: center;
+  justify-content: center;
+  color: var(--preto);
+  background: var(--verde-lima);
+  border-radius: 7px;
+  font-weight: 950;
+}
+.rodape-identidade p { margin: 0.8rem 0 0.2rem; color: var(--branco-gelo); font-weight: 650; }
+.rodape-descricao { color: var(--cinza); font-size: 0.88rem; }
+.rodape-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.7rem 1.2rem;
+  max-width: 560px;
+}
+.rodape-links a { color: var(--cinza-claro); font-size: 0.9rem; text-decoration: none; }
+.rodape-links a:hover { color: var(--verde-lima); }
+.rodape-base {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1.7rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--borda);
+  color: var(--cinza);
+  font-size: 0.8rem;
+}
+@media (max-width: 700px) {
+  .rodape-conteudo { flex-direction: column; gap: 1.25rem; }
+  .rodape-links { justify-content: flex-start; }
+  .rodape-base { flex-direction: column; gap: 0.25rem; }
+  .sessao-status { display: none; }
+}
