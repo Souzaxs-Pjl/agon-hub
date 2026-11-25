@@ -21,7 +21,7 @@ export default function Cadastro() {
     setEnviando(true);
     try {
       await cadastrar(nome, email, senha);
-      navigate('/');
+      navigate('/perfil');
     } catch (e) {
       // Se o backend devolveu uma lista de problemas, mostra todos.
       setErro(e.detalhes ? e.detalhes.join(' ') : e.message);
