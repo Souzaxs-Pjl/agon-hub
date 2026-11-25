@@ -3,17 +3,20 @@
 // Não há campo para escolher papel: o backend sempre cria 'usuario'.
 // =====================================================================
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { useAuth } from '../AuthContext.jsx';
 
 export default function Cadastro() {
-  const { cadastrar } = useAuth();
+  const { cadastrar, usuario, carregando } = useAuth();
   const navigate = useNavigate();
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [erro, setErro] = useState('');
   const [enviando, setEnviando] = useState(false);
+
+  if (carregando) return <p className="aviso">Verificando sua sessão...</p>;
+  if (usuario) return <Navigate to={usuario.papel === 'admin' ? '/admin' : '/perfil'} replace />;
 
   async function handleSubmit(evento) {
     evento.preventDefault();
