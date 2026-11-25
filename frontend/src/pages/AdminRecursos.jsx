@@ -217,6 +217,7 @@ export default function AdminRecursos() {
       ]);
       setRegistros(lista);
       setSelecionado(detalhe);
+      setForm(prepararRegistro(config, detalhe));
       setEditandoId(id);
       setArquivo(null);
       setMensagem({ tipo: 'ok', texto: 'Registro salvo no banco de dados.' });
