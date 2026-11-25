@@ -10,9 +10,9 @@ Este documento separa os testes já presentes no repositório dos testes que ain
 | Validação de modalidades/equipes | Testes unitários em `backend/tests` | Não executados nesta sessão |
 | CRUD de equipes | `backend/tests/equipes.test.js` | Não executados nesta sessão |
 | CRUD de modalidades | Verificar cobertura automatizada | Não executados nesta sessão |
-| Atletas, campeonatos, partidas e notícias | A implementar junto com as rotas | Pendente |
-| Uploads | A implementar | Pendente |
-| Build do frontend | `npm run build` | Pendente |
+| Atletas, campeonatos, partidas, notícias e uploads | `backend/tests/recursos.test.js` | Implementados; execução pendente de confirmação |
+| Telas públicas e administrativas | Testes manuais de navegador | Pendente |
+| Build do frontend | `npm run build` e workflow CI | Implementado no workflow; resultado precisa ser conferido |
 
 ## 2. Preparação do ambiente de teste
 
@@ -131,8 +131,35 @@ Este documento separa os testes já presentes no repositório dos testes que ain
 | FE-06 | Atualizar a página após login | Sessão recuperada via `/api/auth/me` |
 | FE-07 | Abrir em viewport móvel | Layout utilizável sem rolagem horizontal indevida |
 | FE-08 | API indisponível | Interface informa falha de comunicação sem afirmar causa não confirmada |
+| FE-09 | Criar/editar/excluir modalidade, atleta, campeonato, partida e notícia | A operação aparece na lista após resposta de sucesso |
+| FE-10 | Criar/remover vínculo atleta-equipe | A função e a equipe aparecem no detalhe do atleta e da equipe |
+| FE-11 | Inscrever/remover equipe em campeonato | A lista de equipes inscritas é atualizada |
+| FE-12 | Enviar logo e foto | Upload aceito e imagem exibida após recarregar o registro |
+| FE-13 | Abrir as páginas públicas dos módulos | A página carrega registros vindos da API |
 
 ## 4. Testes automatizados e execução
+
+### Arquivos de teste existentes
+
+- `backend/tests/auth.test.js`: saúde, cadastro, login, token JWT, sessão e autorização.
+- `backend/tests/equipes.test.js`: leitura pública e CRUD de equipes, incluindo permissões e validação.
+- `backend/tests/recursos.test.js`: CRUD e relacionamentos de atletas/campeonatos, partidas, notícias e upload.
+- Outros testes unitários em `backend/tests` cobrem funções de validação.
+
+### Execução remota pelo GitHub Actions
+
+O arquivo `.github/workflows/ci.yml` prepara um serviço PostgreSQL temporário, instala dependências, aplica `schema.sql` e `seed.sql`, cria um administrador de teste, inicia a API, executa `npm test` e gera o build do frontend.
+
+Para conferir o resultado:
+1. Abra o repositório no GitHub.
+2. Acesse a aba **Actions**.
+3. Abra o workflow **Validar AGON Hub**.
+4. Confira os jobs `backend` e `frontend`.
+5. Se houver falha, abra o job e examine a etapa em vermelho e seus logs.
+
+Um workflow criado no repositório não significa, por si só, que foi executado ou aprovado. Registre o resultado real nesta documentação.
+
+
 
 ### Backend
 
