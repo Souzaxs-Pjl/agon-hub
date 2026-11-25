@@ -74,7 +74,7 @@ export default function Comunidade() {
       <select id="tipo-autor" value={tipoAutor} onChange={e => setTipoAutor(e.target.value)} disabled={!usuario}>
         <option value="usuario">Meu perfil</option>
         {opcoesAutoria.atleta && <option value="atleta">Atleta: {opcoesAutoria.atleta.apelido || opcoesAutoria.atleta.nome}</option>}
-        {opcoesAutoria.equipes.map(eq => )}
+        {opcoesAutoria.equipes.length > 0 && <option value="equipe">Equipe</option>}
       </select>
       {tipoAutor === 'equipe' && <label htmlFor="equipe-autor">Equipe
         <select id="equipe-autor" value={equipeAutor} onChange={e => setEquipeAutor(e.target.value)} required>
