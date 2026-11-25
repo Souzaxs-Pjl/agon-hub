@@ -19,7 +19,25 @@ if (segredo.length < 32 || segredo.startsWith('troque-')) {
 }
 
 const app = express();
-app.use(cors({ origin: process.env.FRONTEND_URL || 'http://localhost:5173' }));
+const origensPermitidas = new Set([
+  'http://localhost:5173',
+  'https://agon-hub-frontend.vercel.app',
+  process.env.FRONTEND_URL,
+  ...(process.env.FRONTEND_URLS || '').split(','),
+].map((origem) => {
+  try { return new URL((origem || '').trim()).origin; } catch { return ''; }
+}).filter(Boolean));
+
+app.use(cors({
+  origin: (origem, callback) => {
+    const origemNormalizada = (() => {
+      try { return new URL(origem).origin; } catch { return ''; }
+    })();
+    if (!origem || origensPermitidas.has(origemNormalizada)) return callback(null, true);
+    console.warn('CORS rejeitou a origem:', origem);
+    return callback(new Error('Origem não permitida pelo CORS.'));
+  },
+}));
 app.use(express.json({ limit: '1mb' }));
 
 // Imagens enviadas por administradores ficam disponíveis em /uploads.
@@ -42,6 +60,7 @@ app.use('/api/atletas', require('./routes/atletas'));
 app.use('/api/campeonatos', require('./routes/campeonatos'));
 app.use('/api/partidas', require('./routes/partidas'));
 app.use('/api/noticias', require('./routes/noticias'));
+app.use('/api/comunidade', require('./routes/comunidade'));
 app.use('/api/uploads', require('./routes/uploads'));
 
 app.use(rotaNaoEncontrada);
