@@ -5,11 +5,13 @@
 -- COMO USAR (depois de rodar o schema.sql):
 --   psql -U postgres -d agon_hub -f database/seed.sql
 --
--- ATENÇÃO: TODOS os dados deste arquivo são DEMONSTRATIVOS (fictícios).
+-- ATENÇÃO: execute este arquivo APENAS UMA VEZ em cada banco novo.
+-- Ele insere IDs fixos e dados demonstrativos; não é um script de atualização.
+-- TODOS os dados deste arquivo são DEMONSTRATIVOS (fictícios).
 -- Equipes, atletas, placares e notícias foram inventados só para testar
 -- o sistema. As partidas estão marcadas com demonstrativo = TRUE.
--- Os campos de imagem (logo_url, foto_url, imagem_url) ficam NULL porque
--- as imagens reais entram depois, pelo upload do sistema.
+-- Os campos de imagem (logo_url, foto_url, imagem_url) ficam NULL no seed.
+-- Logos e fotos podem ser enviados posteriormente pela API de upload.
 --
 -- USUÁRIOS DE TESTE (contas fictícias; as senhas valem só para desenvolvimento):
 --   maria@agonhub.example   senha: Senha@123   (usuário comum)
