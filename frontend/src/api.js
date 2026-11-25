@@ -1,20 +1,14 @@
 // =====================================================================
-// api.js - único lugar que faz chamadas HTTP para o backend.
-//
-// Todas as páginas usam a função api(). Assim, o token JWT é enviado
-// sempre do mesmo jeito e os erros são tratados num lugar só.
+// api.js - centraliza as chamadas HTTP e o envio de token JWT.
+// Também aceita FormData para upload sem definir Content-Type manualmente.
 // =====================================================================
-
-// Chave usada para guardar o token no navegador (localStorage).
-// O localStorage sobrevive a recarregar a página, então o usuário não
-// precisa logar de novo a cada F5.
 const CHAVE_TOKEN = 'agon_token';
 
 export function getToken() {
   try {
     return localStorage.getItem(CHAVE_TOKEN);
   } catch {
-    return null; // navegador bloqueou o armazenamento (ex.: aba privada)
+    return null;
   }
 }
 
@@ -23,20 +17,17 @@ export function setToken(token) {
     if (token) localStorage.setItem(CHAVE_TOKEN, token);
     else localStorage.removeItem(CHAVE_TOKEN);
   } catch {
-    // sem armazenamento: o login vale só nesta aba até recarregar
+    // Sem armazenamento persistente, a sessão vale apenas até recarregar.
   }
 }
 
-// Faz uma chamada à API.
-//   api('/equipes')                       -> GET
-//   api('/equipes', { metodo: 'POST', corpo: {...} })
-// Se a resposta não for de sucesso, lança um Error com:
-//   erro.message  -> texto para mostrar ao usuário
-//   erro.status   -> código HTTP (401, 403, 404, 409...)
-//   erro.detalhes -> lista de problemas de validação (quando houver)
 export async function api(caminho, { metodo = 'GET', corpo, comToken = true } = {}) {
   const cabecalhos = {};
-  if (corpo !== undefined) cabecalhos['Content-Type'] = 'application/json';
+  const ehFormData = typeof FormData !== 'undefined' && corpo instanceof FormData;
+
+  if (corpo !== undefined && !ehFormData) {
+    cabecalhos['Content-Type'] = 'application/json';
+  }
 
   const token = getToken();
   if (comToken && token) cabecalhos.Authorization = `Bearer ${token}`;
@@ -46,17 +37,17 @@ export async function api(caminho, { metodo = 'GET', corpo, comToken = true } = 
     resposta = await fetch(`/api${caminho}`, {
       method: metodo,
       headers: cabecalhos,
-      body: corpo !== undefined ? JSON.stringify(corpo) : undefined,
+      body: corpo === undefined ? undefined : (ehFormData ? corpo : JSON.stringify(corpo)),
     });
   } catch {
-    throw new Error('Não foi possível falar com o servidor. Verifique se o backend está rodando.');
+    throw new Error('Não foi possível estabelecer comunicação com a API. Verifique a conexão e tente novamente.');
   }
 
   let dados = null;
   try {
     dados = await resposta.json();
   } catch {
-    dados = null; // resposta sem JSON (ex.: erro do servidor)
+    dados = null;
   }
 
   if (!resposta.ok) {
