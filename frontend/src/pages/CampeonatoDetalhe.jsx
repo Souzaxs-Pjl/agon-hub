@@ -156,6 +156,11 @@ export default function CampeonatoDetalhe() {
         {campeonato.modalidade_nome && <span className="etiqueta">{campeonato.modalidade_nome}</span>}
         {campeonato.status && <span className="etiqueta">{campeonato.status}</span>}
       </p>
+      {campeonato.campeao_equipe_nome ? (
+        <p className="campeao-destaque">Campeão desta edição: <strong>{campeonato.campeao_equipe_nome}</strong></p>
+      ) : (
+        <p className="pequeno">Campeão ainda não definido ou não cadastrado.</p>
+      )}
 
       {(campeonato.data_inicio || campeonato.data_fim) && (
         <p className="texto">
@@ -180,7 +185,7 @@ export default function CampeonatoDetalhe() {
           {campeonato.equipes.map((equipe) => (
             <Link to={'/equipes/' + equipe.id} className="cartao" key={equipe.id}>
               <h3>{equipe.nome}</h3>
-              {equipe.sigla && <p className="etiqueta">{equipe.sigla}</p>}
+              {equipe.sigla && !String(equipe.sigla).startsWith('EQ') && <p className="etiqueta">{equipe.sigla}</p>}
               {equipe.tipo && <p className="pequeno">{equipe.tipo === 'real' ? 'Real' : 'Fictícia'}</p>}
               <span className="texto-link">Ver equipe →</span>
             </Link>
