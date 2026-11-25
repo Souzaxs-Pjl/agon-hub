@@ -1,203 +1,234 @@
 # AGON Hub
 
-> **"Mais que competição, um universo."**
+> **Mais que competição, um universo.**
 
-O **AGON Hub** é uma plataforma web que funciona como um ecossistema digital esportivo e de e-sports do Universo AGON. Ela reúne, em um único site, informações sobre equipes, atletas, modalidades, campeonatos, partidas, resultados e notícias.
+O **AGON Hub** é uma aplicação web acadêmica que reúne informações de equipes, atletas, modalidades, campeonatos, partidas e conteúdos editoriais de esportes tradicionais e e-sports em um mesmo ambiente.
 
-> ⚠️ **Dados demonstrativos:** todas as equipes, atletas, placares e notícias que vêm no banco de dados (`database/seed.sql`) são **fictícios**, criados apenas para testar o sistema. As partidas de exemplo estão marcadas com `demonstrativo = TRUE`.
+O projeto foi desenvolvido individualmente como parte do curso Técnico em Informática para Internet. Esta documentação descreve o que está implementado no repositório e separa essas funcionalidades das próximas etapas.
 
-## Objetivo
+> **Atenção — dados demonstrativos:** os registros inseridos por `database/seed.sql` são fictícios e servem para desenvolvimento e demonstração. As partidas do seed usam `demonstrativo = TRUE`. Eles não representam resultados oficiais.
 
-Desenvolver uma aplicação web funcional, com **frontend, backend e banco de dados integrados**, permitindo:
+## 1. Situação atual do projeto
 
-- consultar equipes, atletas, modalidades, campeonatos, partidas e notícias;
-- cadastrar-se e fazer login (autenticação com JWT);
-- gerenciar o conteúdo por meio de uma área administrativa (apenas administradores).
-
-## Tecnologias
-
-| Camada | Tecnologia |
+| Área | Situação no código |
 |---|---|
-| Banco de dados | PostgreSQL |
-| Backend | Node.js + Express (API REST) |
-| Autenticação | JWT + bcrypt |
-| Upload de arquivos | multer |
-| Frontend | React (Vite) + React Router + Tailwind CSS |
-| Versionamento | Git e GitHub |
+| Banco PostgreSQL | Estrutura inicial com 9 tabelas e dados demonstrativos |
+| API e conexão com o banco | Implementadas |
+| Cadastro, login e autenticação JWT | Implementados |
+| Permissões de administrador | Implementadas no backend |
+| CRUD de modalidades | Implementado |
+| CRUD de equipes | Implementado |
+| Consulta pública de equipes e detalhes | Implementada |
+| Painel administrativo de equipes | Implementado |
+| CRUD de atletas | Pendente |
+| Vínculo de atletas com equipes pela interface/API | Pendente |
+| CRUD de campeonatos | Pendente |
+| Inscrição de equipes em campeonatos | Pendente |
+| CRUD de partidas | Pendente |
+| CRUD de notícias | Pendente |
+| Upload de arquivos de imagem | Pendente; atualmente são aceitas URLs de imagem |
+| Testes ponta a ponta | Ainda precisam ser executados no ambiente com PostgreSQL |
 
-## Escopo da primeira versão (MVP)
+Esta tabela é a referência para não apresentar como concluído algo que ainda está em desenvolvimento.
 
-**Incluído**
+## 2. Objetivo
 
-- Equipes, atletas, campeonatos, partidas e notícias (CRUD completo).
-- Modalidades esportivas e jogos eletrônicos (diferenciados pelo campo `tipo`).
-- Cadastro, login e dois papéis: **administrador** e **usuário comum**.
-- Upload de arquivos (logo da equipe e foto do atleta).
-- Rotas de consulta públicas; criar, editar e excluir apenas para administradores.
+Construir uma plataforma web integrada que permita consultar informações esportivas e administrar os cadastros principais do universo AGON. O desenvolvimento prioriza uma implementação simples, modular e explicável, adequada ao escopo de um projeto acadêmico individual.
 
-**Fora do escopo desta versão** (previsto para o futuro)
+### Objetivos específicos
 
-- Fases, grupos e chaveamento de mata-mata automáticos.
-- Classificação gerada automaticamente.
-- Categorias, contas de jogos eletrônicos, regulamentos e controle de inscrições.
-- Histórico de ações administrativas.
+- Integrar frontend, backend e banco de dados relacional.
+- Implementar cadastro e login com autenticação JWT.
+- Diferenciar usuários comuns e administradores.
+- Disponibilizar operações de consulta para visitantes.
+- Restringir operações administrativas a usuários autorizados.
+- Modelar relações 1:N e N:N no PostgreSQL.
+- Organizar a API REST e documentar seus endpoints.
+- Validar os fluxos principais com testes e demonstração prática.
 
-## Estrutura do projeto
+## 3. Tecnologias utilizadas
 
-```
+| Camada | Tecnologia | Uso |
+|---|---|---|
+| Frontend | React 18 | Construção da interface |
+| Ferramenta de desenvolvimento frontend | Vite 5 | Servidor local e build |
+| Navegação | React Router 6 | Rotas entre páginas |
+| Estilização | CSS próprio | Layout e componentes visuais |
+| Backend | Node.js + Express 5 | API REST |
+| Banco de dados | PostgreSQL | Persistência relacional |
+| Acesso ao banco | node-postgres (`pg`) | Consultas SQL parametrizadas |
+| Autenticação | JSON Web Token (`jsonwebtoken`) | Emissão e validação de tokens |
+| Hash de senhas | bcrypt | Armazenamento seguro de senhas |
+| Configuração | dotenv | Leitura de variáveis de ambiente |
+| Versionamento | Git e GitHub | Histórico e armazenamento do código |
+
+**Observação:** a versão atual utiliza CSS próprio. Tailwind CSS e Multer não fazem parte das dependências atualmente registradas. Upload de arquivos está previsto para uma etapa posterior.
+
+## 4. Estrutura do repositório
+
+```text
 agon-hub/
 ├── README.md
 ├── database/
-│   ├── schema.sql     # cria as tabelas
-│   └── seed.sql       # preenche todas as tabelas com dados de exemplo
-├── backend/           # API REST em Node.js + Express
-├── frontend/          # aplicação React (Vite + React Router)
-└── docs/              # documentação das rotas da API (docs/API.md)
+│   ├── schema.sql
+│   └── seed.sql
+├── backend/
+│   ├── scripts/
+│   │   └── criar-admin.js
+│   ├── src/
+│   │   ├── middlewares/
+│   │   ├── routes/
+│   │   ├── db.js
+│   │   ├── server.js
+│   │   └── validacao.js
+│   ├── tests/
+│   ├── .env.example
+│   └── package.json
+├── frontend/
+│   ├── src/
+│   │   ├── components/
+│   │   ├── pages/
+│   │   ├── App.jsx
+│   │   ├── AuthContext.jsx
+│   │   ├── api.js
+│   │   └── index.css
+│   ├── index.html
+│   ├── vite.config.js
+│   └── package.json
+└── docs/
+    ├── API.md
+    ├── APRESENTACAO.md
+    ├── FIGMA_BRIEF.md
+    ├── LOVABLE_PROMPTS.md
+    ├── PLANO_DE_TESTES.md
+    └── RELATORIO_ACADEMICO.md
 ```
 
-## Banco de dados
+A estrutura acima representa os principais arquivos já identificados e os documentos de apoio do projeto. Novos arquivos de rotas, telas, uploads e testes serão acrescentados conforme a implementação evoluir.
 
-### Tabelas
+## 5. Modelagem do banco de dados
 
-| Tabela | Descrição | Relação |
-|---|---|---|
-| `usuarios` | Contas de login, com papel `admin` ou `usuario` | |
-| `modalidades` | Esportes (`esporte`) e jogos eletrônicos (`esport`) | |
-| `equipes` | Equipes reais ou fictícias, com logo | N:1 com `modalidades` |
-| `atletas` | Pessoas atletas, com foto; conta de usuário é opcional | N:1 opcional com `usuarios` |
-| `equipe_atletas` | Atletas de cada equipe | **N:N** `equipes` ↔ `atletas` |
-| `campeonatos` | Edições de campeonatos | N:1 com `modalidades` |
-| `campeonato_equipes` | Equipes participantes de cada campeonato | **N:N** `campeonatos` ↔ `equipes` |
-| `partidas` | Partidas e placares | N:1 com `campeonatos` |
-| `noticias` | Notícias e conteúdos editoriais | N:1 com `usuarios` |
+A estrutura atual possui nove tabelas:
 
-### Como criar e preencher o banco
+| Tabela | Responsabilidade |
+|---|---|
+| `usuarios` | Contas que podem entrar na plataforma |
+| `modalidades` | Esportes e jogos eletrônicos |
+| `equipes` | Equipes vinculadas a uma modalidade |
+| `atletas` | Dados das pessoas atletas |
+| `equipe_atletas` | Associação N:N entre equipes e atletas, incluindo a função |
+| `campeonatos` | Edições de competições |
+| `campeonato_equipes` | Associação N:N entre campeonatos e equipes |
+| `partidas` | Jogos, datas, fases, placares e situação |
+| `noticias` | Conteúdos editoriais |
 
-**Pré-requisito:** PostgreSQL instalado, com o comando `psql` disponível no terminal.
+### Relacionamentos
 
-1. Clone o repositório e entre na pasta:
+- Uma modalidade pode estar associada a várias equipes (1:N).
+- Uma modalidade pode estar associada a vários campeonatos (1:N).
+- Uma equipe pode ter vários atletas e um atleta pode participar de mais de uma equipe (N:N), por meio de `equipe_atletas`.
+- Um campeonato pode ter várias equipes e uma equipe pode participar de vários campeonatos (N:N), por meio de `campeonato_equipes`.
+- Um campeonato pode ter várias partidas (1:N).
+- Uma conta de usuário pode estar associada a um cadastro de atleta; essa associação é opcional.
+- Um usuário pode ser autor de várias notícias.
 
-   ```bash
-   git clone https://github.com/Souzaxs-Pjl/agon-hub.git
-   cd agon-hub
-   ```
+A equipe possui uma modalidade principal obrigatória em `modalidade_id`. Os vínculos e as relações são controlados por chaves primárias, chaves estrangeiras, restrições `UNIQUE` e regras `CHECK`.
 
-2. Crie o banco de dados (será pedida a senha do usuário `postgres`):
-
-   ```bash
-   psql -U postgres -c "CREATE DATABASE agon_hub;"
-   ```
-
-3. Crie as tabelas:
-
-   ```bash
-   psql -U postgres -d agon_hub -f database/schema.sql
-   ```
-
-4. Preencha o banco com os dados de exemplo:
-
-   ```bash
-   psql -U postgres -d agon_hub -f database/seed.sql
-   ```
-
-Para **zerar o banco** e começar de novo, basta repetir os passos 3 e 4 (o `schema.sql` apaga e recria as tabelas).
-
-> Prefere interface gráfica? No **pgAdmin**, crie o banco `agon_hub`, abra a *Query Tool*, carregue o arquivo `schema.sql` e execute; depois faça o mesmo com o `seed.sql`.
-
-**Problema com acentos no Windows?** Antes de rodar os comandos, execute `set PGCLIENTENCODING=UTF8` (Prompt de Comando) ou `$env:PGCLIENTENCODING="UTF8"` (PowerShell).
-
-### Usuários de teste
-
-O seed traz três contas **fictícias** de usuário comum:
-
-| E-mail | Senha | Papel |
-|---|---|---|
-| `maria@agonhub.example` | `Senha@123` | Usuário comum |
-| `joao@agonhub.example` | `Senha@123` | Usuário comum |
-| `ana@agonhub.example` | `Senha@123` | Usuário comum |
-
-Essas senhas existem **apenas para desenvolvimento**. No banco ficam guardados somente os hashes bcrypt.
-
-O seed **não cria nenhum administrador**, para que não exista senha de admin escrita no repositório. A conta de administrador é criada com o seu próprio e-mail e senha, pelo comando `npm run criar-admin` (veja a seção Backend).
-
-## Backend
-
-API REST em Node.js + Express. A documentação de todas as rotas (método, caminho, acesso, parâmetros e exemplos de resposta) está em [`docs/API.md`](docs/API.md).
+## 6. Preparação do ambiente
 
 ### Pré-requisitos
 
-- **Node.js 18 ou mais novo** (confira com `node --version`).
-- **PostgreSQL** com o banco `agon_hub` já criado e preenchido (seção *Banco de dados*, acima).
+- Node.js 18 ou superior.
+- npm.
+- PostgreSQL instalado e em execução.
+- Git para clonar o repositório.
 
-### Como executar
-
-Todos os comandos abaixo são na pasta `backend`.
-
-1. Entre na pasta e instale as dependências:
-
-   ```bash
-   cd backend
-   npm install
-   ```
-
-2. Crie o arquivo de configuração `.env` a partir do exemplo:
-
-   ```bash
-   cp .env.example .env        # Windows (Prompt de Comando): copy .env.example .env
-   ```
-
-   Abra o `.env` e preencha:
-   - `DB_PASSWORD`: a senha do seu usuário do PostgreSQL;
-   - `JWT_SECRET`: um segredo longo e aleatório. Para gerar um:
-     ```bash
-     node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"
-     ```
-   - `ADMIN_EMAIL` e `ADMIN_SENHA`: o e-mail e a senha (mínimo 8 caracteres) que você quer para o administrador.
-
-   > O arquivo `.env` contém segredos e **não vai para o GitHub** (está no `.gitignore`).
-
-3. Crie a conta de administrador (usa o `ADMIN_EMAIL` e a `ADMIN_SENHA` do `.env`):
-
-   ```bash
-   npm run criar-admin
-   ```
-
-4. Inicie o servidor:
-
-   ```bash
-   npm run dev
-   ```
-
-   Deve aparecer `Conectado ao PostgreSQL.` e `API do AGON Hub rodando em http://localhost:3000`.
-
-5. Confira no navegador: <http://localhost:3000/api/saude> deve mostrar `{"status":"ok","banco":"ok"}`.
-
-### Testes
-
-Com o servidor rodando (passo 4), abra **outro terminal** na pasta `backend` e execute:
+Confira as versões:
 
 ```bash
-npm test
+node --version
+npm --version
+psql --version
 ```
 
-Os testes conferem cadastro, login, token JWT, a proteção das rotas de administrador e o CRUD de equipes (`tests/equipes.test.js`). Os testes de equipes criam uma equipe de teste e a apagam no fim. Os testes de administrador só rodam se o `ADMIN_EMAIL` e a `ADMIN_SENHA` estiverem no `.env` e o passo 3 tiver sido feito.
+### 6.1. Clonar o repositório
 
-### Problemas comuns
+```bash
+git clone https://github.com/Souzaxs-Pjl/agon-hub.git
+cd agon-hub
+```
 
-| Sintoma | O que fazer |
-|---|---|
-| `Não foi possível conectar ao PostgreSQL` | Confira se o PostgreSQL está ligado e se `DB_USER`, `DB_PASSWORD`, `DB_HOST`, `DB_PORT` e `DB_NAME` do `.env` estão certos. |
-| `defina um JWT_SECRET forte` | Gere e cole um segredo no `.env` (comando do passo 2). |
-| `npm install` falha ao instalar o `bcrypt` | Use uma versão LTS do Node.js (18, 20 ou 22) e tente de novo. |
-| `EADDRINUSE` (porta em uso) | Outra aplicação usa a porta 3000. Mude `PORT` no `.env`. |
+### 6.2. Criar o banco
 
-## Frontend
+Crie o banco vazio:
 
-Aplicação React criada com Vite, com React Router para as páginas. O frontend conversa com a API pelo endereço `/api`, que o Vite repassa para o backend (`vite.config.js`).
+```bash
+psql -U postgres -c "CREATE DATABASE agon_hub;"
+```
 
-### Como executar
+Execute os scripts na ordem:
 
-Com o **backend já rodando** (`npm run dev` na pasta `backend`), abra **outro terminal**:
+```bash
+psql -U postgres -d agon_hub -f database/schema.sql
+psql -U postgres -d agon_hub -f database/seed.sql
+```
+
+> **Cuidado com o schema.sql:** a versão atual contém comandos `DROP TABLE ... CASCADE`. Executá-lo em um banco existente apaga as tabelas e os dados nelas contidos. Use-o somente para a instalação inicial ou em um banco de teste que possa ser recriado. Faça backup antes de qualquer reinicialização. Não execute esse script em um banco com dados que deseja preservar.
+
+### 6.3. Configurar o backend
+
+```bash
+cd backend
+npm install
+cp .env.example .env
+```
+
+No Windows, a cópia pode ser feita com:
+
+```powershell
+Copy-Item .env.example .env
+```
+
+Edite `backend/.env` e configure os valores do PostgreSQL e do JWT:
+
+```env
+PORT=3000
+FRONTEND_URL=http://localhost:5173
+DB_HOST=localhost
+DB_PORT=5432
+DB_USER=postgres
+DB_PASSWORD=sua_senha_do_postgres
+DB_NAME=agon_hub
+JWT_SECRET=coloque_um_segredo_aleatorio_com_ao_menos_32_caracteres
+JWT_EXPIRES_IN=2h
+ADMIN_NOME=Administrador AGON
+ADMIN_EMAIL=seu_email
+ADMIN_SENHA=sua_senha
+```
+
+Gere um segredo aleatório para o JWT:
+
+```bash
+node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"
+```
+
+Crie a conta de administrador:
+
+```bash
+npm run criar-admin
+```
+
+Inicie a API:
+
+```bash
+npm run dev
+```
+
+A API deve ficar disponível em `http://localhost:3000`. Consulte `http://localhost:3000/api/saude` para verificar o servidor e a conexão com o banco.
+
+### 6.4. Configurar o frontend
+
+Em outro terminal:
 
 ```bash
 cd frontend
@@ -205,38 +236,84 @@ npm install
 npm run dev
 ```
 
-Abra <http://localhost:5173> no navegador.
+A aplicação fica disponível em `http://localhost:5173`. Durante o desenvolvimento, o Vite encaminha as requisições iniciadas por `/api` para o backend em `http://localhost:3000`.
 
-### Roteiro de demonstração
+## 7. Funcionalidades implementadas
 
-1. Abra a página inicial e clique em **Ver equipes**. A lista vem do banco de dados.
-2. Clique em uma equipe para ver o detalhe, com os atletas vinculados.
-3. Clique em **Entrar** e use o e-mail e a senha do administrador (definidos no `.env` com `npm run criar-admin`). Você é levado ao painel **Administração**.
-4. No painel, preencha o formulário **Nova equipe** e clique em **Cadastrar equipe**. A equipe aparece na tabela ao lado.
-5. Vá em **Equipes** no menu: a equipe nova aparece na lista pública.
-6. Confira no banco de dados que ela foi gravada:
-   ```bash
-   psql -U postgres -d agon_hub -c "SELECT id, nome, sigla, tipo FROM equipes ORDER BY id DESC LIMIT 3;"
-   ```
-7. Saia (botão **Sair**) e tente abrir <http://localhost:5173/admin>. Você verá a mensagem de que é preciso entrar.
-8. Entre com um usuário comum (por exemplo, `maria@agonhub.example` / `Senha@123`) e tente abrir `/admin`. Você verá a mensagem de acesso negado. Se tentar a API diretamente, o backend também recusa (403).
+### Acesso e segurança
 
-### O que está funcionando nesta versão
+- Cadastro público de conta comum.
+- Login com e-mail e senha.
+- Senha armazenada como hash bcrypt, não em texto puro.
+- Emissão e validação de token JWT.
+- Consulta do usuário autenticado em `GET /api/auth/me`.
+- Autorização administrativa no backend.
+- Cadastro público não permite escolher o papel de administrador.
+- O logout atual remove o token do armazenamento local do navegador e limpa o usuário do estado do React. Não existe endpoint de logout no backend nesta versão.
 
-- Cadastro, login, logout e recuperação da sessão com `/api/auth/me`.
-- Token guardado no navegador; se expirar, o sistema pede para entrar de novo.
-- Lista pública e detalhe de **equipes**.
-- Painel administrativo para **criar, editar e excluir equipes**.
-- Proteção da área administrativa tanto no frontend (mensagem) quanto no backend (403).
+### Modalidades
 
-### O que ainda não está pronto
+A API possui operações de consulta, criação, edição e exclusão. Os tipos aceitos no banco são `esporte` e `esport` (valor interno utilizado para jogos eletrônicos).
 
-- Páginas públicas de atletas, campeonatos, partidas e notícias (as rotas do backend ainda não foram feitas).
-- Upload de imagens: o logo é informado como URL.
-- Vínculos entre equipes e atletas, e inscrições de equipes em campeonatos, pelo painel.
-- Destaques de campeonatos e partidas na página inicial.
+### Equipes
 
-## Integrantes
+A API possui operações de consulta, criação, edição e exclusão. Cada equipe precisa estar vinculada a uma modalidade existente. O painel administrativo atual permite administrar equipes.
 
-<!-- Preencha com o nome do(s) autor(es) do projeto -->
-- (nome)
+### Consulta pública
+
+Visitantes podem consultar a lista de equipes e abrir o detalhe de cada equipe. A página de detalhe apresenta os atletas vinculados, com nome, apelido e função.
+
+## 8. Funcionalidades planejadas para conclusão do MVP
+
+As estruturas das tabelas já existem no banco, mas a presença de uma tabela não significa que a funcionalidade esteja pronta no sistema. As próximas entregas são:
+
+- CRUD de atletas.
+- Gerenciamento dos vínculos entre atletas e equipes.
+- CRUD de campeonatos.
+- Gerenciamento das equipes inscritas em campeonatos.
+- CRUD de partidas e resultados.
+- CRUD de notícias.
+- Upload de logos das equipes e imagens dos atletas, com validação de formato e tamanho.
+- Interfaces administrativas e consultas públicas para esses recursos.
+- Testes de integração e revisão final.
+
+## 9. Testes
+
+Os testes automatizados existentes usam o módulo nativo `node:test` do Node.js. Parte deles é de unidade e não depende do banco; os testes de integração fazem requisições HTTP à API e precisam de PostgreSQL e servidor ativos.
+
+Dentro da pasta `backend`:
+
+```bash
+npm test
+```
+
+Os testes administrativos precisam de uma conta criada com `npm run criar-admin`. Os testes de integração de equipes também criam e removem um registro temporário. Consulte `docs/PLANO_DE_TESTES.md` para o roteiro completo e para os casos planejados das novas funcionalidades.
+
+## 10. Segurança e cuidados
+
+- Não publique o arquivo `.env`.
+- Não use senhas reais nos dados de demonstração.
+- Não armazene senhas em texto puro.
+- Mantenha consultas SQL parametrizadas.
+- Proteja operações administrativas no backend; ocultar botões no frontend não substitui autorização.
+- Valide os dados recebidos pela API, mesmo que o frontend também faça validação.
+- Faça backup antes de scripts destrutivos no banco.
+- Identifique dados fictícios para não confundi-los com informações oficiais.
+
+## 11. Documentação complementar
+
+- [Documentação da API](docs/API.md)
+- [Plano de testes](docs/PLANO_DE_TESTES.md)
+- [Relatório acadêmico — estrutura](docs/RELATORIO_ACADEMICO.md)
+- [Roteiro de apresentação](docs/APRESENTACAO.md)
+- [Briefing para Figma](docs/FIGMA_BRIEF.md)
+- [Prompts para Lovable](docs/LOVABLE_PROMPTS.md)
+
+## 12. Autor
+
+Projeto acadêmico individual.
+
+**Estudante:** [preencher nome completo]  
+**Curso:** Técnico em Informática para Internet  
+**Instituição:** [preencher instituição]  
+**Ano:** 2026
