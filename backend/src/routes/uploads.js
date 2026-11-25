@@ -40,8 +40,8 @@ function detectarImagem(buffer) {
   return null;
 }
 
-async function salvarImagem(req, res, tabela, coluna, prefixo, rotulo) {
-  const id = parseId(req.params.id);
+async function salvarImagem(req, res, tabela, coluna, prefixo, rotulo, idOverride = null) {
+  const id = parseId(idOverride ?? req.params.id);
   if (id === null) return res.status(400).json({ erro: 'ID inválido.' });
   if (!req.file) return res.status(400).json({ erro: 'Envie um arquivo no campo imagem.' });
 
@@ -84,6 +84,10 @@ async function salvarImagem(req, res, tabela, coluna, prefixo, rotulo) {
     [coluna]: atualizacao.rows[0][coluna],
   });
 }
+
+router.post('/perfil', autenticar, receberArquivo.single('imagem'), (req, res) =>
+  salvarImagem(req, res, 'usuarios', 'foto_url', 'perfil', 'Perfil', req.usuario.id)
+);
 
 router.post('/equipes/:id/logo', autenticar, exigirAdmin, receberArquivo.single('imagem'), (req, res) =>
   salvarImagem(req, res, 'equipes', 'logo_url', 'equipe', 'Equipe')
