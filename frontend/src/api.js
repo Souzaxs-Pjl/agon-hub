@@ -70,7 +70,9 @@ export async function api(caminho, { metodo = 'GET', corpo, comToken = true } = 
     erro.detalhes = dados?.detalhes;
     throw erro;
   }
-  if (modoDemonstrativo && metodoNormalizado === 'GET' && /^\\/equipes\\/\\d+$/.test(String(caminho).split('?')[0])) {
+  const rotaSemConsulta = String(caminho).split('?')[0];
+  const ehDetalheEquipe = rotaSemConsulta.startsWith('/equipes/') && /^\\d+$/.test(rotaSemConsulta.slice('/equipes/'.length));
+  if (modoDemonstrativo && metodoNormalizado === 'GET' && ehDetalheEquipe) {
     return aplicarElencoDemonstrativo(dados);
   }
   return dados;
