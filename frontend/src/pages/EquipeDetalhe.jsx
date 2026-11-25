@@ -13,12 +13,14 @@ export default function EquipeDetalhe() {
   const [erro, setErro] = useState('');
 
   useEffect(() => {
+    let ativa = true;
     setCarregando(true);
     setErro('');
     api(`/equipes/${id}`)
-      .then(setEquipe)
-      .catch((e) => setErro(e.message))
-      .finally(() => setCarregando(false));
+      .then((dados) => { if (ativa) setEquipe(dados); })
+      .catch((e) => { if (ativa) setErro(e.message); })
+      .finally(() => { if (ativa) setCarregando(false); });
+    return () => { ativa = false; };
   }, [id]);
 
   if (carregando) return <p className="aviso">Carregando equipe...</p>;

@@ -11,14 +11,18 @@ export default function Equipes() {
   const [erro, setErro] = useState('');
 
   useEffect(() => {
+    let ativa = true;
+    setCarregando(true);
+    setErro('');
     api('/equipes')
-      .then(setEquipes)
-      .catch((e) => setErro(e.message))
-      .finally(() => setCarregando(false));
+      .then((dados) => { if (ativa) setEquipes(dados); })
+      .catch((e) => { if (ativa) setErro(e.message); })
+      .finally(() => { if (ativa) setCarregando(false); });
+    return () => { ativa = false; };
   }, []);
 
   if (carregando) return <p className="aviso">Carregando equipes...</p>;
-  if (erro) return <p className="aviso aviso-erro">{erro}</p>;
+  if (erro) return <p className="aviso aviso-erro" role="alert">{erro}</p>;
   if (equipes.length === 0) return <p className="aviso">Nenhuma equipe cadastrada ainda.</p>;
 
   return (

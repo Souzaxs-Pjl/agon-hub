@@ -28,16 +28,18 @@ export default function ConsultaPublica({ tipo }) {
   const [erro, setErro] = useState('');
 
   useEffect(() => {
+    let ativa = true;
     if (!config) {
       setCarregando(false);
-      return;
+      return () => { ativa = false; };
     }
     setCarregando(true);
     setErro('');
     api(config.endpoint)
-      .then(setRegistros)
-      .catch((e) => setErro(e.message))
-      .finally(() => setCarregando(false));
+      .then((dados) => { if (ativa) setRegistros(dados); })
+      .catch((e) => { if (ativa) setErro(e.message); })
+      .finally(() => { if (ativa) setCarregando(false); });
+    return () => { ativa = false; };
   }, [tipo]);
 
   if (!config) return <p className="aviso aviso-erro">Página não encontrada.</p>;
@@ -59,6 +61,12 @@ export default function ConsultaPublica({ tipo }) {
                   <h2>{item.nome}</h2>
                   <p className="pequeno">{item.apelido || 'Sem apelido cadastrado'}</p>
                   {item.bio && <p>{item.bio}</p>}
+                  {item.equipes?.length > 0 && (
+                    <p className="pequeno">
+                      <strong>Funções:</strong>{' '}
+                      {item.equipes.map((equipe) => `${equipe.nome}: ${equipe.funcao || 'Sem função'}`).join(' · ')}
+                    </p>
+                  )}
                 </>
               )}
               {tipo === 'campeonatos' && (

@@ -117,6 +117,9 @@ export default function AdminRecursos() {
   const [mensagem, setMensagem] = useState({ tipo: '', texto: '' });
   const [carregando, setCarregando] = useState(true);
   const [salvando, setSalvando] = useState(false);
+  const [excluindoId, setExcluindoId] = useState(null);
+  const [vinculando, setVinculando] = useState(false);
+  const [removendoVinculoId, setRemovendoVinculoId] = useState(null);
 
   const opcoes = useMemo(() => fontes, [fontes]);
 
@@ -169,7 +172,10 @@ export default function AdminRecursos() {
     setMensagem({ tipo: '', texto: '' });
     setArquivo(null);
     try {
-      const detalhe = await api(`${config.endpoint}/${item.id}`);
+      const caminho = recurso === 'atletas'
+        ? `/atletas/admin/${item.id}`
+        : `${config.endpoint}/${item.id}`;
+      const detalhe = await api(caminho);
       setSelecionado(detalhe);
       setForm(prepararRegistro(config, detalhe));
     } catch (erro) {
@@ -187,6 +193,7 @@ export default function AdminRecursos() {
 
   async function salvar(evento) {
     evento.preventDefault();
+    if (salvando) return;
     setSalvando(true);
     setMensagem({ tipo: '', texto: '' });
     const corpo = { ...form };
@@ -205,15 +212,32 @@ export default function AdminRecursos() {
         : await api(config.endpoint, { metodo: 'POST', corpo });
 
       const id = editandoId || salvo.id;
+      // O ID é guardado imediatamente: erro no upload não transforma uma
+      // segunda tentativa em outro POST e não cria um registro duplicado.
+      setEditandoId(id);
+
       if (arquivo && config.upload === 'foto') {
         const dadosArquivo = new FormData();
         dadosArquivo.append('imagem', arquivo);
-        await api(`/uploads/atletas/${id}/foto`, { metodo: 'POST', corpo: dadosArquivo });
+        try {
+          await api(`/uploads/atletas/${id}/foto`, { metodo: 'POST', corpo: dadosArquivo });
+          setArquivo(null);
+        } catch (erroUpload) {
+          const detalhe = erroUpload.detalhes?.join(' ') || erroUpload.message;
+          setMensagem({
+            tipo: 'erro',
+            texto: `O atleta foi salvo, mas o envio da foto falhou: ${detalhe} Tente novamente; o formulário continuará ligado ao atleta existente e não criará outro.`,
+          });
+          return;
+        }
       }
 
+      const caminhoDetalhe = recurso === 'atletas'
+        ? `/atletas/admin/${id}`
+        : `${config.endpoint}/${id}`;
       const [lista, detalhe] = await Promise.all([
         api(config.endpoint),
-        api(`${config.endpoint}/${id}`),
+        api(caminhoDetalhe),
       ]);
       setRegistros(lista);
       setSelecionado(detalhe);
@@ -229,7 +253,9 @@ export default function AdminRecursos() {
   }
 
   async function excluir(item) {
+    if (excluindoId !== null) return;
     if (!window.confirm(`Excluir "${item.nome || item.titulo || item.id}"? Esta ação não pode ser desfeita.`)) return;
+    setExcluindoId(item.id);
     try {
       await api(`${config.endpoint}/${item.id}`, { metodo: 'DELETE' });
       setRegistros(await api(config.endpoint));
@@ -237,32 +263,46 @@ export default function AdminRecursos() {
       setMensagem({ tipo: 'ok', texto: 'Registro excluído.' });
     } catch (erro) {
       tratarErro(erro);
+    } finally {
+      setExcluindoId(null);
     }
   }
 
   async function adicionarVinculo(evento) {
     evento.preventDefault();
-    if (!selecionado || !config.relacionar || !vinculo.id) return;
+    if (!selecionado || !config.relacionar || !vinculo.id || vinculando) return;
+    setVinculando(true);
     const corpo = { equipe_id: Number(vinculo.id) };
     if (config.relacionar === 'atletas') corpo.funcao = vinculo.funcao;
     try {
+      const caminhoDetalhe = recurso === 'atletas'
+        ? `/atletas/admin/${selecionado.id}`
+        : `${config.endpoint}/${selecionado.id}`;
       await api(`${config.endpoint}/${selecionado.id}/equipes`, { metodo: 'POST', corpo });
-      setSelecionado(await api(`${config.endpoint}/${selecionado.id}`));
+      setSelecionado(await api(caminhoDetalhe));
       setVinculo({ id: '', funcao: '' });
       setMensagem({ tipo: 'ok', texto: 'Vínculo registrado.' });
     } catch (erro) {
       tratarErro(erro);
+    } finally {
+      setVinculando(false);
     }
   }
 
   async function removerVinculo(equipeId) {
-    if (!selecionado) return;
+    if (!selecionado || removendoVinculoId !== null) return;
+    setRemovendoVinculoId(equipeId);
     try {
+      const caminhoDetalhe = recurso === 'atletas'
+        ? `/atletas/admin/${selecionado.id}`
+        : `${config.endpoint}/${selecionado.id}`;
       await api(`${config.endpoint}/${selecionado.id}/equipes/${equipeId}`, { metodo: 'DELETE' });
-      setSelecionado(await api(`${config.endpoint}/${selecionado.id}`));
+      setSelecionado(await api(caminhoDetalhe));
       setMensagem({ tipo: 'ok', texto: 'Vínculo removido.' });
     } catch (erro) {
       tratarErro(erro);
+    } finally {
+      setRemovendoVinculoId(null);
     }
   }
 
@@ -276,7 +316,7 @@ export default function AdminRecursos() {
           <p className="nota"><Link to="/admin">Administração</Link> / {config.titulo}</p>
           <h1>{config.titulo}</h1>
         </div>
-        <button type="button" className="botao-secundario" onClick={novoRegistro}>Novo registro</button>
+        <button type="button" className="botao-secundario" onClick={novoRegistro} disabled={salvando}>Novo registro</button>
       </div>
 
       <nav className="admin-menu" aria-label="Módulos administrativos">
@@ -356,7 +396,9 @@ export default function AdminRecursos() {
                     <td>{resumir(item, recurso)}</td>
                     <td className="celula-acoes">
                       <button type="button" className="botao-secundario" onClick={() => abrirRegistro(item)}>Editar</button>
-                      <button type="button" className="botao-perigo" onClick={() => excluir(item)}>Excluir</button>
+                      <button type="button" className="botao-perigo" onClick={() => excluir(item)} disabled={excluindoId !== null}>
+                        {excluindoId === item.id ? 'Excluindo...' : 'Excluir'}
+                      </button>
                     </td>
                   </tr>
                 ))}
@@ -383,14 +425,18 @@ export default function AdminRecursos() {
                 <input value={vinculo.funcao} onChange={(e) => setVinculo((v) => ({ ...v, funcao: e.target.value }))} placeholder="Ex.: Ala" />
               </label>
             )}
-            <button className="botao-primario" type="submit">Adicionar vínculo</button>
+            <button className="botao-primario" type="submit" disabled={vinculando}>
+              {vinculando ? 'Adicionando...' : 'Adicionar vínculo'}
+            </button>
           </form>
           {selecionado.equipes?.length ? (
             <ul className="lista-vinculos">
               {selecionado.equipes.map((equipe) => (
                 <li key={equipe.id}>
                   <span><strong>{equipe.nome}</strong>{equipe.funcao ? ` · ${equipe.funcao}` : ''}</span>
-                  <button type="button" className="botao-perigo" onClick={() => removerVinculo(equipe.id)}>Remover</button>
+                  <button type="button" className="botao-perigo" onClick={() => removerVinculo(equipe.id)} disabled={removendoVinculoId !== null}>
+                    {removendoVinculoId === equipe.id ? 'Removendo...' : 'Remover'}
+                  </button>
                 </li>
               ))}
             </ul>
