@@ -2,6 +2,8 @@
 // api.js - centraliza as chamadas HTTP e o envio de token JWT.
 // Também aceita FormData para upload sem definir Content-Type manualmente.
 // =====================================================================
+import { aplicarElencoDemonstrativo, respostaAtletaDemonstrativo } from './demoApi.js';
+
 const CHAVE_TOKEN = 'agon_token';
 
 export function getToken() {
@@ -23,6 +25,13 @@ export function setToken(token) {
 
 export async function api(caminho, { metodo = 'GET', corpo, comToken = true } = {}) {
   const cabecalhos = {};
+  const metodoNormalizado = String(metodo).toUpperCase();
+  const modoDemonstrativo = import.meta.env.PROD;
+
+  // A versão publicada de main usa atletas fictícios e não grava no banco oficial.
+  if (modoDemonstrativo && metodoNormalizado !== 'GET' && !(metodoNormalizado === 'POST' && caminho === '/auth/login')) {
+    throw new Error('Modo demonstrativo: cadastros, edições e exclusões estão desativados nesta versão.');
+  }
   const ehFormData = typeof FormData !== 'undefined' && corpo instanceof FormData;
 
   if (corpo !== undefined && !ehFormData) {
@@ -31,6 +40,11 @@ export async function api(caminho, { metodo = 'GET', corpo, comToken = true } = 
 
   const token = getToken();
   if (comToken && token) cabecalhos.Authorization = `Bearer ${token}`;
+
+  if (modoDemonstrativo && metodoNormalizado === 'GET') {
+    const demonstrativo = await respostaAtletaDemonstrativo(caminho, cabecalhos);
+    if (demonstrativo.gerenciado) return demonstrativo.dados;
+  }
 
   let resposta;
   try {
@@ -55,6 +69,9 @@ export async function api(caminho, { metodo = 'GET', corpo, comToken = true } = 
     erro.status = resposta.status;
     erro.detalhes = dados?.detalhes;
     throw erro;
+  }
+  if (modoDemonstrativo && metodoNormalizado === 'GET' && /^\\/equipes\\/\\d+$/.test(String(caminho).split('?')[0])) {
+    return aplicarElencoDemonstrativo(dados);
   }
   return dados;
 }
