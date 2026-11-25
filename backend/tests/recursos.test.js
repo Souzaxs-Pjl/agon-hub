@@ -1,6 +1,6 @@
 // =====================================================================
-// Testes de integração dos módulos de atletas, campeonatos, partidas,
-// notícias e upload. Exigem API e PostgreSQL ativos.
+// Testes de integração dos módulos de modalidades, atletas, campeonatos,
+// partidas, notícias, relacionamentos, permissões e uploads.
 // =====================================================================
 const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
@@ -30,6 +30,8 @@ const sufixo = String(Date.now()).slice(-7);
 const emailAdmin = process.env.ADMIN_EMAIL;
 const senhaAdmin = process.env.ADMIN_SENHA;
 let adminToken;
+let usuarioToken;
+let modalidadeId;
 let atletaId;
 let campeonatoId;
 let partidaId;
@@ -48,9 +50,20 @@ before(async () => {
   });
   assert.equal(login.status, 200);
   adminToken = login.dados.token;
+
+  const cadastro = await chamar('POST', '/api/auth/register', {
+    corpo: {
+      nome: 'Usuário comum de integração',
+      email: `teste.recursos.${sufixo}@agonhub.example`,
+      senha: 'SenhaTeste@123',
+    },
+  });
+  assert.equal(cadastro.status, 201);
+  usuarioToken = cadastro.dados.token;
 });
 
 after(async () => {
+  if (modalidadeId) await chamar('DELETE', `/api/modalidades/${modalidadeId}`, { token: adminToken });
   if (partidaId) await chamar('DELETE', `/api/partidas/${partidaId}`, { token: adminToken });
   if (atletaVinculado && atletaId) {
     await chamar('DELETE', `/api/atletas/${atletaId}/equipes/1`, { token: adminToken });
@@ -64,6 +77,58 @@ after(async () => {
     }
     await chamar('DELETE', `/api/campeonatos/${campeonatoId}`, { token: adminToken });
   }
+});
+
+describe('Proteção administrativa dos novos módulos', () => {
+  it('recusa criação sem token (401) e para usuário comum (403)', async () => {
+    const rotas = ['/api/modalidades', '/api/atletas', '/api/campeonatos', '/api/partidas', '/api/noticias'];
+    for (const rota of rotas) {
+      const semToken = await chamar('POST', rota, { corpo: {} });
+      assert.equal(semToken.status, 401, `${rota} deveria exigir autenticação`);
+      const comum = await chamar('POST', rota, { token: usuarioToken, corpo: {} });
+      assert.equal(comum.status, 403, `${rota} deveria exigir administrador`);
+    }
+  });
+
+  it('recusa upload de imagem sem token ou como usuário comum', async () => {
+    const semToken = await chamar('POST', '/api/uploads/equipes/1/logo');
+    assert.equal(semToken.status, 401);
+    const comum = await chamar('POST', '/api/uploads/equipes/1/logo', { token: usuarioToken });
+    assert.equal(comum.status, 403);
+  });
+});
+
+describe('CRUD de modalidades', () => {
+  it('cria, lista, consulta, edita e exclui modalidade', async () => {
+    const nome = `Modalidade Teste ${sufixo}`;
+    const criada = await chamar('POST', '/api/modalidades', {
+      token: adminToken,
+      corpo: { nome, tipo: 'esporte', descricao: 'Modalidade temporária de teste.' },
+    });
+    assert.equal(criada.status, 201);
+    modalidadeId = criada.dados.id;
+
+    const lista = await chamar('GET', '/api/modalidades');
+    assert.equal(lista.status, 200);
+    assert.ok(lista.dados.some((m) => m.id === modalidadeId));
+
+    const consulta = await chamar('GET', `/api/modalidades/${modalidadeId}`);
+    assert.equal(consulta.status, 200);
+    assert.equal(consulta.dados.nome, nome);
+
+    const edicao = await chamar('PUT', `/api/modalidades/${modalidadeId}`, {
+      token: adminToken,
+      corpo: { nome, tipo: 'esport', descricao: 'Atualizada no teste.' },
+    });
+    assert.equal(edicao.status, 200);
+    assert.equal(edicao.dados.tipo, 'esport');
+
+    const remocao = await chamar('DELETE', `/api/modalidades/${modalidadeId}`, { token: adminToken });
+    assert.equal(remocao.status, 200);
+    const depois = await chamar('GET', `/api/modalidades/${modalidadeId}`);
+    assert.equal(depois.status, 404);
+    modalidadeId = null;
+  });
 });
 
 describe('CRUD de atletas e relação equipe_atletas', () => {
@@ -211,6 +276,12 @@ describe('CRUD de partidas', () => {
     });
     assert.equal(edicao.status, 200);
     assert.equal(edicao.dados.placar_casa, 2);
+
+    const remocao = await chamar('DELETE', `/api/partidas/${partidaId}`, { token: adminToken });
+    assert.equal(remocao.status, 200);
+    const depois = await chamar('GET', `/api/partidas/${partidaId}`);
+    assert.equal(depois.status, 404);
+    partidaId = null;
   });
 
   it('rejeita equipe duplicada, placar negativo e equipes não inscritas', async () => {
@@ -274,8 +345,8 @@ describe('CRUD de notícias', () => {
 });
 
 describe('Upload de imagem', () => {
-  it('aceita JPEG válido, grava a URL e serve o arquivo', async () => {
-    // Assinatura mínima suficiente para o validador de formato do endpoint.
+  it('reconhece a assinatura JPEG, grava a URL e serve o arquivo', async () => {
+    // O endpoint verifica a assinatura binária e o MIME declarado.
     const jpeg = Buffer.from([0xff, 0xd8, 0xff, 0xd9]);
     const formulario = new FormData();
     formulario.append('imagem', new Blob([jpeg], { type: 'image/jpeg' }), 'teste.jpg');
@@ -291,6 +362,19 @@ describe('Upload de imagem', () => {
     assert.equal(arquivo.headers.get('content-type'), 'image/jpeg');
   });
 
+
+  it('aceita a assinatura PNG para foto do atleta', async () => {
+    const png = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]);
+    const formulario = new FormData();
+    formulario.append('imagem', new Blob([png], { type: 'image/png' }), 'teste.png');
+    const envio = await chamar('POST', `/api/uploads/atletas/${atletaId}/foto`, {
+      token: adminToken,
+      corpo: formulario,
+    });
+    assert.equal(envio.status, 201);
+    assert.match(envio.dados.foto_url, /^\/uploads\/atleta-/);
+  });
+
   it('recusa arquivo que não seja imagem permitida', async () => {
     const formulario = new FormData();
     formulario.append('imagem', new Blob(['texto'], { type: 'text/plain' }), 'arquivo.txt');
@@ -299,5 +383,31 @@ describe('Upload de imagem', () => {
       corpo: formulario,
     });
     assert.equal(envio.status, 400);
+  });
+});
+
+
+describe('Remoção dos registros de integração', () => {
+  it('remove uma inscrição e exclui o campeonato de teste', async () => {
+    const retirada = await chamar('DELETE', `/api/campeonatos/${campeonatoId}/equipes/2`, {
+      token: adminToken,
+    });
+    assert.equal(retirada.status, 200);
+
+    const remocao = await chamar('DELETE', `/api/campeonatos/${campeonatoId}`, {
+      token: adminToken,
+    });
+    assert.equal(remocao.status, 200);
+    const depois = await chamar('GET', `/api/campeonatos/${campeonatoId}`);
+    assert.equal(depois.status, 404);
+    campeonatoId = null;
+  });
+
+  it('exclui o atleta de teste depois dos testes de vínculo e foto', async () => {
+    const remocao = await chamar('DELETE', `/api/atletas/${atletaId}`, { token: adminToken });
+    assert.equal(remocao.status, 200);
+    const depois = await chamar('GET', `/api/atletas/${atletaId}`);
+    assert.equal(depois.status, 404);
+    atletaId = null;
   });
 });
