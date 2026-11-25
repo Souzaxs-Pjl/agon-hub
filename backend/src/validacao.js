@@ -8,7 +8,7 @@ const TIPOS_MODALIDADE = ['esporte', 'esport'];
 const TIPOS_EQUIPE = ['real', 'ficticia'];
 const STATUS_CAMPEONATO = ['planejado', 'em_andamento', 'encerrado'];
 const STATUS_PARTIDA = ['agendada', 'em_andamento', 'finalizada'];
-const REGEX_SIGLA = /^[A-Z0-9]{2,10}$/;
+const REGEX_SIGLA = /^[A-Z0-9$]{2,10}$/;
 const REGEX_URL_IMAGEM = /^(https?:\/\/\S+|\/uploads\/[A-Za-z0-9._-]+)$/;
 
 function normalizarEmail(email) {
@@ -104,6 +104,14 @@ function validarModalidade(corpo) {
   return { erros, dados: { nome, tipo: d.tipo, descricao } };
 }
 
+function validarUrlInstagram(valor, rotulo, erros) {
+  const url = lerTextoOpcional(valor, 255, rotulo, erros);
+  if (url && !/^https:\/\/(www\.)?instagram\.com\/[A-Za-z0-9._]+\/?$/i.test(url)) {
+    erros.push(`${rotulo} deve ser um link HTTPS de perfil do Instagram.`);
+  }
+  return url;
+}
+
 function validarEquipe(corpo) {
   const d = corpo && typeof corpo === 'object' ? corpo : {};
   const erros = [];
@@ -120,11 +128,18 @@ function validarEquipe(corpo) {
   const instituicao = lerTextoOpcional(d.instituicao, 150, 'A instituição', erros);
   const descricao = lerTextoOpcional(d.descricao, 1000, 'A descrição', erros);
   const logoUrl = validarUrlImagem(d.logo_url, 'A imagem da equipe', erros);
+  const slogan = lerTextoOpcional(d.slogan, 180, 'O slogan', erros);
+  const instagram_url = validarUrlInstagram(d.instagram_url, 'O Instagram da equipe', erros);
+  const titulos = lerTextoOpcional(d.titulos, 5000, 'Os títulos da equipe', erros);
+  const cidade = lerTextoOpcional(d.cidade, 100, 'A cidade', erros);
+  const responsavel = lerTextoOpcional(d.responsavel, 150, 'O responsável', erros);
+  const cores = lerTextoOpcional(d.cores, 180, 'As cores', erros);
   return {
     erros,
     dados: {
       nome, sigla, tipo: d.tipo, modalidade_id: modalidadeId,
-      instituicao, descricao, logo_url: logoUrl,
+      instituicao, descricao, logo_url: logoUrl, slogan, instagram_url,
+      titulos, cidade, responsavel, cores,
     },
   };
 }
@@ -136,12 +151,16 @@ function validarAtleta(corpo) {
   const apelido = lerTextoOpcional(d.apelido, 50, 'O apelido', erros);
   const bio = lerTextoOpcional(d.bio, 5000, 'A biografia', erros);
   const foto_url = validarUrlImagem(d.foto_url, 'A foto do atleta', erros);
+  const instagram_url = validarUrlInstagram(d.instagram_url, 'O Instagram do atleta', erros);
+  const titulos = lerTextoOpcional(d.titulos, 5000, 'Os títulos do atleta', erros);
+  const geracao = lerTextoOpcional(d.geracao, 30, 'A geração do atleta', erros);
+  const divisao = lerTextoOpcional(d.divisao, 30, 'A divisão do atleta', erros);
   let usuario_id = null;
   if (d.usuario_id !== undefined && d.usuario_id !== null && d.usuario_id !== '') {
     usuario_id = parseId(d.usuario_id);
     if (usuario_id === null) erros.push('O usuário associado deve ser um ID válido.');
   }
-  return { erros, dados: { nome, apelido, bio, foto_url, usuario_id } };
+  return { erros, dados: { nome, apelido, bio, foto_url, usuario_id, instagram_url, titulos, geracao, divisao } };
 }
 
 function validarCampeonato(corpo) {
