@@ -150,10 +150,16 @@ Cada equipe possui uma modalidade principal obrigatória.
 A tabela `atletas` representa pessoas. O vínculo com uma conta em `usuarios` é opcional.
 
 ### `GET /api/atletas`
-- Acesso: público. Lista atletas e, quando houver, o nome da conta associada.
+- Acesso: público. Lista atletas com nome, apelido, biografia, foto e equipes vinculadas.
+- Cada item em `equipes` contém `id`, `nome`, `sigla` e `funcao`.
+- Não expõe o vínculo interno com uma conta de usuário.
 
 ### `GET /api/atletas/:id`
 - Acesso: público. Devolve o atleta e as equipes vinculadas, incluindo função.
+
+### `GET /api/atletas/admin/:id`
+- Acesso: administrador.
+- Retorna os dados do atleta e o campo `usuario_id`, necessário para administrar a associação com uma conta.
 
 ### `POST /api/atletas`
 - Acesso: administrador.
@@ -270,6 +276,7 @@ Regras:
 - Limite: 5 MB por arquivo.
 - O backend confere a assinatura binária do arquivo.
 - Os arquivos são gravados em `backend/uploads`.
+- Ao substituir uma imagem ou excluir um atleta/equipe, o backend tenta remover o arquivo local antigo após a operação no banco; imagens compartilhadas e URLs externas não são removidas.
 - A URL retornada começa com `/uploads/` e pode ser aberta por HTTP.
 
 Exemplo:

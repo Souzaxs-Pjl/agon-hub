@@ -36,6 +36,8 @@ let atletaId;
 let campeonatoId;
 let partidaId;
 let noticiaId;
+let equipeUploadId;
+let fotoUploadUrl;
 let atletaVinculado = false;
 let equipesInscritas = false;
 
@@ -63,6 +65,7 @@ before(async () => {
 });
 
 after(async () => {
+  if (equipeUploadId) await chamar('DELETE', `/api/equipes/${equipeUploadId}`, { token: adminToken });
   if (modalidadeId) await chamar('DELETE', `/api/modalidades/${modalidadeId}`, { token: adminToken });
   if (partidaId) await chamar('DELETE', `/api/partidas/${partidaId}`, { token: adminToken });
   if (atletaVinculado && atletaId) {
@@ -171,6 +174,17 @@ describe('CRUD de atletas e relação equipe_atletas', () => {
     const equipe = await chamar('GET', '/api/equipes/1');
     assert.equal(equipe.status, 200);
     assert.ok(equipe.dados.atletas.some((a) => a.id === atletaId && a.apelido === 'Novo' && a.funcao === 'Ala'));
+
+    const listaPublica = await chamar('GET', '/api/atletas');
+    const atletaPublico = listaPublica.dados.find((a) => a.id === atletaId);
+    assert.ok(atletaPublico);
+    assert.ok(atletaPublico.equipes.some((e) => e.id === 1 && e.funcao === 'Ala'));
+    assert.equal('usuario_id' in atletaPublico, false);
+    assert.equal('usuario_nome' in atletaPublico, false);
+
+    const detalheAdmin = await chamar('GET', `/api/atletas/admin/${atletaId}`, { token: adminToken });
+    assert.equal(detalheAdmin.status, 200);
+    assert.ok('usuario_id' in detalheAdmin.dados);
 
     const edicao = await chamar('PUT', `/api/atletas/${atletaId}/equipes/1`, {
       token: adminToken,
@@ -345,47 +359,59 @@ describe('CRUD de notícias', () => {
 });
 
 describe('Upload de imagem', () => {
-  it('reconhece a assinatura JPEG, grava a URL e serve o arquivo', async () => {
-    // O endpoint verifica a assinatura binária e o MIME declarado.
-    const jpeg = Buffer.from([0xff, 0xd8, 0xff, 0xd9]);
-    const formulario = new FormData();
-    formulario.append('imagem', new Blob([jpeg], { type: 'image/jpeg' }), 'teste.jpg');
-    const envio = await chamar('POST', '/api/uploads/equipes/1/logo', {
+  it('substitui o logo e exclui o arquivo antigo ao apagar a equipe', async () => {
+    const criada = await chamar('POST', '/api/equipes', {
       token: adminToken,
-      corpo: formulario,
+      corpo: { nome: `Equipe Upload ${sufixo}`, sigla: `U${sufixo}`, tipo: 'ficticia', modalidade_id: 2 },
     });
-    assert.equal(envio.status, 201);
-    assert.match(envio.dados.logo_url, /^\/uploads\/equipe-/);
+    assert.equal(criada.status, 201);
+    equipeUploadId = criada.dados.id;
 
-    const arquivo = await fetch(BASE + envio.dados.logo_url);
-    assert.equal(arquivo.status, 200);
-    assert.equal(arquivo.headers.get('content-type'), 'image/jpeg');
+    const primeiro = new FormData();
+    primeiro.append('imagem', new Blob([Buffer.from([0xff, 0xd8, 0xff, 0xd9])], { type: 'image/jpeg' }), 'logo.jpg');
+    const envioInicial = await chamar('POST', `/api/uploads/equipes/${equipeUploadId}/logo`, { token: adminToken, corpo: primeiro });
+    assert.equal(envioInicial.status, 201);
+    const urlAntiga = envioInicial.dados.logo_url;
+
+    const segundo = new FormData();
+    segundo.append('imagem', new Blob([Buffer.from([137, 80, 78, 71, 13, 10, 26, 10])], { type: 'image/png' }), 'logo.png');
+    const substituicao = await chamar('POST', `/api/uploads/equipes/${equipeUploadId}/logo`, { token: adminToken, corpo: segundo });
+    assert.equal(substituicao.status, 201);
+    const urlAtual = substituicao.dados.logo_url;
+    assert.notEqual(urlAtual, urlAntiga);
+    assert.equal((await fetch(BASE + urlAntiga)).status, 404);
+    assert.equal((await fetch(BASE + urlAtual)).status, 200);
+
+    const exclusao = await chamar('DELETE', `/api/equipes/${equipeUploadId}`, { token: adminToken });
+    assert.equal(exclusao.status, 200);
+    assert.equal((await fetch(BASE + urlAtual)).status, 404);
+    equipeUploadId = null;
   });
 
+  it('substitui a foto de atleta e elimina a imagem anterior', async () => {
+    const primeiro = new FormData();
+    primeiro.append('imagem', new Blob([Buffer.from([0xff, 0xd8, 0xff, 0xd9])], { type: 'image/jpeg' }), 'foto.jpg');
+    const envioInicial = await chamar('POST', `/api/uploads/atletas/${atletaId}/foto`, { token: adminToken, corpo: primeiro });
+    assert.equal(envioInicial.status, 201);
+    const urlAntiga = envioInicial.dados.foto_url;
 
-  it('aceita a assinatura PNG para foto do atleta', async () => {
-    const png = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]);
-    const formulario = new FormData();
-    formulario.append('imagem', new Blob([png], { type: 'image/png' }), 'teste.png');
-    const envio = await chamar('POST', `/api/uploads/atletas/${atletaId}/foto`, {
-      token: adminToken,
-      corpo: formulario,
-    });
-    assert.equal(envio.status, 201);
-    assert.match(envio.dados.foto_url, /^\/uploads\/atleta-/);
+    const segundo = new FormData();
+    segundo.append('imagem', new Blob([Buffer.from([137, 80, 78, 71, 13, 10, 26, 10])], { type: 'image/png' }), 'foto.png');
+    const substituicao = await chamar('POST', `/api/uploads/atletas/${atletaId}/foto`, { token: adminToken, corpo: segundo });
+    assert.equal(substituicao.status, 201);
+    fotoUploadUrl = substituicao.dados.foto_url;
+    assert.notEqual(fotoUploadUrl, urlAntiga);
+    assert.equal((await fetch(BASE + urlAntiga)).status, 404);
+    assert.equal((await fetch(BASE + fotoUploadUrl)).status, 200);
   });
 
   it('recusa arquivo que não seja imagem permitida', async () => {
     const formulario = new FormData();
     formulario.append('imagem', new Blob(['texto'], { type: 'text/plain' }), 'arquivo.txt');
-    const envio = await chamar('POST', '/api/uploads/equipes/1/logo', {
-      token: adminToken,
-      corpo: formulario,
-    });
+    const envio = await chamar('POST', '/api/uploads/equipes/1/logo', { token: adminToken, corpo: formulario });
     assert.equal(envio.status, 400);
   });
 });
-
 
 describe('Remoção dos registros de integração', () => {
   it('remove uma inscrição e exclui o campeonato de teste', async () => {
@@ -408,6 +434,10 @@ describe('Remoção dos registros de integração', () => {
     assert.equal(remocao.status, 200);
     const depois = await chamar('GET', `/api/atletas/${atletaId}`);
     assert.equal(depois.status, 404);
+    if (fotoUploadUrl) {
+      assert.equal((await fetch(BASE + fotoUploadUrl)).status, 404);
+      fotoUploadUrl = null;
+    }
     atletaId = null;
   });
 });

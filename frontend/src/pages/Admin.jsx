@@ -33,6 +33,8 @@ export default function Admin() {
   const [mensagem, setMensagem] = useState({ tipo: '', texto: '' });
   const [carregando, setCarregando] = useState(true);
   const [logoArquivo, setLogoArquivo] = useState(null);
+  const [salvando, setSalvando] = useState(false);
+  const [excluindoId, setExcluindoId] = useState(null);
 
   // Trata erros de forma única: sessão expirada sai do sistema;
   // os demais aparecem na tela.
@@ -100,9 +102,9 @@ export default function Admin() {
 
   async function salvar(evento) {
     evento.preventDefault();
+    if (salvando) return;
+    setSalvando(true);
     setMensagem({ tipo: '', texto: '' });
-
-    // Campos vazios são enviados como texto vazio; o backend os trata como null.
     const corpo = { ...form, modalidade_id: Number(form.modalidade_id) };
 
     try {
@@ -110,15 +112,26 @@ export default function Admin() {
         ? await api(`/equipes/${editandoId}`, { metodo: 'PUT', corpo })
         : await api('/equipes', { metodo: 'POST', corpo });
 
+      // O registro já existe: qualquer nova tentativa passa a ser PUT.
+      setEditandoId(equipeSalva.id);
+
       if (logoArquivo) {
         const dadosArquivo = new FormData();
         dadosArquivo.append('imagem', logoArquivo);
-        await api(`/uploads/equipes/${equipeSalva.id}/logo`, {
-          metodo: 'POST',
-          corpo: dadosArquivo,
-        });
+        try {
+          await api(`/uploads/equipes/${equipeSalva.id}/logo`, { metodo: 'POST', corpo: dadosArquivo });
+        } catch (erroUpload) {
+          const detalhe = erroUpload.detalhes?.join(' ') || erroUpload.message;
+          setMensagem({
+            tipo: 'erro',
+            texto: `A equipe foi salva, mas o envio do logo falhou: ${detalhe} Tente novamente; o formulário já está ligado à equipe salva e não criará outra.`,
+          });
+          return;
+        }
       }
 
+      const lista = await api('/equipes');
+      setEquipes(lista);
       setMensagem({
         tipo: 'ok',
         texto: editandoId ? 'Equipe atualizada e salva no banco de dados.' : 'Equipe cadastrada e salva no banco de dados.',
@@ -126,24 +139,28 @@ export default function Admin() {
       setEditandoId(null);
       setLogoArquivo(null);
       setForm({ ...FORM_VAZIO, modalidade_id: modalidades[0]?.id ?? '' });
-      setEquipes(await api('/equipes'));
     } catch (erro) {
       tratarErro(erro);
+    } finally {
+      setSalvando(false);
     }
   }
 
   async function excluir(equipe) {
-    if (!window.confirm(`Excluir a equipe "${equipe.nome}"? Esta ação não pode ser desfeita.`)) {
-      return;
-    }
+    if (excluindoId !== null) return;
+    if (!window.confirm(`Excluir a equipe "${equipe.nome}"? Esta ação não pode ser desfeita.`)) return;
+    setExcluindoId(equipe.id);
     setMensagem({ tipo: '', texto: '' });
     try {
       await api(`/equipes/${equipe.id}`, { metodo: 'DELETE' });
+      const lista = await api('/equipes');
+      setEquipes(lista);
       setMensagem({ tipo: 'ok', texto: `Equipe "${equipe.nome}" excluída.` });
       if (editandoId === equipe.id) cancelarEdicao();
-      setEquipes(await api('/equipes'));
     } catch (erro) {
       tratarErro(erro);
+    } finally {
+      setExcluindoId(null);
     }
   }
 
@@ -209,12 +226,12 @@ export default function Admin() {
           </label>
           <label>
             Enviar arquivo de logo (JPEG, PNG ou WebP; até 5 MB)
-            <input type="file" accept="image/jpeg,image/png,image/webp" onChange={(e) => setLogoArquivo(e.target.files?.[0] || null)} />
+            <input type="file" accept="image/jpeg,image/png,image/webp" disabled={salvando} onChange={(e) => setLogoArquivo(e.target.files?.[0] || null)} />
           </label>
 
           <div className="acoes">
-            <button type="submit" className="botao-primario">
-              {editandoId ? 'Salvar alterações' : 'Cadastrar equipe'}
+            <button type="submit" className="botao-primario" disabled={salvando}>
+              {salvando ? 'Salvando...' : (editandoId ? 'Salvar alterações' : 'Cadastrar equipe')}
             </button>
             {editandoId && (
               <button type="button" className="botao-secundario" onClick={cancelarEdicao}>
@@ -240,8 +257,8 @@ export default function Admin() {
                     <button type="button" className="botao-secundario" onClick={() => iniciarEdicao(equipe)}>
                       Editar
                     </button>
-                    <button type="button" className="botao-perigo" onClick={() => excluir(equipe)}>
-                      Excluir
+                    <button type="button" className="botao-perigo" onClick={() => excluir(equipe)} disabled={excluindoId !== null}>
+                      {excluindoId === equipe.id ? 'Excluindo...' : 'Excluir'}
                     </button>
                   </td>
                 </tr>

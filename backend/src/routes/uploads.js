@@ -11,6 +11,7 @@ const crypto = require('crypto');
 const db = require('../db');
 const { autenticar, exigirAdmin } = require('../middlewares/auth');
 const { parseId } = require('../validacao');
+const { limparImagemSeNaoUtilizada } = require('../arquivos');
 
 const router = express.Router();
 const pastaUploads = path.join(__dirname, '..', '..', 'uploads');
@@ -49,29 +50,39 @@ async function salvarImagem(req, res, tabela, coluna, prefixo, rotulo) {
     return res.status(400).json({ erro: 'Arquivo inválido. Envie uma imagem JPEG, PNG ou WebP.' });
   }
 
-  const existe = await db.query(`SELECT id FROM ${tabela} WHERE id = $1`, [id]);
-  if (!existe.rowCount) return res.status(404).json({ erro: `${rotulo} não encontrado.` });
+  const existente = await db.query(
+    `SELECT ${coluna} AS imagem_anterior FROM ${tabela} WHERE id = $1`,
+    [id]
+  );
+  if (!existente.rowCount) return res.status(404).json({ erro: `${rotulo} não encontrado.` });
 
   await fs.mkdir(pastaUploads, { recursive: true });
   const nomeArquivo = `${prefixo}-${crypto.randomUUID()}.${imagem.extensao}`;
   const caminho = path.join(pastaUploads, nomeArquivo);
   const url = `/uploads/${nomeArquivo}`;
+  let atualizacao;
 
   try {
     await fs.writeFile(caminho, req.file.buffer, { flag: 'wx' });
-    const atualizacao = await db.query(
+    atualizacao = await db.query(
       `UPDATE ${tabela} SET ${coluna} = $1 WHERE id = $2 RETURNING id, ${coluna}`,
       [url, id]
     );
-    res.status(201).json({
-      mensagem: 'Imagem enviada e vinculada com sucesso.',
-      id: atualizacao.rows[0].id,
-      [coluna]: atualizacao.rows[0][coluna],
-    });
+    if (!atualizacao.rowCount) {
+      await fs.unlink(caminho).catch(() => {});
+      return res.status(404).json({ erro: `${rotulo} não encontrado.` });
+    }
   } catch (erro) {
     await fs.unlink(caminho).catch(() => {});
     throw erro;
   }
+
+  await limparImagemSeNaoUtilizada(existente.rows[0].imagem_anterior);
+  res.status(201).json({
+    mensagem: 'Imagem enviada e vinculada com sucesso.',
+    id: atualizacao.rows[0].id,
+    [coluna]: atualizacao.rows[0][coluna],
+  });
 }
 
 router.post('/equipes/:id/logo', autenticar, exigirAdmin, receberArquivo.single('imagem'), (req, res) =>

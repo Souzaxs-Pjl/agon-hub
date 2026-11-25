@@ -5,15 +5,15 @@ const express = require('express');
 const db = require('../db');
 const { autenticar, exigirAdmin } = require('../middlewares/auth');
 const { parseId, validarAtleta, validarFuncaoEquipe } = require('../validacao');
+const { limparImagemSeNaoUtilizada } = require('../arquivos');
 
 const router = express.Router();
 
-async function buscarAtleta(id) {
+async function buscarAtleta(id, incluirUsuario = false) {
+  const camposPrivados = incluirUsuario ? ', a.usuario_id' : '';
   const resultado = await db.query(
-    `SELECT a.id, a.nome, a.apelido, a.bio, a.foto_url, a.usuario_id,
-            u.nome AS usuario_nome
+    `SELECT a.id, a.nome, a.apelido, a.bio, a.foto_url${camposPrivados}
      FROM atletas a
-     LEFT JOIN usuarios u ON u.id = a.usuario_id
      WHERE a.id = $1`,
     [id]
   );
@@ -30,12 +30,32 @@ async function buscarAtleta(id) {
   return { ...resultado.rows[0], equipes: equipes.rows };
 }
 
+router.get('/admin/:id', autenticar, exigirAdmin, async (req, res) => {
+  const id = parseId(req.params.id);
+  if (id === null) return res.status(400).json({ erro: 'ID inválido.' });
+  const atleta = await buscarAtleta(id, true);
+  if (!atleta) return res.status(404).json({ erro: 'Atleta não encontrado.' });
+  res.json(atleta);
+});
+
 router.get('/', async (req, res) => {
   const { rows } = await db.query(
-    `SELECT a.id, a.nome, a.apelido, a.bio, a.foto_url, a.usuario_id,
-            u.nome AS usuario_nome
+    `SELECT a.id, a.nome, a.apelido, a.bio, a.foto_url,
+            COALESCE(
+              json_agg(
+                json_build_object(
+                  'id', e.id,
+                  'nome', e.nome,
+                  'sigla', e.sigla,
+                  'funcao', ea.funcao
+                ) ORDER BY e.nome
+              ) FILTER (WHERE e.id IS NOT NULL),
+              '[]'::json
+            ) AS equipes
      FROM atletas a
-     LEFT JOIN usuarios u ON u.id = a.usuario_id
+     LEFT JOIN equipe_atletas ea ON ea.atleta_id = a.id
+     LEFT JOIN equipes e ON e.id = ea.equipe_id
+     GROUP BY a.id
      ORDER BY a.nome`
   );
   res.json(rows);
@@ -57,12 +77,16 @@ router.post('/', autenticar, exigirAdmin, async (req, res) => {
      VALUES ($1, $2, $3, $4, $5) RETURNING id`,
     [dados.nome, dados.apelido, dados.bio, dados.foto_url, dados.usuario_id]
   );
-  res.status(201).json(await buscarAtleta(rows[0].id));
+  res.status(201).json(await buscarAtleta(rows[0].id, true));
 });
 
 router.put('/:id', autenticar, exigirAdmin, async (req, res) => {
   const id = parseId(req.params.id);
   if (id === null) return res.status(400).json({ erro: 'ID inválido.' });
+
+  const anterior = await db.query('SELECT foto_url FROM atletas WHERE id = $1', [id]);
+  if (!anterior.rowCount) return res.status(404).json({ erro: 'Atleta não encontrado.' });
+
   const { erros, dados } = validarAtleta(req.body);
   if (erros.length) return res.status(400).json({ erro: 'Dados inválidos.', detalhes: erros });
   const resultado = await db.query(
@@ -72,14 +96,20 @@ router.put('/:id', autenticar, exigirAdmin, async (req, res) => {
     [dados.nome, dados.apelido, dados.bio, dados.foto_url, dados.usuario_id, id]
   );
   if (!resultado.rowCount) return res.status(404).json({ erro: 'Atleta não encontrado.' });
-  res.json(await buscarAtleta(id));
+
+  await limparImagemSeNaoUtilizada(anterior.rows[0].foto_url);
+  res.json(await buscarAtleta(id, true));
 });
 
 router.delete('/:id', autenticar, exigirAdmin, async (req, res) => {
   const id = parseId(req.params.id);
   if (id === null) return res.status(400).json({ erro: 'ID inválido.' });
-  const resultado = await db.query('DELETE FROM atletas WHERE id = $1', [id]);
+  const resultado = await db.query(
+    'DELETE FROM atletas WHERE id = $1 RETURNING foto_url',
+    [id]
+  );
   if (!resultado.rowCount) return res.status(404).json({ erro: 'Atleta não encontrado.' });
+  await limparImagemSeNaoUtilizada(resultado.rows[0].foto_url);
   res.json({ mensagem: 'Atleta excluído.' });
 });
 
@@ -96,7 +126,7 @@ router.post('/:id/equipes', autenticar, exigirAdmin, async (req, res) => {
     'INSERT INTO equipe_atletas (equipe_id, atleta_id, funcao) VALUES ($1, $2, $3)',
     [equipeId, atletaId, funcao]
   );
-  res.status(201).json(await buscarAtleta(atletaId));
+  res.status(201).json(await buscarAtleta(atletaId, true));
 });
 
 router.put('/:id/equipes/:equipeId', autenticar, exigirAdmin, async (req, res) => {
@@ -110,7 +140,7 @@ router.put('/:id/equipes/:equipeId', autenticar, exigirAdmin, async (req, res) =
     [funcao, atletaId, equipeId]
   );
   if (!resultado.rowCount) return res.status(404).json({ erro: 'Vínculo não encontrado.' });
-  res.json(await buscarAtleta(atletaId));
+  res.json(await buscarAtleta(atletaId, true));
 });
 
 router.delete('/:id/equipes/:equipeId', autenticar, exigirAdmin, async (req, res) => {

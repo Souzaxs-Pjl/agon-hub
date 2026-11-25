@@ -15,6 +15,7 @@ const express = require('express');
 const db = require('../db');
 const { autenticar, exigirAdmin } = require('../middlewares/auth');
 const { parseId, validarEquipe } = require('../validacao');
+const { limparImagemSeNaoUtilizada } = require('../arquivos');
 
 const router = express.Router();
 
@@ -85,6 +86,9 @@ router.put('/:id', autenticar, exigirAdmin, async (req, res) => {
   const id = parseId(req.params.id);
   if (id === null) return res.status(400).json({ erro: 'ID inválido.' });
 
+  const anterior = await db.query('SELECT logo_url FROM equipes WHERE id = $1', [id]);
+  if (!anterior.rowCount) return res.status(404).json({ erro: 'Equipe não encontrada.' });
+
   const { erros, dados } = validarEquipe(req.body);
   if (erros.length > 0) return res.status(400).json({ erro: 'Dados inválidos.', detalhes: erros });
 
@@ -98,6 +102,7 @@ router.put('/:id', autenticar, exigirAdmin, async (req, res) => {
   );
   if (rows.length === 0) return res.status(404).json({ erro: 'Equipe não encontrada.' });
 
+  await limparImagemSeNaoUtilizada(anterior.rows[0].logo_url);
   res.json(await buscarEquipe(id));
 });
 
@@ -109,8 +114,13 @@ router.delete('/:id', autenticar, exigirAdmin, async (req, res) => {
   const id = parseId(req.params.id);
   if (id === null) return res.status(400).json({ erro: 'ID inválido.' });
 
-  const { rowCount } = await db.query('DELETE FROM equipes WHERE id = $1', [id]);
-  if (rowCount === 0) return res.status(404).json({ erro: 'Equipe não encontrada.' });
+  const { rows } = await db.query(
+    'DELETE FROM equipes WHERE id = $1 RETURNING logo_url',
+    [id]
+  );
+  if (rows.length === 0) return res.status(404).json({ erro: 'Equipe não encontrada.' });
+
+  await limparImagemSeNaoUtilizada(rows[0].logo_url);
   res.json({ mensagem: 'Equipe excluída.' });
 });
 
