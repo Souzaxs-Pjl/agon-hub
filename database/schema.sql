@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS usuarios (
 ALTER TABLE usuarios
     ADD COLUMN IF NOT EXISTS bio TEXT,
     ADD COLUMN IF NOT EXISTS foto_url VARCHAR(255),
-    ADD COLUMN IF NOT EXISTS perfil_publico BOOLEAN NOT NULL DEFAULT TRUE;
+    ADD COLUMN IF NOT EXISTS perfil_publico BOOLEAN NOT NULL DEFAULT FALSE;
 
 
 -- ---------------------------------------------------------------------
