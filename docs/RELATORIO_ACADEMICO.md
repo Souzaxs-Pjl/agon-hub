@@ -117,9 +117,11 @@ As consultas SQL devem utilizar parâmetros, e os dados enviados pelo cliente de
 
 Descrever aqui, após conferência da versão final, o fluxo de cadastro, login, consulta de sessão, autorização administrativa, CRUD de modalidades e CRUD de equipes. Para cada fluxo, inserir imagens da interface e exemplos de chamadas/respostas da API.
 
-### 9.2. Funcionalidades concluídas nesta etapa
+### 9.2. Módulos adicionais implementados no repositório
 
-[Atualizar após implementar e testar CRUD de atletas, campeonatos, partidas e notícias, vínculos e uploads.]
+Nesta etapa foram acrescentadas rotas CRUD de atletas, campeonatos, partidas e notícias, além de endpoints para administrar os relacionamentos N:N entre atletas e equipes e entre campeonatos e equipes. Também foi criado um módulo de upload para logos de equipes e fotos de atletas, restrito a administradores e com limite de tamanho e formatos permitidos.
+
+No frontend foram adicionadas consultas públicas de atletas, campeonatos, partidas e notícias, além de um painel administrativo reutilizável para os módulos de modalidades, atletas, campeonatos, partidas e notícias. O painel de equipes existente recebeu o envio de logos. A validação em navegador e a execução dos testes precisam ser registradas na seção 10 antes da entrega final.
 
 ### 9.3. Funcionalidades não concluídas
 
@@ -127,7 +129,7 @@ Descrever aqui, após conferência da versão final, o fluxo de cadastro, login,
 
 ## 10. Testes e validação
 
-Os testes devem contemplar autenticação, autorização, validação de dados, operações CRUD, relacionamentos e comportamento das páginas. Os testes automatizados existentes utilizam `node:test`. A execução dos testes de integração depende de PostgreSQL configurado e API ativa.
+Os testes devem contemplar autenticação, autorização, validação de dados, operações CRUD, relacionamentos, upload de imagens e comportamento das páginas. Os testes automatizados utilizam `node:test`. O workflow do GitHub Actions foi configurado para disponibilizar PostgreSQL temporário e executar testes de backend e build do frontend. O resultado da execução remota e a conferência manual no navegador ainda precisam ser registrados.
 
 Nesta seção, incluir:
 - comando utilizado;
