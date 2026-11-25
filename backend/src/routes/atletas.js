@@ -12,9 +12,10 @@ const router = express.Router();
 async function buscarAtleta(id, incluirUsuario = false) {
   const camposPrivados = incluirUsuario ? ', a.usuario_id' : '';
   const resultado = await db.query(
-    `SELECT a.id, a.nome, a.apelido, a.bio, a.foto_url${camposPrivados}
+    `SELECT a.id, a.nome, a.apelido, a.bio, a.foto_url,
+            a.instagram_url, a.titulos, a.geracao, a.divisao${camposPrivados}
      FROM atletas a
-     WHERE a.id = $1`,
+     WHERE a.id = $1 AND a.demonstrativo = FALSE`,
     [id]
   );
   if (resultado.rows.length === 0) return null;
@@ -23,7 +24,7 @@ async function buscarAtleta(id, incluirUsuario = false) {
     `SELECT e.id, e.nome, e.sigla, ea.funcao
      FROM equipe_atletas ea
      JOIN equipes e ON e.id = ea.equipe_id
-     WHERE ea.atleta_id = $1
+     WHERE ea.atleta_id = $1 AND e.demonstrativo = FALSE
      ORDER BY e.nome`,
     [id]
   );
@@ -41,6 +42,7 @@ router.get('/admin/:id', autenticar, exigirAdmin, async (req, res) => {
 router.get('/', async (req, res) => {
   const { rows } = await db.query(
     `SELECT a.id, a.nome, a.apelido, a.bio, a.foto_url,
+            a.instagram_url, a.titulos, a.geracao, a.divisao,
             COALESCE(
               json_agg(
                 json_build_object(
@@ -55,6 +57,7 @@ router.get('/', async (req, res) => {
      FROM atletas a
      LEFT JOIN equipe_atletas ea ON ea.atleta_id = a.id
      LEFT JOIN equipes e ON e.id = ea.equipe_id
+     WHERE a.demonstrativo = FALSE
      GROUP BY a.id
      ORDER BY a.nome`
   );
@@ -73,9 +76,11 @@ router.post('/', autenticar, exigirAdmin, async (req, res) => {
   const { erros, dados } = validarAtleta(req.body);
   if (erros.length) return res.status(400).json({ erro: 'Dados inválidos.', detalhes: erros });
   const { rows } = await db.query(
-    `INSERT INTO atletas (nome, apelido, bio, foto_url, usuario_id)
-     VALUES ($1, $2, $3, $4, $5) RETURNING id`,
-    [dados.nome, dados.apelido, dados.bio, dados.foto_url, dados.usuario_id]
+    `INSERT INTO atletas
+       (nome, apelido, bio, foto_url, usuario_id, instagram_url, titulos, geracao, divisao)
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING id`,
+    [dados.nome, dados.apelido, dados.bio, dados.foto_url, dados.usuario_id,
+      dados.instagram_url, dados.titulos, dados.geracao, dados.divisao]
   );
   res.status(201).json(await buscarAtleta(rows[0].id, true));
 });
@@ -91,9 +96,11 @@ router.put('/:id', autenticar, exigirAdmin, async (req, res) => {
   if (erros.length) return res.status(400).json({ erro: 'Dados inválidos.', detalhes: erros });
   const resultado = await db.query(
     `UPDATE atletas
-     SET nome = $1, apelido = $2, bio = $3, foto_url = $4, usuario_id = $5
-     WHERE id = $6 RETURNING id`,
-    [dados.nome, dados.apelido, dados.bio, dados.foto_url, dados.usuario_id, id]
+     SET nome = $1, apelido = $2, bio = $3, foto_url = $4, usuario_id = $5,
+         instagram_url = $6, titulos = $7, geracao = $8, divisao = $9
+     WHERE id = $10 RETURNING id`,
+    [dados.nome, dados.apelido, dados.bio, dados.foto_url, dados.usuario_id,
+      dados.instagram_url, dados.titulos, dados.geracao, dados.divisao, id]
   );
   if (!resultado.rowCount) return res.status(404).json({ erro: 'Atleta não encontrado.' });
 
