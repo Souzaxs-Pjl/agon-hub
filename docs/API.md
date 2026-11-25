@@ -174,3 +174,203 @@ Erros de validação podem trazer também a lista `detalhes`:
 ```
 
 **Erros:** `401` não autenticado · `403` usuário logado, mas não é administrador.
+
+---
+
+## Modalidades
+
+Esportes (`tipo: esporte`) e jogos eletrônicos (`tipo: esport`).
+
+### `GET /api/modalidades`
+
+- **Acesso:** 🌐 Pública
+- **Finalidade:** listar as modalidades, em ordem alfabética.
+- **Parâmetros:** nenhum.
+
+**Resposta 200**
+```json
+[
+  { "id": 2, "nome": "Futsal", "tipo": "esporte", "descricao": "Futebol de salão..." },
+  { "id": 11, "nome": "Valorant", "tipo": "esport", "descricao": "Jogo eletrônico..." }
+]
+```
+
+### `GET /api/modalidades/:id`
+
+- **Acesso:** 🌐 Pública
+- **Parâmetros de URL:** `id` (número inteiro).
+
+**Resposta 200**
+```json
+{ "id": 2, "nome": "Futsal", "tipo": "esporte", "descricao": "Futebol de salão..." }
+```
+
+**Erros:** `400` id inválido · `404` modalidade não encontrada.
+
+### `POST /api/modalidades`
+
+- **Acesso:** 🔒👑 Admin
+- **Corpo da requisição**
+
+| Campo | Tipo | Obrigatório | Regras |
+|---|---|---|---|
+| `nome` | texto | sim | 2 a 80 caracteres, único |
+| `tipo` | texto | sim | `esporte` ou `esport` |
+| `descricao` | texto | não | até 500 caracteres |
+
+```json
+{ "nome": "Xadrez", "tipo": "esporte", "descricao": "Jogo de estratégia." }
+```
+
+**Resposta 201**
+```json
+{ "id": 15, "nome": "Xadrez", "tipo": "esporte", "descricao": "Jogo de estratégia." }
+```
+
+**Erros:** `400` dados inválidos (com `detalhes`) · `401` · `403` · `409` nome já existe.
+
+### `PUT /api/modalidades/:id`
+
+- **Acesso:** 🔒👑 Admin
+- **Corpo:** os mesmos campos do POST (todos).
+- **Resposta 200:** a modalidade já alterada.
+- **Erros:** `400` · `401` · `403` · `404` · `409`.
+
+### `DELETE /api/modalidades/:id`
+
+- **Acesso:** 🔒👑 Admin
+- **Finalidade:** excluir a modalidade. Não é possível se houver equipes usando-a.
+
+**Resposta 200**
+```json
+{ "mensagem": "Modalidade excluída." }
+```
+
+**Erros:** `401` · `403` · `404` · `409` modalidade em uso por equipes.
+
+---
+
+## Equipes
+
+Equipes reais (`tipo: real`) ou fictícias (`tipo: ficticia`). Cada equipe pertence a uma modalidade.
+
+### `GET /api/equipes`
+
+- **Acesso:** 🌐 Pública
+- **Finalidade:** listar todas as equipes, com o nome e o tipo da modalidade.
+- **Parâmetros:** nenhum.
+
+**Resposta 200**
+```json
+[
+  {
+    "id": 1,
+    "nome": "Falcões do Norte",
+    "sigla": "FDN",
+    "tipo": "ficticia",
+    "instituicao": null,
+    "descricao": "Equipe fictícia de futsal...",
+    "logo_url": null,
+    "modalidade_id": 2,
+    "modalidade_nome": "Futsal",
+    "modalidade_tipo": "esporte"
+  }
+]
+```
+
+### `GET /api/equipes/:id`
+
+- **Acesso:** 🌐 Pública
+- **Finalidade:** uma equipe, com a modalidade e a lista de atletas (tabela `equipe_atletas`).
+- **Parâmetros de URL:** `id` (número inteiro).
+
+**Resposta 200**
+```json
+{
+  "id": 1,
+  "nome": "Falcões do Norte",
+  "sigla": "FDN",
+  "tipo": "ficticia",
+  "instituicao": null,
+  "descricao": "Equipe fictícia de futsal...",
+  "logo_url": null,
+  "modalidade_id": 2,
+  "modalidade_nome": "Futsal",
+  "modalidade_tipo": "esporte",
+  "atletas": [
+    { "id": 1, "nome": "Maria Souza", "apelido": "Mari", "funcao": "Ala" },
+    { "id": 2, "nome": "Bruno Teles", "apelido": "Brunão", "funcao": "Fixo" }
+  ]
+}
+```
+
+**Erros:** `400` id inválido · `404` equipe não encontrada.
+
+### `POST /api/equipes`
+
+- **Acesso:** 🔒👑 Admin
+- **Finalidade:** cadastrar uma equipe. Grava no PostgreSQL e devolve a equipe já com a modalidade.
+
+**Corpo da requisição**
+
+| Campo | Tipo | Obrigatório | Regras |
+|---|---|---|---|
+| `nome` | texto | sim | 2 a 100 caracteres, único |
+| `sigla` | texto | sim | 2 a 10 letras ou números, sem espaços; é guardada em maiúsculas; única |
+| `tipo` | texto | sim | `real` ou `ficticia` |
+| `modalidade_id` | número | sim | id de uma modalidade existente |
+| `instituicao` | texto | não | até 150 caracteres |
+| `descricao` | texto | não | até 1000 caracteres |
+| `logo_url` | texto | não | URL que começa com `http://` ou `https://` (até 255 caracteres) |
+
+```json
+{
+  "nome": "Equipe Exemplo",
+  "sigla": "EXE",
+  "tipo": "real",
+  "modalidade_id": 2,
+  "instituicao": "Instituto Federal",
+  "descricao": "Equipe criada pela banca.",
+  "logo_url": null
+}
+```
+
+**Resposta 201**
+```json
+{
+  "id": 9,
+  "nome": "Equipe Exemplo",
+  "sigla": "EXE",
+  "tipo": "real",
+  "instituicao": "Instituto Federal",
+  "descricao": "Equipe criada pela banca.",
+  "logo_url": null,
+  "modalidade_id": 2,
+  "modalidade_nome": "Futsal",
+  "modalidade_tipo": "esporte",
+  "atletas": []
+}
+```
+
+**Erros:** `400` dados inválidos (com `detalhes`), ou modalidade inexistente · `401` sem token · `403` não é admin · `409` nome ou sigla já existem (com mensagem dizendo qual).
+
+### `PUT /api/equipes/:id`
+
+- **Acesso:** 🔒👑 Admin
+- **Corpo:** os mesmos campos do POST (todos).
+- **Resposta 200:** a equipe já alterada, no mesmo formato do GET /:id.
+- **Erros:** `400` · `401` · `403` · `404` · `409`.
+
+### `DELETE /api/equipes/:id`
+
+- **Acesso:** 🔒👑 Admin
+- **Finalidade:** excluir a equipe. Os vínculos com atletas e campeonatos são removidos junto. Se a equipe já tiver partidas, a exclusão é recusada.
+
+**Resposta 200**
+```json
+{ "mensagem": "Equipe excluída." }
+```
+
+**Erros:** `401` · `403` · `404` · `409` equipe usada em partidas.
+
+> **Ainda não implementado nesta versão:** atletas (CRUD e vínculo com equipes), campeonatos, partidas, notícias, upload de imagens (por enquanto o logo é informado como URL) e o cadastro de equipes em campeonatos.

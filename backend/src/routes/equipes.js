@@ -1,0 +1,117 @@
+// =====================================================================
+// routes/equipes.js - equipes (reais ou fictícias)
+//
+// Rotas (prefixo /api/equipes):
+//   GET    /      -> lista equipes, com a modalidade    (pública)
+//   GET    /:id   -> uma equipe, com a modalidade e os atletas (pública)
+//   POST   /      -> cria uma equipe                     (admin)
+//   PUT    /:id   -> altera uma equipe (envia todos os campos) (admin)
+//   DELETE /:id   -> exclui uma equipe                   (admin)
+//
+// Cada equipe pertence a UMA modalidade (1:N). Os atletas de uma equipe
+// vêm da tabela equipe_atletas (N:N), lida pelo GET /:id.
+// =====================================================================
+const express = require('express');
+const db = require('../db');
+const { autenticar, exigirAdmin } = require('../middlewares/auth');
+const { parseId, validarEquipe } = require('../validacao');
+
+const router = express.Router();
+
+// SELECT base: traz a equipe junto com o nome e o tipo da modalidade.
+// O JOIN ("juntar tabelas") evita o frontend ter de buscar a modalidade à parte.
+const SQL_EQUIPE = `
+  SELECT e.id, e.nome, e.sigla, e.tipo, e.instituicao, e.descricao, e.logo_url,
+         e.modalidade_id, m.nome AS modalidade_nome, m.tipo AS modalidade_tipo
+  FROM equipes e
+  JOIN modalidades m ON m.id = e.modalidade_id`;
+
+// Busca UMA equipe com seus atletas. Devolve null se não existir.
+// Usada pelo GET /:id e também pelo POST e PUT, para responder sempre
+// no mesmo formato.
+async function buscarEquipe(id) {
+  const { rows } = await db.query(`${SQL_EQUIPE} WHERE e.id = $1`, [id]);
+  if (rows.length === 0) return null;
+
+  const atletas = await db.query(
+    `SELECT a.id, a.nome, a.apelido, ea.funcao
+     FROM equipe_atletas ea
+     JOIN atletas a ON a.id = ea.atleta_id
+     WHERE ea.equipe_id = $1
+     ORDER BY a.nome`,
+    [id]
+  );
+  return { ...rows[0], atletas: atletas.rows };
+}
+
+// GET /api/equipes  (pública)
+router.get('/', async (req, res) => {
+  const { rows } = await db.query(`${SQL_EQUIPE} ORDER BY e.nome`);
+  res.json(rows);
+});
+
+// GET /api/equipes/:id  (pública)
+router.get('/:id', async (req, res) => {
+  const id = parseId(req.params.id);
+  if (id === null) return res.status(400).json({ erro: 'ID inválido.' });
+
+  const equipe = await buscarEquipe(id);
+  if (!equipe) return res.status(404).json({ erro: 'Equipe não encontrada.' });
+  res.json(equipe);
+});
+
+// POST /api/equipes  (admin)
+// Corpo: nome, sigla, tipo ('real' | 'ficticia'), modalidade_id,
+//        e opcionais instituicao, descricao, logo_url
+router.post('/', autenticar, exigirAdmin, async (req, res) => {
+  const { erros, dados } = validarEquipe(req.body);
+  if (erros.length > 0) return res.status(400).json({ erro: 'Dados inválidos.', detalhes: erros });
+
+  // Se a sigla ou o nome já existir, o banco recusa (UNIQUE) e o
+  // tratador de erros responde 409 com a mensagem certa.
+  const { rows } = await db.query(
+    `INSERT INTO equipes (nome, sigla, tipo, instituicao, descricao, logo_url, modalidade_id)
+     VALUES ($1, $2, $3, $4, $5, $6, $7)
+     RETURNING id`,
+    [dados.nome, dados.sigla, dados.tipo, dados.instituicao, dados.descricao, dados.logo_url, dados.modalidade_id]
+  );
+
+  const equipe = await buscarEquipe(rows[0].id);
+  res.status(201).json(equipe);
+});
+
+// PUT /api/equipes/:id  (admin)
+router.put('/:id', autenticar, exigirAdmin, async (req, res) => {
+  const id = parseId(req.params.id);
+  if (id === null) return res.status(400).json({ erro: 'ID inválido.' });
+
+  const { erros, dados } = validarEquipe(req.body);
+  if (erros.length > 0) return res.status(400).json({ erro: 'Dados inválidos.', detalhes: erros });
+
+  const { rows } = await db.query(
+    `UPDATE equipes
+     SET nome = $1, sigla = $2, tipo = $3, instituicao = $4,
+         descricao = $5, logo_url = $6, modalidade_id = $7
+     WHERE id = $8
+     RETURNING id`,
+    [dados.nome, dados.sigla, dados.tipo, dados.instituicao, dados.descricao, dados.logo_url, dados.modalidade_id, id]
+  );
+  if (rows.length === 0) return res.status(404).json({ erro: 'Equipe não encontrada.' });
+
+  res.json(await buscarEquipe(id));
+});
+
+// DELETE /api/equipes/:id  (admin)
+// Apaga também os vínculos com atletas e campeonatos (CASCADE, definido no
+// schema). Se a equipe já tiver partidas, o banco recusa (RESTRICT) e a
+// resposta é 409.
+router.delete('/:id', autenticar, exigirAdmin, async (req, res) => {
+  const id = parseId(req.params.id);
+  if (id === null) return res.status(400).json({ erro: 'ID inválido.' });
+
+  const { rowCount } = await db.query('DELETE FROM equipes WHERE id = $1', [id]);
+  if (rowCount === 0) return res.status(404).json({ erro: 'Equipe não encontrada.' });
+  res.json({ mensagem: 'Equipe excluída.' });
+});
+
+module.exports = router;

@@ -29,8 +29,17 @@ function tratarErros(err, req, res, next) {
 
   // Erros do PostgreSQL: cada um tem um código (err.code).
   switch (err.code) {
-    case '23505': // unique_violation: valor repetido em campo UNIQUE
-      return res.status(409).json({ erro: 'Já existe um registro com esse valor.' });
+    case '23505': { // unique_violation: valor repetido em campo UNIQUE
+      // err.constraint diz qual campo se repetiu (ex.: equipes_sigla_key).
+      const mensagens = {
+        equipes_nome_key: 'Já existe uma equipe com esse nome.',
+        equipes_sigla_key: 'Já existe uma equipe com essa sigla.',
+        modalidades_nome_key: 'Já existe uma modalidade com esse nome.',
+      };
+      return res.status(409).json({
+        erro: mensagens[err.constraint] || 'Já existe um registro com esse valor.',
+      });
+    }
 
     case '23503': // foreign_key_violation
       // Ao EXCLUIR: ainda existem registros que dependem deste.

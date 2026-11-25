@@ -48,7 +48,9 @@ app.get('/api/saude', async (req, res) => {
 
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/usuarios', require('./routes/usuarios'));
-// (as rotas de equipes, atletas, campeonatos etc. serão adicionadas aqui)
+app.use('/api/modalidades', require('./routes/modalidades'));
+app.use('/api/equipes', require('./routes/equipes'));
+// (atletas, campeonatos, partidas e notícias serão adicionados aqui)
 
 // 5) Por último: rota inexistente (404) e tratador central de erros.
 app.use(rotaNaoEncontrada);

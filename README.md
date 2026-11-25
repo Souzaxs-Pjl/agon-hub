@@ -50,9 +50,9 @@ agon-hub/
 ├── database/
 │   ├── schema.sql     # cria as tabelas
 │   └── seed.sql       # preenche todas as tabelas com dados de exemplo
-├── backend/           # API REST em Node.js + Express   (em desenvolvimento)
-├── frontend/          # aplicação React                 (em desenvolvimento)
-└── docs/              # documentação das rotas da API   (em desenvolvimento)
+├── backend/           # API REST em Node.js + Express
+├── frontend/          # aplicação React (Vite + React Router)
+└── docs/              # documentação das rotas da API (docs/API.md)
 ```
 
 ## Banco de dados
@@ -180,7 +180,7 @@ Com o servidor rodando (passo 4), abra **outro terminal** na pasta `backend` e e
 npm test
 ```
 
-Os testes conferem cadastro, login, token JWT e a proteção das rotas de administrador. Os testes de administrador só rodam se o `ADMIN_EMAIL` e a `ADMIN_SENHA` estiverem no `.env` e o passo 3 tiver sido feito.
+Os testes conferem cadastro, login, token JWT, a proteção das rotas de administrador e o CRUD de equipes (`tests/equipes.test.js`). Os testes de equipes criam uma equipe de teste e a apagam no fim. Os testes de administrador só rodam se o `ADMIN_EMAIL` e a `ADMIN_SENHA` estiverem no `.env` e o passo 3 tiver sido feito.
 
 ### Problemas comuns
 
@@ -193,7 +193,48 @@ Os testes conferem cadastro, login, token JWT e a proteção das rotas de admini
 
 ## Frontend
 
-*Em desenvolvimento — as instruções de execução serão adicionadas aqui.*
+Aplicação React criada com Vite, com React Router para as páginas. O frontend conversa com a API pelo endereço `/api`, que o Vite repassa para o backend (`vite.config.js`).
+
+### Como executar
+
+Com o **backend já rodando** (`npm run dev` na pasta `backend`), abra **outro terminal**:
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Abra <http://localhost:5173> no navegador.
+
+### Roteiro de demonstração
+
+1. Abra a página inicial e clique em **Ver equipes**. A lista vem do banco de dados.
+2. Clique em uma equipe para ver o detalhe, com os atletas vinculados.
+3. Clique em **Entrar** e use o e-mail e a senha do administrador (definidos no `.env` com `npm run criar-admin`). Você é levado ao painel **Administração**.
+4. No painel, preencha o formulário **Nova equipe** e clique em **Cadastrar equipe**. A equipe aparece na tabela ao lado.
+5. Vá em **Equipes** no menu: a equipe nova aparece na lista pública.
+6. Confira no banco de dados que ela foi gravada:
+   ```bash
+   psql -U postgres -d agon_hub -c "SELECT id, nome, sigla, tipo FROM equipes ORDER BY id DESC LIMIT 3;"
+   ```
+7. Saia (botão **Sair**) e tente abrir <http://localhost:5173/admin>. Você verá a mensagem de que é preciso entrar.
+8. Entre com um usuário comum (por exemplo, `maria@agonhub.example` / `Senha@123`) e tente abrir `/admin`. Você verá a mensagem de acesso negado. Se tentar a API diretamente, o backend também recusa (403).
+
+### O que está funcionando nesta versão
+
+- Cadastro, login, logout e recuperação da sessão com `/api/auth/me`.
+- Token guardado no navegador; se expirar, o sistema pede para entrar de novo.
+- Lista pública e detalhe de **equipes**.
+- Painel administrativo para **criar, editar e excluir equipes**.
+- Proteção da área administrativa tanto no frontend (mensagem) quanto no backend (403).
+
+### O que ainda não está pronto
+
+- Páginas públicas de atletas, campeonatos, partidas e notícias (as rotas do backend ainda não foram feitas).
+- Upload de imagens: o logo é informado como URL.
+- Vínculos entre equipes e atletas, e inscrições de equipes em campeonatos, pelo painel.
+- Destaques de campeonatos e partidas na página inicial.
 
 ## Integrantes
 
