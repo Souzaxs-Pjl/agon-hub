@@ -79,7 +79,7 @@ export default function EquipeDetalhe() {
 
       <section>
         <div className="pagina-topo">
-          <div><h2>Elenco</h2><p className="pequeno">{atletas.length} integrante(s) cadastrado(s)</p></div>
+          <div><h2>Elenco</h2><p className="pequeno">{atletas.length} perfil(is) público(s)</p></div>
         </div>
         {atletas.length === 0 ? (
           <p className="aviso">Nenhum perfil individual está público no momento. O elenco só aparece aqui após a autorização de publicação ser confirmada e registrada.</p>
