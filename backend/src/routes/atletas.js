@@ -52,7 +52,7 @@ router.get('/admin', autenticar, exigirAdmin, async (req, res) => {
      FROM atletas a
      LEFT JOIN equipe_atletas ea ON ea.atleta_id = a.id
      LEFT JOIN equipes e ON e.id = ea.equipe_id AND e.demonstrativo = FALSE
-     WHERE a.demonstrativo = FALSE AND a.perfil_publico = TRUE
+     WHERE a.demonstrativo = FALSE
      GROUP BY a.id
      ORDER BY a.nome`
   );
@@ -77,7 +77,7 @@ router.get('/', async (req, res) => {
      FROM atletas a
      LEFT JOIN equipe_atletas ea ON ea.atleta_id = a.id
      LEFT JOIN equipes e ON e.id = ea.equipe_id
-     WHERE a.demonstrativo = FALSE
+     WHERE a.demonstrativo = FALSE AND a.perfil_publico = TRUE
      GROUP BY a.id
      ORDER BY a.nome`
   );
