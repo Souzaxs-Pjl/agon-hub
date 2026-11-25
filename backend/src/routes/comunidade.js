@@ -4,6 +4,25 @@ const db = require('../db');
 const { autenticar } = require('../middlewares/auth');
 const router = express.Router();
 
+
+// Opções de autoria disponíveis para a conta autenticada.
+router.get('/opcoes-autoria', autenticar, async (req, res) => {
+  const atletaResult = await db.query(
+    'SELECT id, nome, apelido FROM atletas WHERE usuario_id=$1 LIMIT 1',
+    [req.usuario.id]
+  );
+  const equipesResult = await db.query(
+    `SELECT DISTINCT e.id, e.nome, e.sigla
+     FROM equipe_atletas ea
+     JOIN atletas a ON a.id=ea.atleta_id
+     JOIN equipes e ON e.id=ea.equipe_id
+     WHERE a.usuario_id=$1
+     ORDER BY e.nome`,
+    [req.usuario.id]
+  );
+  res.json({ atleta: atletaResult.rows[0] || null, equipes: equipesResult.rows });
+});
+
 router.get('/', async (req, res) => {
   const { rows } = await db.query(
     `SELECT p.id, p.tipo_autor, p.atleta_id, p.equipe_id, p.texto, p.criado_em,
