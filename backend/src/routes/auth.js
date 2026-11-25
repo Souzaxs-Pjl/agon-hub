@@ -11,6 +11,7 @@ const bcrypt = require('bcrypt');
 const db = require('../db');
 const { gerarToken, autenticar } = require('../middlewares/auth');
 const { normalizarEmail, validarCadastro } = require('../validacao');
+const { limparImagemSeNaoUtilizada } = require('../arquivos');
 
 const router = express.Router();
 
@@ -43,7 +44,7 @@ router.post('/register', async (req, res) => {
     const { rows } = await db.query(
       `INSERT INTO usuarios (nome, email, senha_hash, papel)
        VALUES ($1, $2, $3, 'usuario')
-       RETURNING id, nome, email, papel, criado_em`,
+       RETURNING id, nome, email, papel, bio, foto_url, perfil_publico, criado_em`,
       [nome, email, senhaHash]
     );
     const usuario = rows[0];
@@ -70,7 +71,7 @@ router.post('/login', async (req, res) => {
   }
 
   const { rows } = await db.query(
-    'SELECT id, nome, email, papel, senha_hash FROM usuarios WHERE email = $1',
+    'SELECT id, nome, email, papel, senha_hash, bio, foto_url, perfil_publico, criado_em FROM usuarios WHERE email = $1',
     [email]
   );
   const usuario = rows[0];
@@ -90,7 +91,11 @@ router.post('/login', async (req, res) => {
   }
 
   res.json({
-    usuario: { id: usuario.id, nome: usuario.nome, email: usuario.email, papel: usuario.papel },
+    usuario: {
+      id: usuario.id, nome: usuario.nome, email: usuario.email, papel: usuario.papel,
+      bio: usuario.bio, foto_url: usuario.foto_url, perfil_publico: usuario.perfil_publico,
+      criado_em: usuario.criado_em,
+    },
     token: gerarToken(usuario.id),
   });
 });
@@ -101,6 +106,50 @@ router.post('/login', async (req, res) => {
 // ---------------------------------------------------------------------
 router.get('/me', autenticar, (req, res) => {
   res.json({ usuario: req.usuario });
+});
+
+
+// PUT /api/auth/me: cada pessoa só consegue alterar a própria conta.
+router.put('/me', autenticar, async (req, res) => {
+  const nome = typeof req.body?.nome === 'string' ? req.body.nome.trim() : '';
+  const bio = typeof req.body?.bio === 'string' && req.body.bio.trim()
+    ? req.body.bio.trim()
+    : null;
+  const fotoUrl = typeof req.body?.foto_url === 'string' && req.body.foto_url.trim()
+    ? req.body.foto_url.trim()
+    : null;
+  const perfilPublico = req.body?.perfil_publico;
+
+  const erros = [];
+  if (nome.length < 2 || nome.length > 100) {
+    erros.push('O nome deve ter entre 2 e 100 caracteres.');
+  }
+  if (bio && bio.length > 3000) {
+    erros.push('A biografia deve ter no máximo 3000 caracteres.');
+  }
+  if (fotoUrl && (fotoUrl.length > 255 || !REGEX_URL_IMAGEM.test(fotoUrl))) {
+    erros.push('A foto deve ser uma URL http(s) válida ou um arquivo enviado ao AGON Hub.');
+  }
+  if (typeof perfilPublico !== 'boolean') {
+    erros.push('Escolha se o perfil será público ou privado.');
+  }
+  if (erros.length) {
+    return res.status(400).json({ erro: 'Dados inválidos.', detalhes: erros });
+  }
+
+  const anterior = req.usuario.foto_url;
+  const { rows } = await db.query(
+    `UPDATE usuarios
+     SET nome = $1, bio = $2, foto_url = $3, perfil_publico = $4
+     WHERE id = $5
+     RETURNING id, nome, email, papel, bio, foto_url, perfil_publico, criado_em`,
+    [nome, bio, fotoUrl, perfilPublico, req.usuario.id]
+  );
+
+  if (!rows.length) return res.status(404).json({ erro: 'Usuário não encontrado.' });
+  if (anterior !== fotoUrl) await limparImagemSeNaoUtilizada(anterior);
+
+  res.json({ usuario: rows[0] });
 });
 
 module.exports = router;
