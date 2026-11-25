@@ -70,8 +70,8 @@ async function iniciar() {
   try {
     await db.query('SELECT 1');
     console.log('Conectado ao PostgreSQL.');
-    const resultadoBaseReal = await require('./migrations/002_base_real_2026')(db);
-    console.log(resultadoBaseReal.aplicada ? `Base real AGON importada: ${resultadoBaseReal.equipes} equipes e ${resultadoBaseReal.atletas} atletas.` : 'Migração da base real já aplicada.');
+    const resultadoBaseDemo = await require('./migrations/002_base_real_2026')(db);
+    console.log(resultadoBaseDemo.aplicada ? `Base demonstrativa AGON importada: ${resultadoBaseDemo.equipes} equipes e ${resultadoBaseDemo.atletas} atletas fictícios.` : 'Migração da base demonstrativa já aplicada.');
   } catch (erro) {
     console.error(
       'ERRO: não foi possível conectar ao PostgreSQL.\n' +
