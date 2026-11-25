@@ -1,9 +1,9 @@
-// Migração idempotente da base real inicial do AGON Hub.
+// Migração idempotente da base demonstrativa do AGON Hub.
 // Adiciona os cadastros reais sem apagar contas, publicações ou registros existentes.
 const fs = require('fs');
 const path = require('path');
 
-module.exports = async function aplicarBaseReal(db) {
+module.exports = async function aplicarBaseDemonstrativa(db) {
   const raiz = path.resolve(__dirname, '..', '..', '..');
   const arquivoDados = path.join(raiz, 'database', 'data', 'agon_demo_data_2026.json');
   const dados = JSON.parse(fs.readFileSync(arquivoDados, 'utf8'));
