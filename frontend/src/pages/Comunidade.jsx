@@ -66,6 +66,17 @@ export default function Comunidade() {
     } catch (e) { setErro(e.message); }
   }
 
+  async function excluirPublicacao(publicacao) {
+    if (!usuario || (usuario.id !== publicacao.usuario_id && usuario.papel !== 'admin')) return;
+    if (!window.confirm('Excluir esta publicação? Esta ação não pode ser desfeita.')) return;
+    try {
+      await api('/comunidade/' + publicacao.id, { metodo: 'DELETE' });
+      await carregar();
+    } catch (e) {
+      setErro(e.message);
+    }
+  }
+
   return <section className="comunidade">
     <div className="hero">
       <p className="etiqueta">AGON Community</p>
@@ -96,7 +107,12 @@ export default function Comunidade() {
         {feed.map(p => <article className="cartao" key={p.id}>
           <div className="acoes">
             <strong>{p.tipo_autor === 'equipe' ? p.equipe_nome : p.tipo_autor === 'atleta' ? (p.atleta_apelido || p.atleta_nome) : p.usuario_nome}</strong>
-            <small>{new Date(p.criado_em).toLocaleString('pt-BR')}</small>
+            <div className="acoes">
+              <small>{new Date(p.criado_em).toLocaleString('pt-BR')}</small>
+              {usuario && (usuario.id === p.usuario_id || usuario.papel === 'admin') && (
+                <button type="button" className="botao-perigo" onClick={() => excluirPublicacao(p)}>Apagar publicação</button>
+              )}
+            </div>
           </div>
           <p style={{ whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' }}>{p.texto}</p>
           <div className="acoes">
