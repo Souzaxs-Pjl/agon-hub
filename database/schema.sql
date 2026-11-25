@@ -5,9 +5,9 @@
 -- COMO USAR (com o banco "agon_hub" já criado):
 --   psql -U postgres -d agon_hub -f database/schema.sql
 --
--- ATENÇÃO: este script cria apenas tabelas que ainda não existem.
--- Ele não apaga dados nem altera automaticamente estruturas existentes.
--- Mudanças futuras de colunas ou restrições devem usar migrações SQL.
+-- ATENÇÃO: este script não apaga dados.
+-- Cria tabelas ausentes e acrescenta os campos de perfil ausentes em usuarios.
+-- Outras mudanças estruturais futuras devem usar migrações SQL específicas.
 -- Execute seed.sql uma única vez em cada banco novo.
 -- =====================================================================
 
