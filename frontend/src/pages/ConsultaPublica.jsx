@@ -121,6 +121,15 @@ export default function ConsultaPublica({ tipo }) {
               );
             }
 
+            if (tipo === 'partidas') {
+              return (
+                <Link to={'/partidas/' + item.id} className="cartao" key={item.id}>
+                  {conteudo}
+                  <span className="texto-link">Ver partida →</span>
+                </Link>
+              );
+            }
+
             return (
               <article className="cartao" key={item.id}>
                 {conteudo}
