@@ -22,6 +22,12 @@ const FORM_VAZIO = {
   instituicao: '',
   descricao: '',
   logo_url: '',
+  slogan: '',
+  instagram_url: '',
+  titulos: '',
+  cidade: '',
+  responsavel: '',
+  cores: '',
 };
 
 export default function Admin() {
@@ -90,6 +96,12 @@ export default function Admin() {
       instituicao: equipe.instituicao || '',
       descricao: equipe.descricao || '',
       logo_url: equipe.logo_url || '',
+      slogan: equipe.slogan || '',
+      instagram_url: equipe.instagram_url || '',
+      titulos: equipe.titulos || '',
+      cidade: equipe.cidade || '',
+      responsavel: equipe.responsavel || '',
+      cores: equipe.cores || '',
     });
   }
 
@@ -221,6 +233,30 @@ export default function Admin() {
             <textarea name="descricao" value={form.descricao} onChange={alterarCampo} rows={3} />
           </label>
           <label>
+            Slogan (opcional)
+            <input name="slogan" value={form.slogan} onChange={alterarCampo} maxLength={180} />
+          </label>
+          <label>
+            Instagram oficial (URL completa)
+            <input name="instagram_url" value={form.instagram_url} onChange={alterarCampo} placeholder="https://www.instagram.com/equipe/" />
+          </label>
+          <label>
+            Títulos e conquistas (um por linha)
+            <textarea name="titulos" value={form.titulos} onChange={alterarCampo} rows={3} />
+          </label>
+          <label>
+            Cidade
+            <input name="cidade" value={form.cidade} onChange={alterarCampo} maxLength={100} />
+          </label>
+          <label>
+            Responsável ou referência registrada
+            <input name="responsavel" value={form.responsavel} onChange={alterarCampo} maxLength={150} />
+          </label>
+          <label>
+            Cores de referência
+            <input name="cores" value={form.cores} onChange={alterarCampo} maxLength={180} />
+          </label>
+          <label>
             URL externa do logo (opcional)
             <input name="logo_url" value={form.logo_url} onChange={alterarCampo} placeholder="https://..." />
           </label>
@@ -251,8 +287,8 @@ export default function Admin() {
               {equipes.map((equipe) => (
                 <tr key={equipe.id}>
                   <td>{equipe.nome}</td>
-                  <td>{equipe.sigla}</td>
-                  <td>{equipe.modalidade_nome}</td>
+                  <td>{equipe.sigla_oficial || (String(equipe.codigo_fonte || '').startsWith('TEAM-') ? equipe.sigla : '—')}</td>
+                  <td>{equipe.modalidade_nome === 'Multimodal' ? 'Todas as modalidades' : equipe.modalidade_nome}</td>
                   <td className="celula-acoes">
                     <button type="button" className="botao-secundario" onClick={() => iniciarEdicao(equipe)}>
                       Editar
