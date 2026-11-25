@@ -143,7 +143,7 @@ Este documento separa os testes já presentes no repositório dos testes que ain
 
 - `backend/tests/auth.test.js`: saúde, cadastro, login, token JWT, sessão e autorização.
 - `backend/tests/equipes.test.js`: leitura pública e CRUD de equipes, incluindo permissões e validação.
-- `backend/tests/recursos.test.js`: CRUD e relacionamentos de atletas/campeonatos, partidas, notícias e upload.
+- `backend/tests/recursos.test.js`: CRUD de modalidades, atletas, campeonatos, partidas e notícias; vínculos, permissões e uploads.
 - Outros testes unitários em `backend/tests` cobrem funções de validação.
 
 ### Execução remota pelo GitHub Actions
