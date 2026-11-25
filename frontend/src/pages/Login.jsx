@@ -20,8 +20,8 @@ export default function Login() {
     setEnviando(true);
     try {
       const usuario = await entrar(email, senha);
-      // Administrador vai direto para o painel; os demais, para a home.
-      navigate(usuario.papel === 'admin' ? '/admin' : '/');
+      // Admin continua com acesso direto ao painel; membros vão ao perfil.
+      navigate(usuario.papel === 'admin' ? '/admin' : '/perfil');
     } catch (e) {
       setErro(e.message);
     } finally {
