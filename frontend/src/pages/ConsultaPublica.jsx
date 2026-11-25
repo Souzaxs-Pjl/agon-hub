@@ -50,6 +50,7 @@ export default function ConsultaPublica({ tipo }) {
     <section>
       <p className="nota"><Link to="/">Início</Link> / Universo AGON</p>
       <h1>{config.titulo}</h1>
+      {tipo === 'atletas' && <p className="nota">Todos os atletas desta versão são personagens fictícios criados para demonstração.</p>}
       {registros.length === 0 ? <p className="aviso">Nenhum registro disponível.</p> : (
         <div className="grade">
           {registros.map((item) => {
