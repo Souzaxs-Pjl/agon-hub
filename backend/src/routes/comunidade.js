@@ -26,7 +26,7 @@ router.get('/opcoes-autoria', autenticar, async (req, res) => {
 router.get('/', async (req, res) => {
   const { rows } = await db.query(
     `SELECT p.id, p.tipo_autor, p.atleta_id, p.equipe_id, p.texto, p.criado_em,
-      u.id AS usuario_id, u.nome AS usuario_nome, u.foto_url AS usuario_foto,
+      u.id AS usuario_id, u.nome AS usuario_nome, NULL::varchar AS usuario_foto,
       a.nome AS atleta_nome, a.apelido AS atleta_apelido, a.foto_url AS atleta_foto,
       e.nome AS equipe_nome, e.sigla AS equipe_sigla, e.logo_url AS equipe_logo,
       (SELECT COUNT(*)::int FROM publicacao_curtidas pc WHERE pc.publicacao_id=p.id) AS curtidas,
@@ -97,7 +97,7 @@ router.get('/:id/comentarios', async (req, res) => {
   const id = Number(req.params.id);
   if (!Number.isInteger(id) || id < 1) return res.status(400).json({ erro: 'ID inválido.' });
   const { rows } = await db.query(
-    `SELECT c.id,c.publicacao_id,c.texto,c.criado_em,u.id AS usuario_id,u.nome AS usuario_nome,u.foto_url AS usuario_foto
+    `SELECT c.id,c.publicacao_id,c.texto,c.criado_em,u.id AS usuario_id,u.nome AS usuario_nome,NULL::varchar AS usuario_foto
      FROM publicacao_comentarios c JOIN usuarios u ON u.id=c.usuario_id
      WHERE c.publicacao_id=$1 ORDER BY c.criado_em ASC LIMIT 100`, [id]
   );
