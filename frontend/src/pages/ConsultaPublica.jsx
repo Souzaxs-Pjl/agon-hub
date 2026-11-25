@@ -103,12 +103,25 @@ export default function ConsultaPublica({ tipo }) {
               </>
             );
 
-            return tipo === 'atletas' ? (
-              <Link to={'/atletas/' + item.id} className="cartao" key={item.id}>
-                {conteudo}
-                <span className="texto-link">Ver perfil →</span>
-              </Link>
-            ) : (
+            if (tipo === 'atletas') {
+              return (
+                <Link to={'/atletas/' + item.id} className="cartao" key={item.id}>
+                  {conteudo}
+                  <span className="texto-link">Ver perfil →</span>
+                </Link>
+              );
+            }
+
+            if (tipo === 'campeonatos') {
+              return (
+                <Link to={'/campeonatos/' + item.id} className="cartao" key={item.id}>
+                  {conteudo}
+                  <span className="texto-link">Ver campeonato →</span>
+                </Link>
+              );
+            }
+
+            return (
               <article className="cartao" key={item.id}>
                 {conteudo}
               </article>
