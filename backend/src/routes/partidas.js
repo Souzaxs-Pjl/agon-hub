@@ -20,10 +20,18 @@ const SELECT_PARTIDA = `
   JOIN campeonatos c ON c.id = p.campeonato_id
   JOIN equipes ec ON ec.id = p.equipe_casa_id
   JOIN equipes ev ON ev.id = p.equipe_visitante_id
+  JOIN modalidades mc ON mc.id = ec.modalidade_id
+  JOIN modalidades mv ON mv.id = ev.modalidade_id
 `;
 
 async function buscarPartida(id) {
-  const { rows } = await db.query(`${SELECT_PARTIDA} WHERE p.id = $1`, [id]);
+  const { rows } = await db.query(
+    `${SELECT_PARTIDA}
+     WHERE p.id = $1 AND p.demonstrativo = FALSE
+       AND c.demonstrativo = FALSE
+       AND ec.demonstrativo = FALSE AND ev.demonstrativo = FALSE`,
+    [id]
+  );
   return rows[0] || null;
 }
 
@@ -32,6 +40,8 @@ async function validarParticipantes(dados) {
     `SELECT c.modalidade_id AS modalidade_campeonato,
             ec.modalidade_id AS modalidade_casa,
             ev.modalidade_id AS modalidade_visitante,
+            mc.nome AS modalidade_casa_nome,
+            mv.nome AS modalidade_visitante_nome,
             EXISTS (
               SELECT 1 FROM campeonato_equipes ce
               WHERE ce.campeonato_id = c.id AND ce.equipe_id = ec.id
@@ -43,14 +53,17 @@ async function validarParticipantes(dados) {
      FROM campeonatos c
      JOIN equipes ec ON ec.id = $2
      JOIN equipes ev ON ev.id = $3
-     WHERE c.id = $1`,
+     JOIN modalidades mc ON mc.id = ec.modalidade_id
+     JOIN modalidades mv ON mv.id = ev.modalidade_id
+     WHERE c.id = $1 AND c.demonstrativo = FALSE
+       AND ec.demonstrativo = FALSE AND ev.demonstrativo = FALSE`,
     [dados.campeonato_id, dados.equipe_casa_id, dados.equipe_visitante_id]
   );
   if (!resultado.rowCount) return 'Campeonato ou equipe não encontrado.';
   const r = resultado.rows[0];
   if (
-    r.modalidade_campeonato !== r.modalidade_casa ||
-    r.modalidade_campeonato !== r.modalidade_visitante
+    (r.modalidade_campeonato !== r.modalidade_casa && r.modalidade_casa_nome !== 'Multimodal') ||
+    (r.modalidade_campeonato !== r.modalidade_visitante && r.modalidade_visitante_nome !== 'Multimodal')
   ) {
     return 'As duas equipes precisam pertencer à modalidade do campeonato.';
   }
@@ -66,8 +79,14 @@ router.get('/', async (req, res) => {
     return res.status(400).json({ erro: 'ID de campeonato inválido.' });
   }
   const { rows } = campeonatoId
-    ? await db.query(`${SELECT_PARTIDA} WHERE p.campeonato_id = $1 ORDER BY p.data_hora NULLS LAST, p.id`, [campeonatoId])
-    : await db.query(`${SELECT_PARTIDA} ORDER BY p.data_hora NULLS LAST, p.id`);
+    ? await db.query(`${SELECT_PARTIDA}
+        WHERE p.campeonato_id = $1 AND p.demonstrativo = FALSE
+          AND c.demonstrativo = FALSE AND ec.demonstrativo = FALSE AND ev.demonstrativo = FALSE
+        ORDER BY p.data_hora NULLS LAST, p.id`, [campeonatoId])
+    : await db.query(`${SELECT_PARTIDA}
+        WHERE p.demonstrativo = FALSE
+          AND c.demonstrativo = FALSE AND ec.demonstrativo = FALSE AND ev.demonstrativo = FALSE
+        ORDER BY p.data_hora NULLS LAST, p.id`);
   res.json(rows);
 });
 
