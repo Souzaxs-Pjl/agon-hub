@@ -13,6 +13,14 @@ const PAGINAS = {
   noticias: { titulo: 'Notícias', endpoint: '/noticias' },
 };
 
+// PostgreSQL DATE chega como AAAA-MM-DD. Formatar os componentes evita
+// deslocamento de um dia por conversão de fuso horário no navegador.
+function formatarData(data) {
+  if (!data) return '';
+  const [ano, mes, dia] = String(data).slice(0, 10).split('-');
+  return dia && mes && ano ? `${dia}/${mes}/${ano}` : String(data);
+}
+
 export default function ConsultaPublica({ tipo }) {
   const config = PAGINAS[tipo];
   const [registros, setRegistros] = useState([]);
@@ -59,7 +67,7 @@ export default function ConsultaPublica({ tipo }) {
                   <p>{item.modalidade_nome}</p>
                   <span className="etiqueta">{item.status}</span>
                   <p className="pequeno">{item.total_equipes} equipes inscritas</p>
-                  {item.data_inicio && <p className="pequeno">Início: {new Date(item.data_inicio).toLocaleDateString('pt-BR')}</p>}
+                  {item.data_inicio && <p className="pequeno">Início: {formatarData(item.data_inicio)}</p>}
                 </>
               )}
               {tipo === 'partidas' && (
