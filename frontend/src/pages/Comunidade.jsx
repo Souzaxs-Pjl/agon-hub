@@ -46,8 +46,12 @@ export default function Comunidade() {
   }
 
   async function abrirComentarios(id) {
-    try { setComentarios(s => ({ ...s, [id]: await api(`/comunidade/${id}/comentarios`, { comToken: false }) })); }
-    catch (e) { setErro(e.message); }
+    try {
+      const lista = await api(`/comunidade/${id}/comentarios`, { comToken: false });
+      setComentarios(s => ({ ...s, [id]: lista }));
+    } catch (e) {
+      setErro(e.message);
+    }
   }
 
   async function comentar(id, e) {
