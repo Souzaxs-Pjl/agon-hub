@@ -46,25 +46,25 @@ Revise as telas existentes para garantir feedback consistente:
 
 Garanta labels, foco visível, contraste e navegação por teclado. Mensagem de falha de comunicação não deve afirmar que o backend está desligado, pois a causa pode ser outra. Preserve as chamadas e os endpoints atuais.
 
-## Prompt 4 — CRUD administrativo de atletas
+## Prompt 4 — Revisão do CRUD administrativo de atletas
 
-Implemente a interface administrativa de atletas somente após confirmar os endpoints do backend. Os campos do domínio incluem nome, apelido, bio, foto_url e usuário associado opcional. O vínculo atleta-equipe deve utilizar a tabela `equipe_atletas`, incluindo a função do atleta. Permita criar, consultar, editar e excluir, além de adicionar/remover vínculos. Nome, apelido e função devem aparecer na consulta pública de detalhes da equipe. Não invente endpoints: leia a documentação real da API e adapte-se a ela.
+Revise a interface administrativa de atletas já existente em `frontend/src/pages/AdminRecursos.jsx` e os endpoints descritos em `docs/API.md`. Os campos do domínio incluem nome, apelido, bio, foto_url e usuário associado opcional. O vínculo atleta-equipe deve utilizar a tabela `equipe_atletas`, incluindo a função do atleta. Permita criar, consultar, editar e excluir, além de adicionar/remover vínculos. Nome, apelido e função devem aparecer na consulta pública de detalhes da equipe. Não invente endpoints: leia a documentação real da API e adapte-se a ela.
 
-## Prompt 5 — CRUD de campeonatos e inscrições
+## Prompt 5 — Revisão de campeonatos e inscrições
 
-Implemente telas administrativas para listar, criar, editar e excluir campeonatos. Campos: nome, edição, modalidade, datas de início/fim, status e descrição. Permita gerenciar equipes inscritas usando `campeonato_equipes`. Valide datas e duplicidade de inscrição. Antes de chamar a API, confira os endpoints documentados no repositório; não suponha nomes de rotas.
+Revise as telas administrativas existentes de campeonatos e inscrições. Campos: nome, edição, modalidade, datas de início/fim, status e descrição. Permita gerenciar equipes inscritas usando `campeonato_equipes`. Valide datas e duplicidade de inscrição. Antes de chamar a API, confira os endpoints documentados no repositório; não suponha nomes de rotas.
 
-## Prompt 6 — CRUD de partidas
+## Prompt 6 — Revisão do CRUD de partidas
 
-Implemente interface administrativa para consultar, criar, editar e excluir partidas. Campos: campeonato, equipe mandante, equipe visitante, data/hora, fase, placar e status. Exiba se o registro é demonstrativo. Impedir que a mesma equipe seja escolhida nos dois lados. Não permitir placar negativo; se a partida estiver finalizada, exigir placar completo. Use apenas endpoints existentes e documentados.
+Revise a interface administrativa existente para consultar, criar, editar e excluir partidas. Campos: campeonato, equipe mandante, equipe visitante, data/hora, fase, placar e status. Exiba se o registro é demonstrativo. Impedir que a mesma equipe seja escolhida nos dois lados. Não permitir placar negativo; se a partida estiver finalizada, exigir placar completo. Use apenas endpoints existentes e documentados.
 
-## Prompt 7 — CRUD de notícias
+## Prompt 7 — Revisão do CRUD de notícias
 
-Implemente uma área administrativa para criar, consultar, editar e excluir notícias e uma listagem pública, caso as rotas estejam implementadas. Campos previstos: título, resumo, conteúdo, imagem e autor. Não invente endpoints nem apresente texto gerado como notícia factual.
+Revise a área administrativa e a listagem pública de notícias já criadas, comparando-as com o contrato atual da API. Campos previstos: título, resumo, conteúdo, imagem e autor. Não invente endpoints nem apresente texto gerado como notícia factual.
 
-## Prompt 8 — Upload de imagens
+## Prompt 8 — Revisão de uploads de imagens
 
-Implemente campos de upload somente quando as rotas de upload no backend estiverem disponíveis. Aceitar formatos raster previstos pela API (JPEG, PNG e WebP, conforme contrato), exibir pré-visualização e estado de envio. Enviar arquivo usando `FormData`, sem definir manualmente o cabeçalho `Content-Type`, pois o navegador precisa incluir o boundary multipart. Exibir a URL retornada pela API no campo correspondente. Tratar falhas e tamanho máximo de arquivo. Não converter uploads em URLs externas automaticamente.
+Revise os campos de upload já conectados às rotas do backend. Aceitar formatos raster previstos pela API (JPEG, PNG e WebP, conforme contrato), exibir pré-visualização e estado de envio. Enviar arquivo usando `FormData`, sem definir manualmente o cabeçalho `Content-Type`, pois o navegador precisa incluir o boundary multipart. Exibir a URL retornada pela API no campo correspondente. Tratar falhas e tamanho máximo de arquivo. Não converter uploads em URLs externas automaticamente.
 
 ## Prompt 9 — Revisão final de integração
 
