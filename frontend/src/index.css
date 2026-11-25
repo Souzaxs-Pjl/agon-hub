@@ -207,7 +207,7 @@ textarea { resize: vertical; }
   display: flex !important; align-items: flex-start; gap: 0.75rem !important;
   padding: 0.9rem; border: 1px solid var(--borda); border-radius: 8px;
 }
-.perfil-privacidade input { flex: 0 0 auto; margin-top: 0.2rem; }
+.perfil-privacidade input { flex: 0 0 auto; width: 1.15rem; height: 1.15rem; margin-top: 0.2rem; }
 .perfil-privacidade span { display: grid; gap: 0.25rem; }
 
 @media (max-width: 900px) {
