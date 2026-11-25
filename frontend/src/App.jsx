@@ -14,6 +14,7 @@ import PartidaDetalhe from './pages/PartidaDetalhe.jsx';
 import Perfil from './pages/Perfil.jsx';
 import PerfilPublico from './pages/PerfilPublico.jsx';
 import ConsultaPublica from './pages/ConsultaPublica.jsx';
+import NoticiaDetalhe from './pages/NoticiaDetalhe.jsx';
 import Login from './pages/Login.jsx';
 import Cadastro from './pages/Cadastro.jsx';
 import Admin from './pages/Admin.jsx';
@@ -38,6 +39,7 @@ export default function App() {
           <Route path="/perfil" element={<Perfil />} />
           <Route path="/perfil/:id" element={<PerfilPublico />} />
           <Route path="/noticias" element={<ConsultaPublica tipo="noticias" />} />
+          <Route path="/noticias/:id" element={<NoticiaDetalhe />} />
           <Route path="/login" element={<Login />} />
           <Route path="/cadastro" element={<Cadastro />} />
           <Route path="/admin" element={<RotaAdmin><Admin /></RotaAdmin>} />
