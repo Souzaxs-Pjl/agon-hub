@@ -45,8 +45,12 @@ Preservar contraste acessível. Não usar o verde-limão em grandes blocos de te
 4. **Lista de equipes:** cartões com nome, sigla, modalidade, tipo e logo.
 5. **Detalhe de equipe:** identidade, modalidade, instituição/descrição quando presentes e tabela/lista de atletas com nome, apelido e função.
 6. **Administração de equipes:** formulário de criação/edição e tabela de registros.
-7. **Administração de modalidades:** desenhar a tela como expansão prevista, sinalizada como planejamento se ainda não estiver implementada.
-8. **Administração de atletas, campeonatos, partidas e notícias:** preparar componentes reutilizáveis, mas não representar como telas operacionais até a implementação da API.
+7. **Administração de modalidades:** revisar o formulário e a listagem já existentes no painel reutilizável.
+8. **Administração de atletas:** revisar CRUD, associação opcional de usuário, upload de foto e vínculos com equipes/funções.
+9. **Administração de campeonatos:** revisar CRUD e inscrição/remoção de equipes.
+10. **Administração de partidas:** revisar seleção de campeonato/equipes, data, fase, placar, status e indicador demonstrativo.
+11. **Administração de notícias:** revisar CRUD de título, resumo, conteúdo e imagem.
+12. **Consultas públicas:** revisar as páginas de atletas, campeonatos, partidas e notícias, alimentadas pela API.
 
 ## Componentes e estados
 
