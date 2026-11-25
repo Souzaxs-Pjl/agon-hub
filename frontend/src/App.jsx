@@ -10,6 +10,8 @@ import EquipeDetalhe from './pages/EquipeDetalhe.jsx';
 import AtletaDetalhe from './pages/AtletaDetalhe.jsx';
 import CampeonatoDetalhe from './pages/CampeonatoDetalhe.jsx';
 import PartidaDetalhe from './pages/PartidaDetalhe.jsx';
+import Perfil from './pages/Perfil.jsx';
+import PerfilPublico from './pages/PerfilPublico.jsx';
 import ConsultaPublica from './pages/ConsultaPublica.jsx';
 import Login from './pages/Login.jsx';
 import Cadastro from './pages/Cadastro.jsx';
@@ -31,6 +33,8 @@ export default function App() {
           <Route path="/campeonatos/:id" element={<CampeonatoDetalhe />} />
           <Route path="/partidas" element={<ConsultaPublica tipo="partidas" />} />
           <Route path="/partidas/:id" element={<PartidaDetalhe />} />
+          <Route path="/perfil" element={<Perfil />} />
+          <Route path="/perfil/:id" element={<PerfilPublico />} />
           <Route path="/noticias" element={<ConsultaPublica tipo="noticias" />} />
           <Route path="/login" element={<Login />} />
           <Route path="/cadastro" element={<Cadastro />} />
