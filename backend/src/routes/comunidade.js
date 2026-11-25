@@ -8,7 +8,7 @@ const router = express.Router();
 // Opções de autoria disponíveis para a conta autenticada.
 router.get('/opcoes-autoria', autenticar, async (req, res) => {
   const atletaResult = await db.query(
-    'SELECT id, nome, apelido FROM atletas WHERE usuario_id=$1 LIMIT 1',
+    'SELECT id, nome, apelido FROM atletas WHERE usuario_id=$1 AND demonstrativo=FALSE LIMIT 1',
     [req.usuario.id]
   );
   const equipesResult = await db.query(
@@ -16,7 +16,7 @@ router.get('/opcoes-autoria', autenticar, async (req, res) => {
      FROM equipe_atletas ea
      JOIN atletas a ON a.id=ea.atleta_id
      JOIN equipes e ON e.id=ea.equipe_id
-     WHERE a.usuario_id=$1
+     WHERE a.usuario_id=$1 AND a.demonstrativo=FALSE AND e.demonstrativo=FALSE
      ORDER BY e.nome`,
     [req.usuario.id]
   );
@@ -35,6 +35,8 @@ router.get('/', async (req, res) => {
      JOIN usuarios u ON u.id=p.autor_usuario_id
      LEFT JOIN atletas a ON a.id=p.atleta_id
      LEFT JOIN equipes e ON e.id=p.equipe_id
+     WHERE (a.id IS NULL OR a.demonstrativo = FALSE)
+       AND (e.id IS NULL OR e.demonstrativo = FALSE)
      ORDER BY p.criado_em DESC LIMIT 50`
   );
   res.json(rows);
