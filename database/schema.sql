@@ -27,6 +27,13 @@ CREATE TABLE IF NOT EXISTS usuarios (
     criado_em   TIMESTAMP     NOT NULL DEFAULT NOW()
 );
 
+-- Campos do perfil pessoal. IF NOT EXISTS também atualiza bancos já criados.
+ALTER TABLE usuarios
+    ADD COLUMN IF NOT EXISTS bio TEXT,
+    ADD COLUMN IF NOT EXISTS foto_url VARCHAR(255),
+    ADD COLUMN IF NOT EXISTS perfil_publico BOOLEAN NOT NULL DEFAULT TRUE;
+
+
 -- ---------------------------------------------------------------------
 -- 3) MODALIDADES
 --    Esportes tradicionais e jogos eletrônicos na mesma tabela.
