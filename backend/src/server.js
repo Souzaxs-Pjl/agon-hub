@@ -126,6 +126,8 @@ async function iniciar() {
     await db.query('SELECT 1');
     console.log('Conectado ao PostgreSQL.');
     await prepararBanco();
+    const resultadoBaseReal = await require('./migrations/002_base_real_2026')(db);
+    console.log(resultadoBaseReal.aplicada ? `Base real AGON importada: ${resultadoBaseReal.equipes} equipes e ${resultadoBaseReal.atletas} atletas.` : 'Migração da base real já aplicada.');
     await prepararAdministrador();
   } catch (erro) {
     console.error(
