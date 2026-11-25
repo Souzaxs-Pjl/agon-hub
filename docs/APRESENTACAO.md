@@ -32,23 +32,25 @@ Demonstrar cadastro/login e, se possível, uma tentativa de acesso sem permissã
 
 Ordem sugerida:
 
-1. Abrir a página inicial e navegar para Equipes.
-2. Abrir o detalhe de uma equipe e mostrar modalidade e atletas.
-3. Entrar com administrador.
-4. Abrir a administração de equipes.
-5. Criar uma equipe de demonstração.
-6. Editar a equipe criada.
-7. Conferir a equipe na listagem pública.
-8. Excluir o registro de teste.
-9. Sair e mostrar a restrição do painel para usuário sem permissão.
+1. Abrir a página inicial e apresentar os atalhos de navegação.
+2. Abrir Equipes, escolher uma equipe e mostrar modalidade e atletas (nome, apelido e função).
+3. Entrar com administrador e abrir o painel de equipes.
+4. Criar uma equipe de demonstração, enviar um logo, editar e excluir a equipe de teste.
+5. Abrir Administração > Modalidades e mostrar o CRUD.
+6. Abrir Administração > Atletas, cadastrar um atleta e vinculá-lo a uma equipe com função.
+7. Abrir Administração > Campeonatos, criar um campeonato e inscrever equipes da mesma modalidade.
+8. Abrir Administração > Partidas e cadastrar um confronto entre equipes inscritas.
+9. Abrir Administração > Notícias e criar um conteúdo demonstrativo.
+10. Conferir as páginas públicas de atletas, campeonatos, partidas e notícias.
+11. Sair e mostrar a restrição do painel para usuário sem permissão.
 
-Se os demais CRUDs e uploads já estiverem concluídos e testados, demonstrar brevemente um cadastro de atleta com vínculo a equipe, um campeonato com inscrição e uma partida com placar. Não tente demonstrar funcionalidades que ainda não tenham sido testadas.
+A demonstração completa só deve ser feita depois que o workflow e os fluxos no navegador forem conferidos. Se algum módulo falhar, apresente apenas os fluxos confirmados e explique a limitação sem afirmar que está funcionando.
 
 ## 7. Testes e limitações — 50 segundos
 
 "Os testes verificam fluxos de autenticação, autorização, validação e operações do sistema. Os dados do seed são fictícios e identificados como demonstrativos. Também documentei o que foi implementado e o que permanece como evolução, para não confundir a estrutura do banco com uma funcionalidade já disponível."
 
-Apresentar somente números de testes que tenham sido realmente executados.
+Apresentar somente números de testes que tenham sido realmente executados. Se a aba Actions ainda não apresentar uma execução verde, informar que a automação foi configurada, mas aguarda validação.
 
 ## 8. Encerramento — 30 segundos
 
