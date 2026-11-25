@@ -18,7 +18,7 @@ const PAGINAS = {
 function formatarData(data) {
   if (!data) return '';
   const [ano, mes, dia] = String(data).slice(0, 10).split('-');
-  return dia && mes && ano ? `${dia}/${mes}/${ano}` : String(data);
+  return dia && mes && ano ? [dia, mes, ano].join('/') : String(data);
 }
 
 export default function ConsultaPublica({ tipo }) {
@@ -53,54 +53,67 @@ export default function ConsultaPublica({ tipo }) {
       <p className="nota">Informações demonstrativas do banco de dados do AGON Hub.</p>
       {registros.length === 0 ? <p className="aviso">Nenhum registro disponível.</p> : (
         <div className="grade">
-          {registros.map((item) => (
-            <article className="cartao" key={item.id}>
-              {tipo === 'atletas' && (
-                <>
-                  {item.foto_url && <img src={item.foto_url} alt="" className="foto-card" />}
-                  <h2>{item.nome}</h2>
-                  <p className="pequeno">{item.apelido || 'Sem apelido cadastrado'}</p>
-                  {item.bio && <p>{item.bio}</p>}
-                  {item.equipes?.length > 0 && (
-                    <p className="pequeno">
-                      <strong>Funções:</strong>{' '}
-                      {item.equipes.map((equipe) => `${equipe.nome}: ${equipe.funcao || 'Sem função'}`).join(' · ')}
-                    </p>
-                  )}
-                </>
-              )}
-              {tipo === 'campeonatos' && (
-                <>
-                  <h2>{item.nome} · {item.edicao}</h2>
-                  <p>{item.modalidade_nome}</p>
-                  <span className="etiqueta">{item.status}</span>
-                  <p className="pequeno">{item.total_equipes} equipes inscritas</p>
-                  {item.data_inicio && <p className="pequeno">Início: {formatarData(item.data_inicio)}</p>}
-                </>
-              )}
-              {tipo === 'partidas' && (
-                <>
-                  <p className="pequeno">{item.campeonato_nome} · {item.fase || 'Partida'}</p>
-                  <h2>{item.equipe_casa_nome} × {item.equipe_visitante_nome}</h2>
-                  <p className="placar">{item.placar_casa ?? '—'} : {item.placar_visitante ?? '—'}</p>
-                  <span className="etiqueta">{item.status}</span>
-                  {item.demonstrativo && <p className="nota">Resultado demonstrativo</p>}
-                </>
-              )}
-              {tipo === 'noticias' && (
-                <>
-                  {item.imagem_url && <img src={item.imagem_url} alt="" className="imagem-noticia" />}
-                  <h2>{item.titulo}</h2>
-                  {item.resumo && <p>{item.resumo}</p>}
-                  <p className="pequeno">Por {item.autor_nome || 'Redação AGON'}</p>
-                  <details>
-                    <summary>Continuar lendo</summary>
-                    <p className="texto">{item.conteudo}</p>
-                  </details>
-                </>
-              )}
-            </article>
-          ))}
+          {registros.map((item) => {
+            const conteudo = (
+              <>
+                {tipo === 'atletas' && (
+                  <>
+                    {item.foto_url && <img src={item.foto_url} alt="" className="foto-card" />}
+                    <h2>{item.nome}</h2>
+                    <p className="pequeno">{item.apelido || 'Sem apelido cadastrado'}</p>
+                    {item.bio && <p>{item.bio}</p>}
+                    {item.equipes?.length > 0 && (
+                      <p className="pequeno">
+                        <strong>Equipes:</strong>{' '}
+                        {item.equipes.map((equipe) => equipe.nome).join(' · ')}
+                      </p>
+                    )}
+                  </>
+                )}
+                {tipo === 'campeonatos' && (
+                  <>
+                    <h2>{item.nome} · {item.edicao}</h2>
+                    <p>{item.modalidade_nome}</p>
+                    <span className="etiqueta">{item.status}</span>
+                    <p className="pequeno">{item.total_equipes} equipes inscritas</p>
+                    {item.data_inicio && <p className="pequeno">Início: {formatarData(item.data_inicio)}</p>}
+                  </>
+                )}
+                {tipo === 'partidas' && (
+                  <>
+                    <p className="pequeno">{item.campeonato_nome} · {item.fase || 'Partida'}</p>
+                    <h2>{item.equipe_casa_nome} × {item.equipe_visitante_nome}</h2>
+                    <p className="placar">{item.placar_casa ?? '—'} : {item.placar_visitante ?? '—'}</p>
+                    <span className="etiqueta">{item.status}</span>
+                    {item.demonstrativo && <p className="nota">Resultado demonstrativo</p>}
+                  </>
+                )}
+                {tipo === 'noticias' && (
+                  <>
+                    {item.imagem_url && <img src={item.imagem_url} alt="" className="imagem-noticia" />}
+                    <h2>{item.titulo}</h2>
+                    {item.resumo && <p>{item.resumo}</p>}
+                    <p className="pequeno">Por {item.autor_nome || 'Redação AGON'}</p>
+                    <details>
+                      <summary>Continuar lendo</summary>
+                      <p className="texto">{item.conteudo}</p>
+                    </details>
+                  </>
+                )}
+              </>
+            );
+
+            return tipo === 'atletas' ? (
+              <Link to={'/atletas/' + item.id} className="cartao" key={item.id}>
+                {conteudo}
+                <span className="texto-link">Ver perfil →</span>
+              </Link>
+            ) : (
+              <article className="cartao" key={item.id}>
+                {conteudo}
+              </article>
+            );
+          })}
         </div>
       )}
     </section>
