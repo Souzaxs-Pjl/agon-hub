@@ -32,6 +32,7 @@ app.use(cors({
   origin: (origem, callback) => {
     // Requisições sem Origin (ex.: health checks) são permitidas.
     if (!origem || origensPermitidas.has(origem)) return callback(null, true);
+    console.warn('CORS rejeitou a origem:', origem);
     return callback(new Error('Origem não permitida pelo CORS.'));
   },
 }));
