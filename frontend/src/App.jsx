@@ -5,6 +5,7 @@ import { Route, Routes } from 'react-router-dom';
 import Navbar from './components/Navbar.jsx';
 import RotaAdmin from './components/RotaAdmin.jsx';
 import Home from './pages/Home.jsx';
+import Comunidade from './pages/Comunidade.jsx';
 import Equipes from './pages/Equipes.jsx';
 import EquipeDetalhe from './pages/EquipeDetalhe.jsx';
 import AtletaDetalhe from './pages/AtletaDetalhe.jsx';
@@ -25,6 +26,7 @@ export default function App() {
       <main className="conteudo">
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/comunidade" element={<Comunidade />} />
           <Route path="/equipes" element={<Equipes />} />
           <Route path="/equipes/:id" element={<EquipeDetalhe />} />
           <Route path="/atletas" element={<ConsultaPublica tipo="atletas" />} />
