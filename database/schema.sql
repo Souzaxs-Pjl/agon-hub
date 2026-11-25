@@ -5,33 +5,19 @@
 -- COMO USAR (com o banco "agon_hub" já criado):
 --   psql -U postgres -d agon_hub -f database/schema.sql
 --
--- ATENÇÃO: este script APAGA as tabelas existentes antes de recriá-las.
--- Isso permite rodá-lo de novo para "zerar" o banco durante o desenvolvimento.
--- Depois de rodar este arquivo, rode o seed.sql para preencher os dados.
+-- ATENÇÃO: este script cria apenas tabelas que ainda não existem.
+-- Ele não apaga dados nem altera automaticamente estruturas existentes.
+-- Mudanças futuras de colunas ou restrições devem usar migrações SQL.
+-- Execute seed.sql uma única vez em cada banco novo.
 -- =====================================================================
 
--- ---------------------------------------------------------------------
--- 1) Apaga as tabelas antigas (ordem inversa das dependências).
---    Tabelas que têm chave estrangeira vêm primeiro.
--- ---------------------------------------------------------------------
-DROP TABLE IF EXISTS partidas            CASCADE;
-DROP TABLE IF EXISTS campeonato_equipes  CASCADE;
-DROP TABLE IF EXISTS campeonatos         CASCADE;
-DROP TABLE IF EXISTS equipe_atletas      CASCADE;
-DROP TABLE IF EXISTS atletas             CASCADE;
-DROP TABLE IF EXISTS equipes             CASCADE;
-DROP TABLE IF EXISTS noticias            CASCADE;
-DROP TABLE IF EXISTS modalidades         CASCADE;
-DROP TABLE IF EXISTS usuarios            CASCADE;
-
--- ---------------------------------------------------------------------
 -- 2) USUARIOS
 --    Quem tem conta na plataforma (login).
 --    O campo "papel" define a permissão: 'admin' ou 'usuario'.
 --    O cadastro público sempre grava 'usuario' (regra aplicada no backend).
 --    A senha NUNCA é guardada em texto puro: só o hash gerado pelo bcrypt.
 -- ---------------------------------------------------------------------
-CREATE TABLE usuarios (
+CREATE TABLE IF NOT EXISTS usuarios (
     id          SERIAL        PRIMARY KEY,
     nome        VARCHAR(100)  NOT NULL,
     email       VARCHAR(150)  NOT NULL UNIQUE,
@@ -46,7 +32,7 @@ CREATE TABLE usuarios (
 --    Esportes tradicionais e jogos eletrônicos na mesma tabela.
 --    "tipo" diferencia: 'esporte' (ex.: Futsal) ou 'esport' (ex.: Valorant).
 -- ---------------------------------------------------------------------
-CREATE TABLE modalidades (
+CREATE TABLE IF NOT EXISTS modalidades (
     id         SERIAL       PRIMARY KEY,
     nome       VARCHAR(80)  NOT NULL UNIQUE,
     tipo       VARCHAR(10)  NOT NULL
@@ -61,7 +47,7 @@ CREATE TABLE modalidades (
 --    "tipo" distingue equipes reais de fictícias.
 --    "logo_url" guarda o caminho do arquivo enviado por upload.
 -- ---------------------------------------------------------------------
-CREATE TABLE equipes (
+CREATE TABLE IF NOT EXISTS equipes (
     id             SERIAL        PRIMARY KEY,
     nome           VARCHAR(100)  NOT NULL UNIQUE,
     sigla          VARCHAR(10)   NOT NULL UNIQUE,
@@ -82,7 +68,7 @@ CREATE TABLE equipes (
 --    UNIQUE garante que um usuário esteja ligado a no máximo um atleta.
 --    "foto_url" guarda o caminho do arquivo enviado por upload.
 -- ---------------------------------------------------------------------
-CREATE TABLE atletas (
+CREATE TABLE IF NOT EXISTS atletas (
     id          SERIAL        PRIMARY KEY,
     nome        VARCHAR(100)  NOT NULL,
     apelido     VARCHAR(50),
@@ -98,7 +84,7 @@ CREATE TABLE atletas (
 --    Uma equipe tem vários atletas e um atleta pode estar em várias equipes.
 --    A chave primária composta impede o mesmo atleta duas vezes na mesma equipe.
 -- ---------------------------------------------------------------------
-CREATE TABLE equipe_atletas (
+CREATE TABLE IF NOT EXISTS equipe_atletas (
     equipe_id  INTEGER      NOT NULL
                REFERENCES equipes (id) ON DELETE CASCADE,
     atleta_id  INTEGER      NOT NULL
@@ -112,7 +98,7 @@ CREATE TABLE equipe_atletas (
 --    Cada linha é uma EDIÇÃO de um campeonato (ex.: "Copa AGON" 2026).
 --    Relação 1:N com modalidades.
 -- ---------------------------------------------------------------------
-CREATE TABLE campeonatos (
+CREATE TABLE IF NOT EXISTS campeonatos (
     id             SERIAL        PRIMARY KEY,
     nome           VARCHAR(120)  NOT NULL,
     edicao         INTEGER       NOT NULL,
@@ -131,7 +117,7 @@ CREATE TABLE campeonatos (
 -- 8) CAMPEONATO_EQUIPES  (relação N:N entre campeonatos e equipes)
 --    Define quais equipes participam de cada campeonato.
 -- ---------------------------------------------------------------------
-CREATE TABLE campeonato_equipes (
+CREATE TABLE IF NOT EXISTS campeonato_equipes (
     campeonato_id  INTEGER  NOT NULL
                    REFERENCES campeonatos (id) ON DELETE CASCADE,
     equipe_id      INTEGER  NOT NULL
@@ -147,7 +133,7 @@ CREATE TABLE campeonato_equipes (
 --    "demonstrativo" = TRUE marca resultados fictícios de exemplo,
 --    para não confundi-los com resultados oficiais.
 -- ---------------------------------------------------------------------
-CREATE TABLE partidas (
+CREATE TABLE IF NOT EXISTS partidas (
     id                   SERIAL       PRIMARY KEY,
     campeonato_id        INTEGER      NOT NULL
                          REFERENCES campeonatos (id) ON DELETE CASCADE,
@@ -170,7 +156,7 @@ CREATE TABLE partidas (
 --     Relação 1:N com usuarios (um usuário/admin escreve várias notícias).
 --     Se o autor for apagado, a notícia continua (autor_id vira NULL).
 -- ---------------------------------------------------------------------
-CREATE TABLE noticias (
+CREATE TABLE IF NOT EXISTS noticias (
     id            SERIAL        PRIMARY KEY,
     titulo        VARCHAR(200)  NOT NULL,
     resumo        VARCHAR(300),
