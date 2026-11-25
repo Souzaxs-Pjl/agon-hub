@@ -44,13 +44,13 @@ Ordem sugerida:
 10. Conferir as páginas públicas de atletas, campeonatos, partidas e notícias.
 11. Sair e mostrar a restrição do painel para usuário sem permissão.
 
-A demonstração completa só deve ser feita depois que o workflow e os fluxos no navegador forem conferidos. Se algum módulo falhar, apresente apenas os fluxos confirmados e explique a limitação sem afirmar que está funcionando.
+O workflow #29 foi aprovado (77 testes e build frontend). Antes da apresentação, confira manualmente no navegador os fluxos que pretende demonstrar. Se algum módulo falhar visualmente, apresente apenas os fluxos confirmados e explique a limitação.
 
 ## 7. Testes e limitações — 50 segundos
 
-"Os testes verificam fluxos de autenticação, autorização, validação e operações do sistema. Os dados do seed são fictícios e identificados como demonstrativos. Também documentei o que foi implementado e o que permanece como evolução, para não confundir a estrutura do banco com uma funcionalidade já disponível."
+"A suíte automatizada foi executada no GitHub Actions com PostgreSQL temporário: 77 testes passaram e não houve falhas. O build do frontend também foi aprovado. Os dados do seed são demonstrativos. A conferência visual no navegador complementa os testes automatizados."
 
-Apresentar somente números de testes que tenham sido realmente executados. Se a aba Actions ainda não apresentar uma execução verde, informar que a automação foi configurada, mas aguarda validação.
+Apresentar o resultado confirmado do CI: 77 aprovados e 0 falhas na execução #29. Não afirmar que os testes manuais passaram sem tê-los executado.
 
 ## 8. Encerramento — 30 segundos
 

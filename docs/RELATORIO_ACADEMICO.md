@@ -115,30 +115,36 @@ As consultas SQL devem utilizar parâmetros, e os dados enviados pelo cliente de
 
 ### 9.1. Implementadas no repositório
 
-Descrever aqui, após conferência da versão final, o fluxo de cadastro, login, consulta de sessão, autorização administrativa, CRUD de modalidades e CRUD de equipes. Para cada fluxo, inserir imagens da interface e exemplos de chamadas/respostas da API.
+A versão atual contém:
+- Cadastro, login e consulta de sessão com JWT.
+- Autorização administrativa no backend.
+- CRUD de modalidades e equipes.
+- CRUD de atletas e vínculo N:N com equipes, incluindo função.
+- CRUD de campeonatos e inscrição de equipes.
+- CRUD de partidas, com fase, placar, status e indicador de resultado demonstrativo.
+- CRUD de notícias.
+- Upload administrativo de logos de equipes e fotos de atletas.
+- Páginas públicas de consulta e painéis administrativos.
 
-### 9.2. Módulos adicionais implementados no repositório
+### 9.2. Validação automatizada concluída
 
-Nesta etapa foram acrescentadas rotas CRUD de atletas, campeonatos, partidas e notícias, além de endpoints para administrar os relacionamentos N:N entre atletas e equipes e entre campeonatos e equipes. Também foi criado um módulo de upload para logos de equipes e fotos de atletas, restrito a administradores e com limite de tamanho e formatos permitidos.
+O GitHub Actions executou a suíte backend na revisão atual da `main`, workflow #29: **77 testes aprovados, 0 falhas**. O build de produção do frontend também foi aprovado.
 
-No frontend foram adicionadas consultas públicas de atletas, campeonatos, partidas e notícias, além de um painel administrativo reutilizável para os módulos de modalidades, atletas, campeonatos, partidas e notícias. O painel de equipes existente recebeu o envio de logos. A validação em navegador e a execução dos testes precisam ser registradas na seção 10 antes da entrega final.
+Referência: [workflow Validar AGON Hub — execução #29](https://github.com/Souzaxs-Pjl/agon-hub/actions/runs/45671746214).
 
-### 9.3. Funcionalidades não concluídas
+### 9.3. Validação manual ainda necessária
 
-[Registrar honestamente qualquer módulo que permanecer parcial na data da entrega.]
+- Conferir os fluxos completos no navegador, incluindo páginas públicas e administrativas.
+- Verificar responsividade e acessibilidade básica.
+- Confirmar envio, substituição e exibição de imagens no ambiente de apresentação.
+- Inserir capturas de tela e preencher os dados pessoais/institucionais.
+- Registrar limitações encontradas durante a demonstração.
 
 ## 10. Testes e validação
 
-Os testes devem contemplar autenticação, autorização, validação de dados, operações CRUD, relacionamentos, upload de imagens e comportamento das páginas. Os testes automatizados utilizam `node:test`. O workflow do GitHub Actions foi configurado para disponibilizar PostgreSQL temporário e executar testes de backend e build do frontend. O resultado da execução remota e a conferência manual no navegador ainda precisam ser registrados.
+A automação do GitHub Actions utiliza PostgreSQL temporário e executa os testes backend e o build do frontend. Na execução #29, foram registrados **77 testes aprovados, 0 falhas**, e build de produção aprovado.
 
-Nesta seção, incluir:
-- comando utilizado;
-- data da execução;
-- quantidade de testes aprovados, reprovados e ignorados;
-- evidências (logs ou capturas de tela);
-- problemas encontrados e correções efetuadas.
-
-**Não afirmar que todos os testes passaram sem registrar a execução real.**
+O resultado comprova a execução automatizada na revisão atual. A validação visual manual e as evidências da apresentação devem ser acrescentadas antes da entrega.
 
 ## 11. Resultados
 

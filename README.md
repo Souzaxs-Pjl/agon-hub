@@ -26,9 +26,9 @@ O projeto foi desenvolvido individualmente como parte do curso Técnico em Infor
 | CRUD de notícias | API e tela administrativa implementadas |
 | Upload de logos e fotos | API e campos de envio no painel implementados |
 | Consultas públicas | Equipes, atletas, campeonatos, partidas e notícias |
-| Testes automatizados | Testes existentes; execução pelo GitHub Actions ainda precisa ser conferida |
+| Testes automatizados | 77/77 aprovados no GitHub Actions #29; 0 falhas |
 
-A existência do código não significa que a execução foi validada. Os testes e a demonstração no navegador ainda precisam ser conferidos e registrados.
+A suíte automatizada foi aprovada no GitHub Actions #29 (77 testes, 0 falhas). A conferência visual manual e a demonstração no navegador ainda precisam ser registradas.
 
 
 ## 2. Objetivo
@@ -307,27 +307,39 @@ A aplicação fica disponível em `http://localhost:5173`. Durante o desenvolvim
 
 ## 8. Pendências para conclusão da entrega
 
-O código já contém os CRUDs e telas principais dos módulos previstos. As tarefas restantes concentram-se em validação e acabamento:
+Os CRUDs e as telas principais estão implementados. O workflow [Validar AGON Hub — execução #29](https://github.com/Souzaxs-Pjl/agon-hub/actions/runs/45671746214), na revisão atual da `main`, aprovou os 77 testes backend e o build frontend. As tarefas finais são de validação manual e preparação:
 
-- Conferir a execução do GitHub Actions e corrigir eventuais falhas.
-- Fazer revisão manual no navegador de todos os fluxos administrativos e públicos.
-- Conferir os uploads com imagens reais e validar a exibição das imagens armazenadas.
-- Ajustar eventuais problemas visuais e responsivos encontrados na revisão.
-- Registrar evidências de testes e completar os campos do relatório acadêmico.
-- Preparar o banco de demonstração e ensaiar a apresentação.
-
+- Conferir no navegador os fluxos públicos e administrativos em desktop e celular.
+- Conferir upload, visualização e substituição de logos e fotos.
+- Verificar o comportamento dos arquivos de imagem no ambiente de apresentação; hospedagens com disco efêmero precisam de armazenamento persistente.
+- Ajustar eventuais problemas visuais ou de usabilidade encontrados.
+- Capturar evidências e completar os campos pessoais do relatório acadêmico.
+- Preparar dados demonstrativos e ensaiar a apresentação.
 
 ## 9. Testes
 
-Os testes automatizados usam o módulo nativo `node:test` do Node.js. Os arquivos cobrem autenticação, CRUD de equipes e os novos recursos de atletas, campeonatos, partidas, notícias e uploads. Os testes de integração fazem requisições HTTP à API e precisam de PostgreSQL e servidor ativos. O workflow `.github/workflows/ci.yml` foi criado para preparar PostgreSQL temporário, executar os testes e gerar o build do frontend. A execução desse workflow ainda precisa ser conferida na aba Actions do GitHub.
+Os testes automatizados usam o módulo nativo `node:test` do Node.js. O GitHub Actions prepara PostgreSQL temporário, instala as dependências, executa a suíte backend e gera o build de produção do frontend.
 
-Dentro da pasta `backend`:
+**Resultado confirmado na revisão atual da `main`:** workflow [Validar AGON Hub — execução #29](https://github.com/Souzaxs-Pjl/agon-hub/actions/runs/45671746214):
+
+- Backend: 77 testes aprovados, 0 falhas.
+- Frontend: build de produção aprovado.
+- O CI utilizou PostgreSQL temporário; não foi necessário instalar banco no computador do estudante.
+- O CI não substitui a conferência visual manual das telas no navegador.
+
+Para executar localmente, dentro de `backend`:
 
 ```bash
 npm test
 ```
 
-Os testes administrativos precisam de uma conta criada com `npm run criar-admin`. Os testes de integração de equipes também criam e removem um registro temporário. Consulte `docs/PLANO_DE_TESTES.md` para o roteiro completo e para os casos planejados das novas funcionalidades.
+Para compilar o frontend, dentro de `frontend`:
+
+```bash
+npm run build
+```
+
+Em ambiente local, os testes de integração precisam de PostgreSQL configurado e API ativa. O workflow do GitHub já prepara um banco temporário. Consulte `docs/PLANO_DE_TESTES.md` para a matriz de testes e a validação manual.
 
 ## 10. Segurança e cuidados
 
@@ -345,6 +357,7 @@ Os testes administrativos precisam de uma conta criada com `npm run criar-admin`
 - [Documentação da API](docs/API.md)
 - [Plano de testes](docs/PLANO_DE_TESTES.md)
 - [Relatório acadêmico — estrutura](docs/RELATORIO_ACADEMICO.md)
+- [Guia do apresentador](docs/GUIA_DO_APRESENTADOR.md)
 - [Roteiro de apresentação](docs/APRESENTACAO.md)
 - [Briefing para Figma](docs/FIGMA_BRIEF.md)
 - [Prompts para Lovable](docs/LOVABLE_PROMPTS.md)

@@ -1,18 +1,29 @@
 # Plano de testes — AGON Hub
 
-Este documento separa os testes já presentes no repositório dos testes que ainda precisam ser acrescentados. Um caso só deve ser marcado como **Aprovado** depois de ser executado e ter seu resultado registrado.
+Este documento registra a cobertura automatizada existente e os testes manuais necessários para a entrega. Um caso manual só deve ser marcado como **Aprovado** depois de ser executado e ter sua evidência registrada.
 
 ## 1. Estado conhecido dos testes
 
-| Área | Testes existentes | Estado de execução nesta revisão |
+| Área | Testes existentes | Estado verificado |
 |---|---|---|
-| Cadastro/login/JWT | `backend/tests/auth.test.js` | Não executados nesta sessão |
-| Validação de modalidades/equipes | Testes unitários em `backend/tests` | Não executados nesta sessão |
-| CRUD de equipes | `backend/tests/equipes.test.js` | Não executados nesta sessão |
-| CRUD de modalidades | Verificar cobertura automatizada | Não executados nesta sessão |
-| Atletas, campeonatos, partidas, notícias e uploads | `backend/tests/recursos.test.js` | Implementados; execução pendente de confirmação |
-| Telas públicas e administrativas | Testes manuais de navegador | Pendente |
-| Build do frontend | `npm run build` e workflow CI | Implementado no workflow; resultado precisa ser conferido |
+| Cadastro/login/JWT e autorização | `backend/tests/auth.test.js` | Aprovado no CI |
+| Validação de dados | `backend/tests/validacao.test.js` e `cadastros-validacao.test.js` | Aprovado no CI |
+| CRUD de equipes | `backend/tests/equipes.test.js` | Aprovado no CI |
+| Atletas e vínculo equipe-atleta | `backend/tests/recursos.test.js` | Aprovado no CI |
+| Campeonatos e inscrições | `backend/tests/recursos.test.js` | Aprovado no CI |
+| Partidas | `backend/tests/recursos.test.js` | Aprovado no CI |
+| Notícias | `backend/tests/recursos.test.js` | Aprovado no CI |
+| Upload de imagem | `backend/tests/recursos.test.js` | Aprovado no CI |
+| Build do frontend | `npm run build` e workflow CI | Aprovado no CI |
+| Revisão visual no navegador | Testes manuais deste documento | Pendente de execução manual |
+
+### Resultado automatizado confirmado
+
+Na execução #29 do workflow **Validar AGON Hub**, na revisão atual da `main`, o backend concluiu **77 testes aprovados e 0 falhas**, e o build de produção do frontend também passou.
+
+- [Abrir execução #29 no GitHub Actions](https://github.com/Souzaxs-Pjl/agon-hub/actions/runs/45671746214)
+- O CI utilizou PostgreSQL temporário; não foi necessário instalar banco no computador do estudante.
+- O resultado automatizado não substitui a conferência visual e a demonstração manual.
 
 ## 2. Preparação do ambiente de teste
 
