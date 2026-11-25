@@ -24,6 +24,11 @@ export default function App() {
   return (
     <>
       <Navbar />
+      {import.meta.env.PROD && (
+        <p className="nota" role="status">
+          Ambiente demonstrativo de apresentação: os perfis de atletas são fictícios e as operações de cadastro, edição e exclusão estão desativadas. Os registros das equipes são consultados na API oficial.
+        </p>
+      )}
       <main className="conteudo">
         <Routes>
           <Route path="/" element={<Home />} />
