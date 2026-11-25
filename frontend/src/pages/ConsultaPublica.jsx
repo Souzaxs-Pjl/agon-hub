@@ -3,7 +3,7 @@
 // partidas e notícias. O conteúdo é carregado da API, não de arrays locais.
 // =====================================================================
 import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { api } from '../api.js';
 
 const PAGINAS = {
@@ -13,8 +13,7 @@ const PAGINAS = {
   noticias: { titulo: 'Notícias', endpoint: '/noticias' },
 };
 
-export default function ConsultaPublica() {
-  const { tipo } = useParams();
+export default function ConsultaPublica({ tipo }) {
   const config = PAGINAS[tipo];
   const [registros, setRegistros] = useState([]);
   const [carregando, setCarregando] = useState(true);
