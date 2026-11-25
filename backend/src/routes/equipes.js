@@ -34,7 +34,7 @@ const SQL_EQUIPE = `
 // Usada pelo GET /:id e também pelo POST e PUT, para responder sempre
 // no mesmo formato.
 async function buscarEquipe(id) {
-  const { rows } = await db.query(`${SQL_EQUIPE} WHERE e.id = $1`, [id]);
+  const { rows } = await db.query(`${SQL_EQUIPE} AND e.id = $1`, [id]);
   if (rows.length === 0) return null;
 
   const atletas = await db.query(
