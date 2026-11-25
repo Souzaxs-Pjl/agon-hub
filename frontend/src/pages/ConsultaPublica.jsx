@@ -50,7 +50,6 @@ export default function ConsultaPublica({ tipo }) {
     <section>
       <p className="nota"><Link to="/">Início</Link> / Universo AGON</p>
       <h1>{config.titulo}</h1>
-      <p className="nota">Informações demonstrativas do banco de dados do AGON Hub.</p>
       {registros.length === 0 ? <p className="aviso">Nenhum registro disponível.</p> : (
         <div className="grade">
           {registros.map((item) => {
@@ -76,6 +75,7 @@ export default function ConsultaPublica({ tipo }) {
                     <p>{item.modalidade_nome}</p>
                     <span className="etiqueta">{item.status}</span>
                     <p className="pequeno">{item.total_equipes} equipes inscritas</p>
+                    {item.campeao_equipe_nome && <p className="campeao-destaque">Campeão: {item.campeao_equipe_nome}</p>}
                     {item.data_inicio && <p className="pequeno">Início: {formatarData(item.data_inicio)}</p>}
                   </>
                 )}
@@ -93,11 +93,8 @@ export default function ConsultaPublica({ tipo }) {
                     {item.imagem_url && <img src={item.imagem_url} alt="" className="imagem-noticia" />}
                     <h2>{item.titulo}</h2>
                     {item.resumo && <p>{item.resumo}</p>}
-                    <p className="pequeno">Por {item.autor_nome || 'Redação AGON'}</p>
-                    <details>
-                      <summary>Continuar lendo</summary>
-                      <p className="texto">{item.conteudo}</p>
-                    </details>
+                    <p className="pequeno">Por {item.autor_nome || 'Redação AGON'} · {formatarData(item.publicado_em)}</p>
+                    {item.conteudo && <p className="texto">{item.conteudo.slice(0, 180)}{item.conteudo.length > 180 ? '…' : ''}</p>}
                   </>
                 )}
               </>
@@ -130,11 +127,16 @@ export default function ConsultaPublica({ tipo }) {
               );
             }
 
-            return (
-              <article className="cartao" key={item.id}>
-                {conteudo}
-              </article>
-            );
+            if (tipo === 'noticias') {
+              return (
+                <Link to={'/noticias/' + item.id} className="cartao" key={item.id}>
+                  {conteudo}
+                  <span className="texto-link">Ler notícia completa →</span>
+                </Link>
+              );
+            }
+
+            return <article className="cartao" key={item.id}>{conteudo}</article>;
           })}
         </div>
       )}
