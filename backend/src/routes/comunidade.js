@@ -8,7 +8,7 @@ const router = express.Router();
 // Opções de autoria disponíveis para a conta autenticada.
 router.get('/opcoes-autoria', autenticar, async (req, res) => {
   const atletaResult = await db.query(
-    'SELECT id, nome, apelido FROM atletas WHERE usuario_id=$1 AND demonstrativo=FALSE LIMIT 1',
+    'SELECT id, nome, apelido FROM atletas WHERE usuario_id=$1 AND demonstrativo=FALSE AND perfil_publico=TRUE LIMIT 1',
     [req.usuario.id]
   );
   const equipesResult = await db.query(
@@ -16,7 +16,7 @@ router.get('/opcoes-autoria', autenticar, async (req, res) => {
      FROM equipe_atletas ea
      JOIN atletas a ON a.id=ea.atleta_id
      JOIN equipes e ON e.id=ea.equipe_id
-     WHERE a.usuario_id=$1 AND a.demonstrativo=FALSE AND e.demonstrativo=FALSE
+     WHERE a.usuario_id=$1 AND a.demonstrativo=FALSE AND a.perfil_publico=TRUE AND e.demonstrativo=FALSE
      ORDER BY e.nome`,
     [req.usuario.id]
   );
@@ -35,7 +35,7 @@ router.get('/', async (req, res) => {
      JOIN usuarios u ON u.id=p.autor_usuario_id
      LEFT JOIN atletas a ON a.id=p.atleta_id
      LEFT JOIN equipes e ON e.id=p.equipe_id
-     WHERE (a.id IS NULL OR a.demonstrativo=FALSE)
+     WHERE (a.id IS NULL OR (a.demonstrativo=FALSE AND a.perfil_publico=TRUE))
        AND (e.id IS NULL OR e.demonstrativo=FALSE)
      ORDER BY p.criado_em DESC LIMIT 50`
   );
@@ -52,7 +52,7 @@ router.post('/', autenticar, async (req, res) => {
   let atleta = null, equipe = null;
   if (tipo === 'atleta') {
     if (!Number.isInteger(atletaId) || atletaId < 1) return res.status(400).json({ erro: 'Atleta inválido.' });
-    const r = await db.query('SELECT id FROM atletas WHERE id=$1 AND usuario_id=$2', [atletaId, req.usuario.id]);
+    const r = await db.query('SELECT id FROM atletas WHERE id=$1 AND usuario_id=$2 AND demonstrativo=FALSE AND perfil_publico=TRUE', [atletaId, req.usuario.id]);
     if (!r.rows.length) return res.status(403).json({ erro: 'Só é possível publicar como seu próprio perfil de atleta.' });
     atleta = atletaId;
   }
@@ -60,7 +60,7 @@ router.post('/', autenticar, async (req, res) => {
     if (!Number.isInteger(equipeId) || equipeId < 1) return res.status(400).json({ erro: 'Equipe inválida.' });
     const r = await db.query(
       `SELECT 1 FROM equipe_atletas ea JOIN atletas a ON a.id=ea.atleta_id
-       WHERE ea.equipe_id=$1 AND a.usuario_id=$2 LIMIT 1`, [equipeId, req.usuario.id]
+       WHERE ea.equipe_id=$1 AND a.usuario_id=$2 AND a.perfil_publico=TRUE AND a.demonstrativo=FALSE LIMIT 1`, [equipeId, req.usuario.id]
     );
     if (!r.rows.length) return res.status(403).json({ erro: 'É necessário ser atleta vinculado à equipe para publicar em nome dela.' });
     equipe = equipeId;

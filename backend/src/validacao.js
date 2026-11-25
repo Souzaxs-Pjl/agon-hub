@@ -155,12 +155,16 @@ function validarAtleta(corpo) {
   const titulos = lerTextoOpcional(d.titulos, 5000, 'Os títulos do atleta', erros);
   const geracao = lerTextoOpcional(d.geracao, 30, 'A geração do atleta', erros);
   const divisao = lerTextoOpcional(d.divisao, 30, 'A divisão do atleta', erros);
+  const perfil_publico = d.perfil_publico === true;
+  if (d.perfil_publico !== undefined && typeof d.perfil_publico !== 'boolean') {
+    erros.push('A autorização de perfil público deve ser verdadeira ou falsa.');
+  }
   let usuario_id = null;
   if (d.usuario_id !== undefined && d.usuario_id !== null && d.usuario_id !== '') {
     usuario_id = parseId(d.usuario_id);
     if (usuario_id === null) erros.push('O usuário associado deve ser um ID válido.');
   }
-  return { erros, dados: { nome, apelido, bio, foto_url, usuario_id, instagram_url, titulos, geracao, divisao } };
+  return { erros, dados: { nome, apelido, bio, foto_url, usuario_id, instagram_url, titulos, geracao, divisao, perfil_publico } };
 }
 
 function validarCampeonato(corpo) {

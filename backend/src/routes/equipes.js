@@ -42,7 +42,7 @@ async function buscarEquipe(id) {
             a.bio, a.foto_url, ea.funcao
      FROM equipe_atletas ea
      JOIN atletas a ON a.id = ea.atleta_id
-     WHERE ea.equipe_id = $1 AND a.demonstrativo = FALSE
+     WHERE ea.equipe_id = $1 AND a.demonstrativo = FALSE AND a.perfil_publico = TRUE
      ORDER BY a.nome`,
     [id]
   );
