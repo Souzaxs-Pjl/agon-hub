@@ -21,11 +21,17 @@ module.exports = async function aplicarBaseReal(db) {
       'CREATE UNIQUE INDEX IF NOT EXISTS uq_atletas_codigo_fonte ON atletas(codigo_fonte);'
     ].join('\n'));
 
-    const aplicada = await client.query('SELECT 1 FROM schema_migrations WHERE version = $1', ['002_base_real_2026']);
+    const aplicada = await client.query('SELECT 1 FROM schema_migrations WHERE version = $1', ['002_demo_base_2026']);
     if (aplicada.rowCount) {
       await client.query('COMMIT');
       return { aplicada: false, equipes: 0, atletas: 0 };
     }
+
+    // A versão demonstrativa não expõe os registros de atletas da base original.
+    // O cadastro das equipes permanece intacto.
+    await client.query(
+      "UPDATE atletas SET demonstrativo = TRUE, perfil_publico = FALSE WHERE codigo_fonte IS NOT NULL AND codigo_fonte NOT LIKE 'DEMO-%'"
+    );
 
     await client.query(
       'UPDATE equipes SET demonstrativo = TRUE WHERE nome = ANY($1::text[])',
@@ -73,22 +79,23 @@ module.exports = async function aplicarBaseReal(db) {
 
     let atletasInseridos = 0;
     const sqlAtleta = [
-      'INSERT INTO atletas (codigo_fonte, nome, apelido, geracao, divisao, revisao_cadastro, demonstrativo)',
-      'VALUES ($1,$2,$3,$4,$5,$6,FALSE)',
+      'INSERT INTO atletas (codigo_fonte, nome, apelido, bio, geracao, divisao, revisao_cadastro, demonstrativo, perfil_publico)',
+      'VALUES ($1,$2,$3,$4,$5,$6,$7,FALSE,TRUE)',
       'ON CONFLICT (codigo_fonte) DO NOTHING RETURNING id'
     ].join(' ');
     for (const atleta of dados.roster) {
       const resultado = await client.query(sqlAtleta, [
-        atleta.source_id, atleta.name, atleta.nickname, atleta.generation,
-        atleta.division, Boolean(atleta.needs_review)
+        atleta.source_id, atleta.name, atleta.nickname,
+        `Perfil fictício criado exclusivamente para demonstração do AGON Hub. Integra a equipe ${atleta.team_name}.`,
+        atleta.generation, atleta.division, Boolean(atleta.needs_review)
       ]);
       if (resultado.rowCount) atletasInseridos++;
     }
 
     await client.query(
       [
-        'INSERT INTO equipe_atletas (equipe_id, atleta_id)',
-        'SELECT e.id, a.id',
+        "INSERT INTO equipe_atletas (equipe_id, atleta_id, funcao)",
+        "SELECT e.id, a.id, 'Atleta de demonstração'",
         'FROM jsonb_to_recordset($1::jsonb) AS r(source_id text, team_name text)',
         'JOIN atletas a ON a.codigo_fonte = r.source_id',
         'JOIN equipes e ON e.nome = r.team_name',
@@ -97,7 +104,7 @@ module.exports = async function aplicarBaseReal(db) {
       [JSON.stringify(dados.roster.map(a => ({ source_id: a.source_id, team_name: a.team_name })))]
     );
 
-    await client.query('INSERT INTO schema_migrations (version) VALUES ($1) ON CONFLICT DO NOTHING', ['002_base_real_2026']);
+    await client.query('INSERT INTO schema_migrations (version) VALUES ($1) ON CONFLICT DO NOTHING', ['002_demo_base_2026']);
     await client.query('COMMIT');
     return { aplicada: true, equipes: equipesInseridas, atletas: atletasInseridos, elencos: dados.roster.length };
   } catch (erro) {
