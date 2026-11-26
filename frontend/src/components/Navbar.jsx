@@ -5,7 +5,7 @@ import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../AuthContext.jsx';
 
 export default function Navbar() {
-  const { usuario, carregando, ehAdmin, sair } = useAuth();
+  const { usuario, carregando, sair } = useAuth();
   const navigate = useNavigate();
 
   function handleSair() {
@@ -34,7 +34,8 @@ export default function Navbar() {
         <NavLink to="/partidas">Partidas</NavLink>
         <NavLink to="/noticias">Notícias</NavLink>
         <NavLink to="/comunidade">Comunidade</NavLink>
-        {ehAdmin && <NavLink to="/admin">Admin</NavLink>}
+        {/* Link visível para qualquer conta autenticada; RotaAdmin verifica o papel. */}
+        {usuario && <NavLink to="/admin">Admin</NavLink>}
       </nav>
       <div className="sessao">
         {carregando ? null : usuario ? (
