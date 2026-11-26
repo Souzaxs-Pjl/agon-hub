@@ -192,14 +192,14 @@ describe('CRUD de atletas e relação equipe_atletas', () => {
     assert.equal(detalheAdmin.status, 200);
     assert.ok('usuario_id' in detalheAdmin.dados);
 
-    const edicao = await chamar('PUT', `/api/atletas/${atletaId}/equipes/1`, {
+    const edicao = await chamar('PUT', `/api/atletas/${atletaId}/equipes/${equipeTesteIds[0]}`, {
       token: adminToken,
       corpo: { funcao: 'Pivô' },
     });
     assert.equal(edicao.status, 200);
     assert.equal(edicao.dados.equipes[0].funcao, 'Pivô');
 
-    const remocao = await chamar('DELETE', `/api/atletas/${atletaId}/equipes/1`, { token: adminToken });
+    const remocao = await chamar('DELETE', `/api/atletas/${atletaId}/equipes/${equipeTesteIds[0]}`, { token: adminToken });
     assert.equal(remocao.status, 200);
     atletaVinculado = false;
   });
@@ -254,7 +254,7 @@ describe('CRUD de campeonatos e inscrições', () => {
     equipesInscritas = true;
 
     const duplicada = await chamar('POST', `/api/campeonatos/${campeonatoId}/equipes`, {
-      token: adminToken, corpo: { equipe_id: 1 },
+      token: adminToken, corpo: { equipe_id: equipeTesteIds[0] },
     });
     assert.equal(duplicada.status, 409);
 
