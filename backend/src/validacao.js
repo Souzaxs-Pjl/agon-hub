@@ -155,7 +155,7 @@ function validarAtleta(corpo) {
   const titulos = lerTextoOpcional(d.titulos, 5000, 'Os títulos do atleta', erros);
   const geracao = lerTextoOpcional(d.geracao, 30, 'A geração do atleta', erros);
   const divisao = lerTextoOpcional(d.divisao, 30, 'A divisão do atleta', erros);
-  const perfil_publico = d.perfil_publico === true;
+  const perfil_publico = d.perfil_publico !== false;
   if (d.perfil_publico !== undefined && typeof d.perfil_publico !== 'boolean') {
     erros.push('A autorização de perfil público deve ser verdadeira ou falsa.');
   }
