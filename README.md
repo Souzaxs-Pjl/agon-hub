@@ -31,7 +31,7 @@ O projeto foi desenvolvido individualmente como parte do curso Técnico em Infor
 | CRUD de notícias | API e tela administrativa implementadas |
 | Upload de logos e fotos | API validada por assinatura do arquivo; teste manual de upload ainda necessário |
 | Consultas públicas | Equipes e atletas com perfil público autorizado; competições e notícias não demonstrativas; feed comunitário |
-| Testes automatizados | 77/77 testes aprovados no GitHub Actions #163; build frontend aprovado |
+| Testes automatizados | Suíte backend e build de produção do frontend executados pelo GitHub Actions em cada PR |
 
 A suíte automatizada foi aprovada no GitHub Actions #29 (77 testes, 0 falhas). A conferência visual manual e a demonstração no navegador ainda precisam ser registradas.
 
