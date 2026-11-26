@@ -57,7 +57,7 @@ export default function Admin() {
   async function carregar() {
     try {
       const [listaEquipes, listaModalidades] = await Promise.all([
-        api('/equipes'),
+        api('/equipes/admin'),
         api('/modalidades'),
       ]);
       setEquipes(listaEquipes);
@@ -181,7 +181,7 @@ export default function Admin() {
   return (
     <section className="admin">
       <h1>Administração</h1>
-      <p className="nota">Painel em modo demonstrativo: os dados podem ser consultados, mas cadastros, edições e exclusões estão desativados nesta versão.</p>
+      <p className="nota">Gerencie equipes cadastradas. Cadastros, edições e exclusões são gravados no banco e exigem uma conta Admin.</p>
       <nav className="admin-menu" aria-label="Módulos administrativos">
         <Link className="selecionado" to="/admin">Equipes</Link>
         <Link to="/admin/modalidades">Modalidades</Link>
