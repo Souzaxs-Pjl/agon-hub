@@ -27,7 +27,7 @@ export default function App() {
       <Navbar />
       {import.meta.env.PROD && (
         <p className="nota" role="status">
-          Ambiente demonstrativo: 693 atletas fictícios e 81 equipes. Campeonatos, partidas e notícias também são demonstrativos. Login, cadastro, edição do perfil, foto de perfil e publicações da comunidade estão disponíveis; alterações administrativas e de dados esportivos permanecem restritas.
+          Ambiente demonstrativo: parte do elenco público é fictícia. Login, cadastro, perfil e comunidade estão disponíveis. Contas Admin podem cadastrar, editar e excluir equipes, atletas, modalidades, campeonatos, partidas e notícias; a API verifica o papel da conta.
         </p>
       )}
       <main className="conteudo">
