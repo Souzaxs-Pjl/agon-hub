@@ -4,6 +4,7 @@
 import { useEffect, useState } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { api } from '../api.js';
+import ImagemComFallback from '../components/ImagemComFallback.jsx';
 import { useAuth } from '../AuthContext.jsx';
 
 const FORM_INICIAL = {
@@ -152,7 +153,7 @@ export default function Perfil() {
       <form className="formulario cartao-form perfil-formulario" onSubmit={salvar}>
         <div className="perfil-resumo">
           {form.foto_url ? (
-            <img src={form.foto_url} alt={'Foto de ' + form.nome} className="perfil-avatar" />
+            <ImagemComFallback src={form.foto_url} alt={'Foto de ' + form.nome} className="perfil-avatar" fallback={form.nome.slice(0, 1).toUpperCase()} />
           ) : (
             <div className="perfil-avatar perfil-avatar-vazio">
               {form.nome ? form.nome.charAt(0).toUpperCase() : 'A'}
