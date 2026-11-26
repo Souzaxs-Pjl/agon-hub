@@ -32,6 +32,7 @@ const senhaAdmin = process.env.ADMIN_SENHA;
 let adminToken;
 let usuarioToken;
 let modalidadeId;
+let equipeTesteIds = [];
 let atletaId;
 let campeonatoId;
 let partidaId;
@@ -62,6 +63,11 @@ before(async () => {
   });
   assert.equal(cadastro.status, 201);
   usuarioToken = cadastro.dados.token;
+
+  const equipesPublicas = await chamar('GET', '/api/equipes');
+  assert.equal(equipesPublicas.status, 200);
+  equipeTesteIds = equipesPublicas.dados.slice(0, 4).map((equipe) => equipe.id);
+  assert.equal(equipeTesteIds.length, 4, 'são necessárias quatro equipes públicas de teste');
 });
 
 after(async () => {
@@ -69,14 +75,14 @@ after(async () => {
   if (modalidadeId) await chamar('DELETE', `/api/modalidades/${modalidadeId}`, { token: adminToken });
   if (partidaId) await chamar('DELETE', `/api/partidas/${partidaId}`, { token: adminToken });
   if (atletaVinculado && atletaId) {
-    await chamar('DELETE', `/api/atletas/${atletaId}/equipes/1`, { token: adminToken });
+    await chamar('DELETE', `/api/atletas/${atletaId}/equipes/${equipeTesteIds[0]}`, { token: adminToken });
   }
   if (atletaId) await chamar('DELETE', `/api/atletas/${atletaId}`, { token: adminToken });
   if (noticiaId) await chamar('DELETE', `/api/noticias/${noticiaId}`, { token: adminToken });
   if (campeonatoId) {
     if (equipesInscritas) {
-      await chamar('DELETE', `/api/campeonatos/${campeonatoId}/equipes/1`, { token: adminToken });
-      await chamar('DELETE', `/api/campeonatos/${campeonatoId}/equipes/2`, { token: adminToken });
+      await chamar('DELETE', `/api/campeonatos/${campeonatoId}/equipes/${equipeTesteIds[0]}`, { token: adminToken });
+      await chamar('DELETE', `/api/campeonatos/${campeonatoId}/equipes/${equipeTesteIds[1]}`, { token: adminToken });
     }
     await chamar('DELETE', `/api/campeonatos/${campeonatoId}`, { token: adminToken });
   }
@@ -165,20 +171,20 @@ describe('CRUD de atletas e relação equipe_atletas', () => {
   it('cria e remove vínculo de atleta com equipe, mantendo a função', async () => {
     const vinculo = await chamar('POST', `/api/atletas/${atletaId}/equipes`, {
       token: adminToken,
-      corpo: { equipe_id: 1, funcao: 'Ala' },
+      corpo: { equipe_id: equipeTesteIds[0], funcao: 'Ala' },
     });
     assert.equal(vinculo.status, 201);
     atletaVinculado = true;
     assert.equal(vinculo.dados.equipes[0].funcao, 'Ala');
 
-    const equipe = await chamar('GET', '/api/equipes/1');
+    const equipe = await chamar('GET', `/api/equipes/${equipeTesteIds[0]}`);
     assert.equal(equipe.status, 200);
     assert.ok(equipe.dados.atletas.some((a) => a.id === atletaId && a.apelido === 'Novo' && a.funcao === 'Ala'));
 
     const listaPublica = await chamar('GET', '/api/atletas');
     const atletaPublico = listaPublica.dados.find((a) => a.id === atletaId);
     assert.ok(atletaPublico);
-    assert.ok(atletaPublico.equipes.some((e) => e.id === 1 && e.funcao === 'Ala'));
+    assert.ok(atletaPublico.equipes.some((e) => e.id === equipeTesteIds[0] && e.funcao === 'Ala'));
     assert.equal('usuario_id' in atletaPublico, false);
     assert.equal('usuario_nome' in atletaPublico, false);
 
@@ -238,11 +244,11 @@ describe('CRUD de campeonatos e inscrições', () => {
 
   it('inscreve equipes e impede inscrição repetida ou modalidade incompatível', async () => {
     const primeira = await chamar('POST', `/api/campeonatos/${campeonatoId}/equipes`, {
-      token: adminToken, corpo: { equipe_id: 1 },
+      token: adminToken, corpo: { equipe_id: equipeTesteIds[0] },
     });
     assert.equal(primeira.status, 201);
     const segunda = await chamar('POST', `/api/campeonatos/${campeonatoId}/equipes`, {
-      token: adminToken, corpo: { equipe_id: 2 },
+      token: adminToken, corpo: { equipe_id: equipeTesteIds[1] },
     });
     assert.equal(segunda.status, 201);
     equipesInscritas = true;
@@ -263,8 +269,8 @@ describe('CRUD de partidas', () => {
   it('cria, consulta, filtra e atualiza partida', async () => {
     const corpo = {
       campeonato_id: campeonatoId,
-      equipe_casa_id: 1,
-      equipe_visitante_id: 2,
+      equipe_casa_id: equipeTesteIds[0],
+      equipe_visitante_id: equipeTesteIds[1],
       data_hora: '2026-11-28T19:00',
       fase: 'Fase de grupos',
       placar_casa: 0,
@@ -301,8 +307,8 @@ describe('CRUD de partidas', () => {
   it('rejeita equipe duplicada, placar negativo e equipes não inscritas', async () => {
     const base = {
       campeonato_id: campeonatoId,
-      equipe_casa_id: 1,
-      equipe_visitante_id: 1,
+      equipe_casa_id: equipeTesteIds[0],
+      equipe_visitante_id: equipeTesteIds[0],
       status: 'agendada',
       demonstrativo: true,
     };
@@ -311,13 +317,13 @@ describe('CRUD de partidas', () => {
 
     const negativo = await chamar('POST', '/api/partidas', {
       token: adminToken,
-      corpo: { ...base, equipe_visitante_id: 2, placar_casa: -1, placar_visitante: 0 },
+      corpo: { ...base, equipe_visitante_id: equipeTesteIds[1], placar_casa: -1, placar_visitante: 0 },
     });
     assert.equal(negativo.status, 400);
 
     const semInscricao = await chamar('POST', '/api/partidas', {
       token: adminToken,
-      corpo: { ...base, equipe_casa_id: 3, equipe_visitante_id: 4 },
+      corpo: { ...base, equipe_casa_id: equipeTesteIds[2], equipe_visitante_id: equipeTesteIds[3] },
     });
     assert.equal(semInscricao.status, 400);
   });
