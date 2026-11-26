@@ -53,8 +53,7 @@ async function validarParticipantes(dados) {
      JOIN equipes ev ON ev.id = $3
      JOIN modalidades mc ON mc.id = ec.modalidade_id
      JOIN modalidades mv ON mv.id = ev.modalidade_id
-     WHERE c.id = $1 AND c.demonstrativo = FALSE
-       AND ec.demonstrativo = FALSE AND ev.demonstrativo = FALSE`,
+     WHERE c.id = $1`,
     [dados.campeonato_id, dados.equipe_casa_id, dados.equipe_visitante_id]
   );
   if (!resultado.rowCount) return 'Campeonato ou equipe não encontrado.';

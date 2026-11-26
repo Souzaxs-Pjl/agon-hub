@@ -70,7 +70,21 @@ router.post('/', autenticar, async (req, res) => {
      VALUES ($1,$2,$3,$4,$5) RETURNING id,tipo_autor,atleta_id,equipe_id,texto,criado_em`,
     [req.usuario.id,tipo,atleta,equipe,texto]
   );
-  res.status(201).json(rows[0]);
+  const publicacao = await db.query(
+    `SELECT p.id, p.tipo_autor, p.atleta_id, p.equipe_id, p.texto, p.criado_em,
+      u.id AS usuario_id, u.nome AS usuario_nome, u.foto_url AS usuario_foto,
+      a.nome AS atleta_nome, a.apelido AS atleta_apelido, a.foto_url AS atleta_foto,
+      e.nome AS equipe_nome, e.sigla AS equipe_sigla, e.logo_url AS equipe_logo,
+      (SELECT COUNT(*)::int FROM publicacao_curtidas pc WHERE pc.publicacao_id=p.id) AS curtidas,
+      (SELECT COUNT(*)::int FROM publicacao_comentarios cm WHERE cm.publicacao_id=p.id) AS comentarios
+     FROM publicacoes p
+     JOIN usuarios u ON u.id=p.autor_usuario_id
+     LEFT JOIN atletas a ON a.id=p.atleta_id
+     LEFT JOIN equipes e ON e.id=p.equipe_id
+     WHERE p.id=$1`,
+    [rows[0].id]
+  );
+  res.status(201).json(publicacao.rows[0]);
 });
 
 router.delete('/:id', autenticar, async (req, res) => {

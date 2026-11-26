@@ -43,8 +43,9 @@ function montarAtleta(registro, indice, equipes) {
 
 export async function respostaAtletaDemonstrativo(caminho, cabecalhos) {
   const rota = String(caminho).split('?')[0];
-  const ehListaAtletas = rota === '/atletas' || rota === '/atletas/admin';
-  const detalhe = rota.match(/^\/atletas\/(?:admin\/)?(\d+)$/);
+  // Elenco fictício somente nas rotas públicas; o painel Admin usa o banco real.
+  const ehListaAtletas = rota === '/atletas';
+  const detalhe = rota.match(/^\/atletas\/(\d+)$/);
   if (!ehListaAtletas && !detalhe) return { gerenciado: false };
 
   const equipes = await carregarEquipes(cabecalhos);
