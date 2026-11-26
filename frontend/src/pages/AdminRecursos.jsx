@@ -133,6 +133,8 @@ export default function AdminRecursos() {
       return;
     }
     setForm(criarFormulario(config));
+    // Limpa erros do módulo anterior ao navegar entre abas do Admin.
+    setMensagem({ tipo: '', texto: '' });
     async function carregar() {
       setCarregando(true);
       try {
