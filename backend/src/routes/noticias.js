@@ -26,14 +26,14 @@ async function buscarNoticia(id, incluirDemonstrativo = false) {
 
 router.get('/admin', autenticar, exigirAdmin, async (req, res) => {
   const { rows } = await db.query(
-    `${SELECT_NOTICIA} WHERE n.demonstrativo = FALSE ORDER BY n.publicado_em DESC, n.id DESC`
+    `${SELECT_NOTICIA} ORDER BY n.publicado_em DESC, n.id DESC`
   );
   res.json(rows);
 });
 
 router.get('/', async (req, res) => {
   const { rows } = await db.query(
-    `${SELECT_NOTICIA} ORDER BY n.publicado_em DESC, n.id DESC`
+    `${SELECT_NOTICIA} WHERE n.demonstrativo = FALSE ORDER BY n.publicado_em DESC, n.id DESC`
   );
   res.json(rows);
 });
