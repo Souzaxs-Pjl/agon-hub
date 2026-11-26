@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS usuarios (
 -- Campos do perfil pessoal. IF NOT EXISTS também atualiza bancos já criados.
 ALTER TABLE usuarios
     ADD COLUMN IF NOT EXISTS bio TEXT,
-    ADD COLUMN IF NOT EXISTS foto_url VARCHAR(255),
+    ADD COLUMN IF NOT EXISTS foto_url TEXT,
     ADD COLUMN IF NOT EXISTS perfil_publico BOOLEAN NOT NULL DEFAULT TRUE;
 
 
@@ -62,7 +62,7 @@ CREATE TABLE IF NOT EXISTS equipes (
                    CHECK (tipo IN ('real', 'ficticia')),
     instituicao    VARCHAR(150),
     descricao      TEXT,
-    logo_url       VARCHAR(255),
+    logo_url       TEXT,
     modalidade_id  INTEGER       NOT NULL
                    REFERENCES modalidades (id) ON DELETE RESTRICT,
     criado_em      TIMESTAMP     NOT NULL DEFAULT NOW()
@@ -80,7 +80,7 @@ CREATE TABLE IF NOT EXISTS atletas (
     nome        VARCHAR(100)  NOT NULL,
     apelido     VARCHAR(50),
     bio         TEXT,
-    foto_url    VARCHAR(255),
+    foto_url    TEXT,
     usuario_id  INTEGER       UNIQUE
                 REFERENCES usuarios (id) ON DELETE SET NULL,
     criado_em   TIMESTAMP     NOT NULL DEFAULT NOW()
@@ -168,7 +168,7 @@ CREATE TABLE IF NOT EXISTS noticias (
     titulo        VARCHAR(200)  NOT NULL,
     resumo        VARCHAR(300),
     conteudo      TEXT          NOT NULL,
-    imagem_url    VARCHAR(255),
+    imagem_url    TEXT,
     autor_id      INTEGER
                   REFERENCES usuarios (id) ON DELETE SET NULL,
     publicado_em  TIMESTAMP     NOT NULL DEFAULT NOW()
