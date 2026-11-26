@@ -138,7 +138,7 @@ export default function AdminRecursos() {
       try {
         const [lista, ...listasFontes] = await Promise.all([
           (recurso === 'atletas' ? api('/atletas/admin') : api(config.endpoint)),
-          ...(config.fontes || []).map((fonte) => api(`/${fonte}`)),
+          ...(config.fontes || []).map((fonte) => api(fonte === 'equipes' ? '/equipes/admin' : `/${fonte}`)),
         ]);
         setRegistros(lista);
         const mapa = {};
@@ -262,7 +262,7 @@ export default function AdminRecursos() {
     setExcluindoId(item.id);
     try {
       await api(`${config.endpoint}/${item.id}`, { metodo: 'DELETE' });
-      setRegistros(await api(config.endpoint));
+      setRegistros(await api(recurso === 'atletas' ? '/atletas/admin' : config.endpoint));
       if (editandoId === item.id) novoRegistro();
       setMensagem({ tipo: 'ok', texto: 'Registro excluído.' });
     } catch (erro) {
