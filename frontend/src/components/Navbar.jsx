@@ -33,6 +33,7 @@ export default function Navbar() {
         <NavLink to="/campeonatos">Campeonatos</NavLink>
         <NavLink to="/partidas">Partidas</NavLink>
         <NavLink to="/noticias">Notícias</NavLink>
+        <NavLink to="/comunidade">Comunidade</NavLink>
         {ehAdmin && <NavLink to="/admin">Admin</NavLink>}
       </nav>
       <div className="sessao">
