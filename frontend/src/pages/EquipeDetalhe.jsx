@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { api } from '../api.js';
+import ImagemComFallback from '../components/ImagemComFallback.jsx';
 
 function siglaPublica(equipe) {
   return equipe.sigla_oficial || (String(equipe.codigo_fonte || '').startsWith('TEAM-') ? equipe.sigla : '');
@@ -41,7 +42,7 @@ export default function EquipeDetalhe() {
       <Link to="/equipes" className="pequeno">← Todas as equipes</Link>
       <header className="detalhe-topo equipe-capa">
         {equipe.logo_url ? (
-          <img src={equipe.logo_url} alt={'Logo de ' + equipe.nome} className="logo logo-grande" />
+          <ImagemComFallback src={equipe.logo_url} alt={'Logo de ' + equipe.nome} className="logo logo-grande" fallback={equipe.sigla || equipe.nome.slice(0, 2).toUpperCase()} />
         ) : (
           <div className="logo logo-grande logo-vazio">{equipe.nome.slice(0, 2).toUpperCase()}</div>
         )}
@@ -89,7 +90,7 @@ export default function EquipeDetalhe() {
             {atletas.map((atleta) => (
               <Link to={'/atletas/' + atleta.id} className="cartao atleta-cartao" key={atleta.id}>
                 {atleta.foto_url ? (
-                  <img src={atleta.foto_url} alt="" className="foto-card atleta-avatar" />
+                  <ImagemComFallback src={atleta.foto_url} alt={'Foto de ' + atleta.nome} className="foto-card atleta-avatar" fallback={atleta.nome.slice(0, 1).toUpperCase()} />
                 ) : (
                   <div className="foto-card atleta-avatar atleta-avatar-vazio">{atleta.nome.slice(0, 1).toUpperCase()}</div>
                 )}
