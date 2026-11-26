@@ -6,7 +6,7 @@ O **AGON Hub** é uma aplicação web acadêmica que reúne informações de equ
 
 O projeto foi desenvolvido individualmente como parte do curso Técnico em Informática para Internet. Esta documentação descreve o que está implementado no repositório e separa essas funcionalidades das próximas etapas.
 
-> **Versão demonstrativa (`main`):** mantém as 81 equipes cadastradas, utiliza **693 atletas fictícios distribuídos pelas 81 equipes**, e apresenta campeonatos, partidas e notícias de demonstração. Perfis fictícios e contas de demonstração começam públicos; cada usuário pode tornar seu perfil pessoal privado. Resultados e matérias não são oficiais.
+> **Base esportiva pública:** o site apresenta 81 equipes e a base de 318 atletas reais. Os perfis públicos são exibidos conforme autorização registrada; dois cadastros marcados para revisão permanecem privados até a conferência. Os 693 perfis fictícios e os conteúdos de competição/notícias demonstrativos permanecem no banco, mas não aparecem nas consultas públicas.
 >
 > **Branches:** `main` é a versão acadêmica demonstrativa (frontend e backend). `deploy` preserva a versão canônica do universo AGON. Não faça merge entre elas. O Render e a Vercel da demonstração acompanham `main`.
 >
@@ -30,7 +30,7 @@ O projeto foi desenvolvido individualmente como parte do curso Técnico em Infor
 | CRUD de partidas | API e tela administrativa implementadas |
 | CRUD de notícias | API e tela administrativa implementadas |
 | Upload de logos e fotos | API validada por assinatura do arquivo; teste manual de upload ainda necessário |
-| Consultas públicas | Equipes, 693 atletas fictícios, campeonatos, partidas, notícias e feed comunitário |
+| Consultas públicas | Equipes e atletas com perfil público autorizado; competições e notícias não demonstrativas; feed comunitário |
 | Testes automatizados | 77/77 testes aprovados no GitHub Actions #163; build frontend aprovado |
 
 A suíte automatizada foi aprovada no GitHub Actions #29 (77 testes, 0 falhas). A conferência visual manual e a demonstração no navegador ainda precisam ser registradas.
@@ -119,7 +119,7 @@ agon-hub/
         └── ci.yml
 ```
 
-O backend contém rotas para autenticação, usuários, modalidades, equipes, atletas, campeonatos, partidas, notícias, comunidade e uploads. As migrações 002, 003, 004 e 005 importam os dados demonstrativos, completam os elencos, criam campeonatos/partidas/notícias, garantem as tabelas da comunidade e ajustam o calendário sem resetar o banco. O frontend possui páginas públicas, autenticação, painel administrativo de equipes e um painel reutilizável para os demais módulos.
+O backend contém rotas para autenticação, usuários, modalidades, equipes, atletas, campeonatos, partidas, notícias, comunidade e uploads. As migrações 002 e 003 mantêm conteúdo demonstrativo; as migrações 004, 005 e 006 cuidam da comunidade, calendário e URLs de imagem. A migração 007 importa ou valida os 318 atletas da base esportiva real, publica os 316 perfis sem pendência de revisão e oculta os cadastros fictícios das consultas públicas, sem resetar o banco. O painel administrativo continua acessando os registros demonstrativos.
 
 
 ## 5. Modelagem do banco de dados
@@ -341,7 +341,8 @@ A aplicação fica disponível em `http://localhost:5173`. Durante o desenvolvim
 ### Conteúdo da demonstração
 
 - 81 equipes preservadas.
-- 693 atletas fictícios com perfis públicos e vínculos distribuídos pelas 81 equipes.
+- 693 atletas fictícios permanecem no banco para testes, mas são ocultados das consultas públicas após a migração 007.
+- A base esportiva real contém 318 atletas; 316 perfis ficam públicos e dois aguardam revisão cadastral.
 - Campeonatos demonstrativos, equipes inscritas e partidas geradas pela migração `003_conteudo_demo_2026`, com ajuste de calendário pela migração 005.
 - 15 notícias fictícias sobre campeonatos, equipes e atletas.
 - Comunidade com publicação, curtida, comentário e exclusão pelo autor (ou administrador).
@@ -351,14 +352,14 @@ A aplicação fica disponível em `http://localhost:5173`. Durante o desenvolvim
 ### Cuidados de implantação
 
 - A migração `003` é idempotente e não apaga tabelas ou dados existentes.
-- O conteúdo esportivo da demonstração está marcado como demonstrativo no banco.
+- Campeonatos, partidas e notícias gerados para demonstração permanecem marcados como demonstrativos e não são exibidos nas consultas públicas.
 - O armazenamento atual de uploads é local em `backend/uploads`. Em instância com disco efêmero, arquivos podem desaparecer após reinício ou novo deploy; para persistência, configurar disco persistente ou armazenamento externo.
 - O teste real de upload, a conferência visual e o smoke test das rotas precisam ser feitos no site publicado. Não são considerados concluídos apenas por compilar.
 
 ## 9. Pendências para conclusão da entrega
 
 - Confirmar que o deploy do Render usando a branch `main` concluiu a migração 003 sem erro.
-- Conferir se as 81 equipes exibem atletas e se os perfis fictícios abrem.
+- Conferir se as 81 equipes exibem os elencos reais e se somente perfis autorizados e sem pendência de revisão abrem publicamente.
 - Conferir campeonatos, partidas e notícias na interface pública.
 - Testar login, edição de perfil, publicação, curtida, comentário e exclusão da própria publicação.
 - Testar upload de foto de perfil e confirmar que a imagem aparece após salvar.
