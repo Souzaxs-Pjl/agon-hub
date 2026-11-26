@@ -27,7 +27,7 @@ export default function App() {
       <Navbar />
       {import.meta.env.PROD && (
         <p className="nota" role="status">
-          Ambiente demonstrativo: parte do elenco público é fictícia. Login, cadastro, perfil e comunidade estão disponíveis. Contas Admin podem cadastrar, editar e excluir equipes, atletas, modalidades, campeonatos, partidas e notícias; a API verifica o papel da conta.
+          Base esportiva AGON: equipes e perfis de atletas autorizados, competições e notícias oficiais conforme cadastro. Conteúdos demonstrativos ficam restritos à administração.
         </p>
       )}
       <main className="conteudo">
