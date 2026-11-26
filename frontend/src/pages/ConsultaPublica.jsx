@@ -66,7 +66,7 @@ export default function ConsultaPublica({ tipo }) {
               <>
                 {tipo === 'atletas' && (
                   <>
-                    {item.foto_url && <ImagemComFallback src={item.foto_url} alt={'Foto de ' + (item.nome || item.apelido || 'atleta')} className="foto-card" fallback={(item.nome || item.apelido || 'AT').slice(0, 2).toUpperCase()} />}
+                    <ImagemComFallback src={item.foto_url} alt={'Foto de ' + (item.nome || item.apelido || 'atleta')} className="foto-card" fallback={(item.nome || item.apelido || 'AT').slice(0, 2).toUpperCase()} />
                     <h2>{item.nome}</h2>
                     <p className="pequeno">{item.apelido || 'Sem apelido cadastrado'}</p>
                     {item.bio && <p>{item.bio}</p>}
@@ -99,7 +99,7 @@ export default function ConsultaPublica({ tipo }) {
                 )}
                 {tipo === 'noticias' && (
                   <>
-                    {item.imagem_url && <ImagemComFallback src={item.imagem_url} alt={'Imagem da notícia: ' + item.titulo} className="imagem-noticia" fallback="AGON" />}
+                    <ImagemComFallback src={item.imagem_url} alt={'Imagem da notícia: ' + item.titulo} className="imagem-noticia" fallback="AGON" />
                     <h2>{item.titulo}</h2>
                     {item.resumo && <p>{item.resumo}</p>}
                     <p className="pequeno">Por {item.autor_nome || 'Redação AGON'} · {formatarData(item.publicado_em)}</p>
