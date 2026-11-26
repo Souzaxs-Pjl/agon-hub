@@ -312,9 +312,7 @@ export default function AdminRecursos() {
     if (!selecionado || removendoVinculoId !== null) return;
     setRemovendoVinculoId(equipeId);
     try {
-      const caminhoDetalhe = recurso === 'atletas'
-        ? `/atletas/admin/${selecionado.id}`
-        : `${config.endpoint}/${selecionado.id}`;
+      const caminhoDetalhe = endpointDetalheAdministrativo(recurso, config, selecionado.id);
       await api(`${config.endpoint}/${selecionado.id}/equipes/${equipeId}`, { metodo: 'DELETE' });
       setSelecionado(await api(caminhoDetalhe));
       setMensagem({ tipo: 'ok', texto: 'Vínculo removido.' });
