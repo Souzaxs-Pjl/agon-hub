@@ -31,7 +31,7 @@ O projeto foi desenvolvido individualmente como parte do curso Técnico em Infor
 | CRUD de notícias | API e tela administrativa implementadas |
 | Upload de logos e fotos | API validada por assinatura do arquivo; teste manual de upload ainda necessário |
 | Consultas públicas | Equipes, 693 atletas fictícios, campeonatos, partidas, notícias e feed comunitário |
-| Testes automatizados | 77 testes existentes; CI da revisão atual em execução |
+| Testes automatizados | 77/77 testes aprovados no GitHub Actions #163; build frontend aprovado |
 
 A suíte automatizada foi aprovada no GitHub Actions #29 (77 testes, 0 falhas). A conferência visual manual e a demonstração no navegador ainda precisam ser registradas.
 
@@ -368,7 +368,7 @@ A aplicação fica disponível em `http://localhost:5173`. Durante o desenvolvim
 
 Os testes automatizados usam o módulo nativo `node:test` do Node.js. O GitHub Actions prepara PostgreSQL temporário, instala as dependências, executa a suíte backend e gera o build de produção do frontend.
 
-**Resultado confirmado na revisão atual da `main`:** workflow [Validar AGON Hub — execução #30](https://github.com/Souzaxs-Pjl/agon-hub/actions/runs/45672099610):
+**Resultado confirmado na revisão atual da `main`:** workflow [Validar AGON Hub — execução #163](https://github.com/Souzaxs-Pjl/agon-hub/actions/runs/45727155211):
 
 - Backend: 77 testes aprovados, 0 falhas.
 - Frontend: build de produção aprovado.
