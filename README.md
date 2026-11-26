@@ -119,7 +119,7 @@ agon-hub/
         └── ci.yml
 ```
 
-O backend contém rotas para autenticação, usuários, modalidades, equipes, atletas, campeonatos, partidas, notícias, comunidade e uploads. As migrações 002, 003 e 004 importam os dados demonstrativos, completam os elencos, criam campeonatos/partidas/notícias e garantem as tabelas da comunidade sem resetar o banco. O frontend possui páginas públicas, autenticação, painel administrativo de equipes e um painel reutilizável para os demais módulos.
+O backend contém rotas para autenticação, usuários, modalidades, equipes, atletas, campeonatos, partidas, notícias, comunidade e uploads. As migrações 002, 003, 004 e 005 importam os dados demonstrativos, completam os elencos, criam campeonatos/partidas/notícias, garantem as tabelas da comunidade e ajustam o calendário sem resetar o banco. O frontend possui páginas públicas, autenticação, painel administrativo de equipes e um painel reutilizável para os demais módulos.
 
 
 ## 5. Modelagem do banco de dados
@@ -342,7 +342,7 @@ A aplicação fica disponível em `http://localhost:5173`. Durante o desenvolvim
 
 - 81 equipes preservadas.
 - 693 atletas fictícios com perfis públicos e vínculos distribuídos pelas 81 equipes.
-- Campeonatos demonstrativos, equipes inscritas e partidas geradas pela migração `003_conteudo_demo_2026`.
+- Campeonatos demonstrativos, equipes inscritas e partidas geradas pela migração `003_conteudo_demo_2026`, com ajuste de calendário pela migração 005.
 - 15 notícias fictícias sobre campeonatos, equipes e atletas.
 - Comunidade com publicação, curtida, comentário e exclusão pelo autor (ou administrador).
 - Aba Comunidade disponível na navbar.
