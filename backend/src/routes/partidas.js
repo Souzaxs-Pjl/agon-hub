@@ -28,7 +28,7 @@ async function buscarPartida(id, incluirDemonstrativo = false) {
   const filtroPublico = incluirDemonstrativo ? '' : 'AND p.demonstrativo = FALSE';
   const { rows } = await db.query(
     `${SELECT_PARTIDA}
-     WHERE p.id = $1`,
+     WHERE p.id = $1 ${filtroPublico}`,
     [id]
   );
   return rows[0] || null;
@@ -84,10 +84,10 @@ router.get('/', async (req, res) => {
   }
   const { rows } = campeonatoId
     ? await db.query(`${SELECT_PARTIDA}
-        WHERE p.campeonato_id = $1
+        WHERE p.campeonato_id = $1 AND p.demonstrativo = FALSE
         ORDER BY p.data_hora NULLS LAST, p.id`, [campeonatoId])
     : await db.query(`${SELECT_PARTIDA}
-        WHERE TRUE
+        WHERE p.demonstrativo = FALSE
         ORDER BY p.data_hora NULLS LAST, p.id`);
   res.json(rows);
 });
