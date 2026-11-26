@@ -282,13 +282,20 @@ describe('CRUD de partidas', () => {
     assert.equal(criado.status, 201);
     partidaId = criado.dados.id;
 
-    const consulta = await chamar('GET', `/api/partidas/${partidaId}`);
-    assert.equal(consulta.status, 200);
-    assert.equal(consulta.dados.demonstrativo, true);
+    const consultaPublica = await chamar('GET', `/api/partidas/${partidaId}`);
+    assert.equal(consultaPublica.status, 404);
 
-    const filtro = await chamar('GET', `/api/partidas?campeonato_id=${campeonatoId}`);
-    assert.equal(filtro.status, 200);
-    assert.ok(filtro.dados.some((p) => p.id === partidaId));
+    const consultaAdmin = await chamar('GET', `/api/partidas/admin/${partidaId}`, { token: adminToken });
+    assert.equal(consultaAdmin.status, 200);
+    assert.equal(consultaAdmin.dados.demonstrativo, true);
+
+    const filtroPublico = await chamar('GET', `/api/partidas?campeonato_id=${campeonatoId}`);
+    assert.equal(filtroPublico.status, 200);
+    assert.ok(!filtroPublico.dados.some((p) => p.id === partidaId));
+
+    const filtroAdmin = await chamar('GET', '/api/partidas/admin', { token: adminToken });
+    assert.equal(filtroAdmin.status, 200);
+    assert.ok(filtroAdmin.dados.some((p) => p.id === partidaId));
 
     const edicao = await chamar('PUT', `/api/partidas/${partidaId}`, {
       token: adminToken,
