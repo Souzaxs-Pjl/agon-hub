@@ -10,24 +10,40 @@ const router = express.Router();
 
 const SELECT_NOTICIA = `
   SELECT n.id, n.titulo, n.resumo, n.conteudo, n.imagem_url,
-         n.autor_id, u.nome AS autor_nome, n.publicado_em
+         n.autor_id, u.nome AS autor_nome, n.publicado_em, n.demonstrativo
   FROM noticias n
   LEFT JOIN usuarios u ON u.id = n.autor_id
 `;
 
-async function buscarNoticia(id) {
+async function buscarNoticia(id, incluirDemonstrativo = false) {
+  const filtroPublico = incluirDemonstrativo ? '' : 'AND n.demonstrativo = FALSE';
   const { rows } = await db.query(
-    `${SELECT_NOTICIA} WHERE n.id = $1`,
+    `${SELECT_NOTICIA} WHERE n.id = $1 ${filtroPublico}`,
     [id]
   );
   return rows[0] || null;
 }
+
+router.get('/admin', autenticar, exigirAdmin, async (req, res) => {
+  const { rows } = await db.query(
+    `${SELECT_NOTICIA} WHERE n.demonstrativo = FALSE ORDER BY n.publicado_em DESC, n.id DESC`
+  );
+  res.json(rows);
+});
 
 router.get('/', async (req, res) => {
   const { rows } = await db.query(
     `${SELECT_NOTICIA} ORDER BY n.publicado_em DESC, n.id DESC`
   );
   res.json(rows);
+});
+
+router.get('/admin/:id', autenticar, exigirAdmin, async (req, res) => {
+  const id = parseId(req.params.id);
+  if (id === null) return res.status(400).json({ erro: 'ID inválido.' });
+  const noticia = await buscarNoticia(id, true);
+  if (!noticia) return res.status(404).json({ erro: 'Notícia não encontrada.' });
+  res.json(noticia);
 });
 
 router.get('/:id', async (req, res) => {
@@ -46,7 +62,7 @@ router.post('/', autenticar, exigirAdmin, async (req, res) => {
      VALUES ($1, $2, $3, $4, $5) RETURNING id`,
     [dados.titulo, dados.resumo, dados.conteudo, dados.imagem_url, req.usuario.id]
   );
-  res.status(201).json(await buscarNoticia(rows[0].id));
+  res.status(201).json(await buscarNoticia(rows[0].id, true));
 });
 
 router.put('/:id', autenticar, exigirAdmin, async (req, res) => {
@@ -61,7 +77,7 @@ router.put('/:id', autenticar, exigirAdmin, async (req, res) => {
     [dados.titulo, dados.resumo, dados.conteudo, dados.imagem_url, id]
   );
   if (!resultado.rowCount) return res.status(404).json({ erro: 'Notícia não encontrada.' });
-  res.json(await buscarNoticia(id));
+  res.json(await buscarNoticia(id, true));
 });
 
 router.delete('/:id', autenticar, exigirAdmin, async (req, res) => {
