@@ -6,7 +6,11 @@ O **AGON Hub** é uma aplicação web acadêmica que reúne informações de equ
 
 O projeto foi desenvolvido individualmente como parte do curso Técnico em Informática para Internet. Esta documentação descreve o que está implementado no repositório e separa essas funcionalidades das próximas etapas.
 
-> **Atenção — dados demonstrativos:** os registros inseridos por `database/seed.sql` são fictícios e servem para desenvolvimento e demonstração. As partidas do seed usam `demonstrativo = TRUE`. Eles não representam resultados oficiais.
+> **Versão demonstrativa (`main`):** mantém as 81 equipes cadastradas, utiliza **693 atletas fictícios distribuídos pelas 81 equipes**, e apresenta campeonatos, partidas e notícias de demonstração. Perfis fictícios e contas de demonstração começam públicos; cada usuário pode tornar seu perfil pessoal privado. Resultados e matérias não são oficiais.
+>
+> **Branches:** `main` é a versão acadêmica demonstrativa (frontend e backend). `deploy` preserva a versão canônica do universo AGON. Não faça merge entre elas. O Render e a Vercel da demonstração acompanham `main`.
+>
+> **Banco compartilhado:** o backend demonstrativo usa o PostgreSQL já configurado no Render. As migrações são idempotentes e não resetam a base; ainda assim, alterações de conta e publicações da comunidade persistem no banco compartilhado. Não execute `seed.sql` nem comandos destrutivos no banco de produção.
 
 ## 1. Situação atual do projeto
 
@@ -25,9 +29,9 @@ O projeto foi desenvolvido individualmente como parte do curso Técnico em Infor
 | Inscrição de equipes em campeonatos | API e controles de inscrição implementados |
 | CRUD de partidas | API e tela administrativa implementadas |
 | CRUD de notícias | API e tela administrativa implementadas |
-| Upload de logos e fotos | API e campos de envio no painel implementados |
-| Consultas públicas | Equipes, atletas, campeonatos, partidas e notícias |
-| Testes automatizados | 77/77 aprovados no GitHub Actions #29; 0 falhas |
+| Upload de logos e fotos | API validada por assinatura do arquivo; teste manual de upload ainda necessário |
+| Consultas públicas | Equipes, 693 atletas fictícios, campeonatos, partidas e notícias demonstrativas |
+| Testes automatizados | 77 testes existentes; CI será reexecutado após as alterações desta entrega |
 
 A suíte automatizada foi aprovada no GitHub Actions #29 (77 testes, 0 falhas). A conferência visual manual e a demonstração no navegador ainda precisam ser registradas.
 
@@ -303,17 +307,60 @@ A aplicação fica disponível em `http://localhost:5173`. Durante o desenvolvim
 - Estados de carregamento, erro e confirmação em fluxos principais.
 - Estilos próprios com adaptação para telas menores.
 
-## 8. Pendências para conclusão da entrega
+## 8. Auditoria dos requisitos de entrega
 
-Os CRUDs e as telas principais estão implementados. O workflow [Validar AGON Hub — execução #30](https://github.com/Souzaxs-Pjl/agon-hub/actions/runs/45672099610), na revisão atual da `main`, aprovou os 77 testes backend e o build frontend. As tarefas finais são de validação manual e preparação:
+| Requisito | Situação atual |
+|---|---|
+| Quebra de layout e responsividade | CSS adaptativo existente; precisa de conferência visual final em celular e desktop |
+| Área de toque, legibilidade, hierarquia, contraste, espaçamento e respiro | Estilos existentes; revisão manual de usabilidade pendente |
+| Menus, navbar e fluxo intuitivo | Navbar inclui Equipes, Atletas, Campeonatos, Partidas, Notícias e Comunidade; testar navegação real |
+| Feedback visual, estados de carregamento e erros | Implementados em páginas e chamadas principais; revisar durante QA |
+| Links e botões | Rotas principais implementadas; teste manual de todos os links pendente |
+| Formulários e prevenção de duplo envio | Validação frontend/backend existente; revisão por fluxo pendente |
+| Controle de acesso e proteção de API | JWT e autorização de administrador no backend; operações comunitárias exigem autenticação e o backend valida autoria |
+| Exposição de chaves | Segredos ficam em variáveis de ambiente; nunca colocar `.env` ou chaves no frontend |
+| Injeção e sanitização | Consultas SQL parametrizadas e validações de entrada; revisão de segurança complementar pendente |
+| Tratamento global de erros | Middleware global de erros implementado |
+| Integridade e transações | Migrações 002/003 executadas em transação; constraints e chaves estrangeiras no schema |
+| Performance e connection pooling | Pool `pg` configurado; otimização e análise de consultas pendentes |
+| Índices em chaves estrangeiras | Conferir cobertura no schema antes de considerar concluído |
+| CORS | Lista de origens permitidas configurada por `FRONTEND_URL` e `FRONTEND_URLS` |
+| Logs, alertas e backups | Logs de servidor disponíveis; alertas e rotina de backup devem ser confirmados no painel do provedor |
+| Sessão e condições de corrida | JWT com expiração; curtidas usam restrição única e `ON CONFLICT`; logout remove token local |
+| Atualização de placares e consistência matemática | CRUD e validação de placares implementados; classificação e desempates automáticos completos não estão implementados |
+| Upload e otimização de imagens | JPEG/PNG/WebP, limite de 5 MB e assinatura binária validados; otimização automática não implementada |
+| Open Graph | Metadados sociais dinâmicos não implementados |
+| Code splitting e cache de leitura | Não implementados como otimização dedicada |
+| Paginação | Feed comunitário limita a 50 publicações; paginação geral das listagens não implementada |
+| Proporção de imagens e estabilidade visual | Classes de imagem existentes; conferência visual final necessária |
 
-- Conferir no navegador os fluxos públicos e administrativos em desktop e celular.
-- Conferir upload, visualização e substituição de logos e fotos.
-- Verificar o comportamento dos arquivos de imagem no ambiente de apresentação; hospedagens com disco efêmero precisam de armazenamento persistente.
-- Ajustar eventuais problemas visuais ou de usabilidade encontrados.
-- Preparar dados demonstrativos e ensaiar a apresentação.
+### Conteúdo da demonstração
 
-## 9. Testes
+- 81 equipes preservadas.
+- 693 atletas fictícios com perfis públicos e vínculos distribuídos pelas 81 equipes.
+- Campeonatos demonstrativos, equipes inscritas e partidas geradas pela migração `003_conteudo_demo_2026`.
+- Notícias fictícias sobre campeonatos, equipes e atletas.
+- Comunidade com publicação, curtida, comentário e exclusão pelo autor (ou administrador).
+- Aba Comunidade disponível na navbar.
+- Upload de foto de perfil disponível para usuário autenticado; logos e fotos esportivas são restritos a administrador.
+
+### Cuidados de implantação
+
+- A migração `003` é idempotente e não apaga tabelas ou dados existentes.
+- O conteúdo esportivo da demonstração está marcado como demonstrativo no banco.
+- O armazenamento atual de uploads é local em `backend/uploads`. Em instância com disco efêmero, arquivos podem desaparecer após reinício ou novo deploy; para persistência, configurar disco persistente ou armazenamento externo.
+- O teste real de upload, a conferência visual e o smoke test das rotas precisam ser feitos no site publicado. Não são considerados concluídos apenas por compilar.
+
+## 9. Pendências para conclusão da entrega
+
+- Confirmar que o deploy do Render usando a branch `main` concluiu a migração 003 sem erro.
+- Conferir se as 81 equipes exibem atletas e se os perfis fictícios abrem.
+- Conferir campeonatos, partidas e notícias na interface pública.
+- Testar login, edição de perfil, publicação, curtida, comentário e exclusão da própria publicação.
+- Testar upload de foto de perfil e confirmar que a imagem aparece após salvar.
+- Fazer uma passada visual em celular e desktop e corrigir apenas problemas bloqueadores.
+
+## 10. Testes
 
 Os testes automatizados usam o módulo nativo `node:test` do Node.js. O GitHub Actions prepara PostgreSQL temporário, instala as dependências, executa a suíte backend e gera o build de produção do frontend.
 
@@ -338,7 +385,7 @@ npm run build
 
 Em ambiente local, os testes de integração precisam de PostgreSQL configurado e API ativa. O workflow do GitHub já prepara um banco temporário. Consulte os testes automatizados em `backend/tests/`. A validação visual manual deve ser feita no navegador, conforme o roteiro de conferência da entrega.
 
-## 10. Segurança e cuidados
+## 11. Segurança e cuidados
 
 - Não publique o arquivo `.env`.
 - Não use senhas reais nos dados de demonstração.
@@ -349,11 +396,11 @@ Em ambiente local, os testes de integração precisam de PostgreSQL configurado 
 - Faça backup antes de scripts destrutivos no banco.
 - Identifique dados fictícios para não confundi-los com informações oficiais.
 
-## 11. Documentação complementar
+## 12. Documentação complementar
 
 - [Documentação da API](docs/API.md)
 
-## 12. Autor
+## 13. Autor
 
 Projeto acadêmico individual.
 
