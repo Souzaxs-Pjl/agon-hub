@@ -28,14 +28,16 @@ export async function api(caminho, { metodo = 'GET', corpo, comToken = true } = 
   const metodoNormalizado = String(metodo).toUpperCase();
   const modoDemonstrativo = import.meta.env.PROD;
 
-  // Em main, somente autenticação e edição do próprio perfil são permitidas.
-  // Operações administrativas e publicações continuam desativadas para preservar a base oficial.
+  // A demonstração permite ações pessoais e recursos comunitários moderados pela API.
+  // CRUD esportivo e operações administrativas continuam bloqueados no frontend.
   const rota = String(caminho).split('?')[0];
   const operacaoDeContaPermitida =
-    (metodoNormalizado === 'POST' && ['/auth/login', '/auth/register', '/uploads/perfil'].includes(rota)) ||
-    (metodoNormalizado === 'PUT' && rota === '/auth/me');
+    (metodoNormalizado === 'POST' && ['/auth/login', '/auth/register', '/uploads/perfil', '/comunidade'].includes(rota)) ||
+    (metodoNormalizado === 'PUT' && (rota === '/auth/me' || /^\\/comunidade\\/\\d+\\/curtida$/.test(rota))) ||
+    (metodoNormalizado === 'POST' && /^\\/comunidade\\/\\d+\\/comentarios$/.test(rota)) ||
+    (metodoNormalizado === 'DELETE' && /^\\/comunidade\\/\\d+$/.test(rota));
   if (modoDemonstrativo && metodoNormalizado !== 'GET' && !operacaoDeContaPermitida) {
-    throw new Error('Modo demonstrativo: alterações de dados esportivos e publicações estão desativadas nesta versão.');
+    throw new Error('Modo demonstrativo: alterações administrativas e de dados esportivos estão desativadas.');
   }
   const ehFormData = typeof FormData !== 'undefined' && corpo instanceof FormData;
 
