@@ -31,11 +31,21 @@ export async function api(caminho, { metodo = 'GET', corpo, comToken = true } = 
   // A demonstração permite ações pessoais e recursos comunitários moderados pela API.
   // CRUD esportivo e operações administrativas continuam bloqueados no frontend.
   const rota = String(caminho).split('?')[0];
+  const segmentosRota = rota.split('/').filter(Boolean);
+  const idComunidade = Number(segmentosRota[1]);
+  const rotaComunidadeComId =
+    segmentosRota[0] === 'comunidade' &&
+    segmentosRota.length >= 2 &&
+    Number.isSafeInteger(idComunidade) &&
+    idComunidade > 0;
   const operacaoDeContaPermitida =
     (metodoNormalizado === 'POST' && ['/auth/login', '/auth/register', '/uploads/perfil', '/comunidade'].includes(rota)) ||
-    (metodoNormalizado === 'PUT' && (rota === '/auth/me' || /^\\/comunidade\\/\\d+\\/curtida$/.test(rota))) ||
-    (metodoNormalizado === 'POST' && /^\\/comunidade\\/\\d+\\/comentarios$/.test(rota)) ||
-    (metodoNormalizado === 'DELETE' && /^\\/comunidade\\/\\d+$/.test(rota));
+    (metodoNormalizado === 'PUT' && (
+      rota === '/auth/me' ||
+      (rotaComunidadeComId && segmentosRota.length === 3 && segmentosRota[2] === 'curtida')
+    )) ||
+    (metodoNormalizado === 'POST' && rotaComunidadeComId && segmentosRota.length === 3 && segmentosRota[2] === 'comentarios') ||
+    (metodoNormalizado === 'DELETE' && rotaComunidadeComId && segmentosRota.length === 2);
   if (modoDemonstrativo && metodoNormalizado !== 'GET' && !operacaoDeContaPermitida) {
     throw new Error('Modo demonstrativo: alterações administrativas e de dados esportivos estão desativadas.');
   }
