@@ -74,6 +74,8 @@ async function iniciar() {
     console.log(resultadoBaseDemo.aplicada ? `Base demonstrativa AGON importada: ${resultadoBaseDemo.equipes} equipes e ${resultadoBaseDemo.atletas} atletas fictícios.` : 'Migração da base demonstrativa já aplicada.');
     const resultadoConteudoDemo = await require('./migrations/003_conteudo_demo_2026')(db);
     console.log(resultadoConteudoDemo.aplicada ? `Conteúdo demonstrativo criado: ${resultadoConteudoDemo.atletas} atletas adicionais, ${resultadoConteudoDemo.campeonatos} campeonatos, ${resultadoConteudoDemo.partidas} partidas e ${resultadoConteudoDemo.noticias} notícias.` : 'Migração do conteúdo demonstrativo já aplicada.');
+    await require('./migrations/004_schema_comunidade')(db);
+    console.log('Schema da comunidade verificado.');
   } catch (erro) {
     console.error(
       'ERRO: não foi possível conectar ao PostgreSQL.\n' +
