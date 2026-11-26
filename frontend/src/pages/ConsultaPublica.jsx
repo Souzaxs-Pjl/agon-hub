@@ -26,6 +26,8 @@ export default function ConsultaPublica({ tipo }) {
   const [registros, setRegistros] = useState([]);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState('');
+  const [pagina, setPagina] = useState(1);
+  const porPagina = 20;
 
   useEffect(() => {
     let ativa = true;
@@ -35,12 +37,17 @@ export default function ConsultaPublica({ tipo }) {
     }
     setCarregando(true);
     setErro('');
+    setPagina(1);
     api(config.endpoint)
-      .then((dados) => { if (ativa) setRegistros(dados); })
+      .then((dados) => { if (ativa) setRegistros(Array.isArray(dados) ? dados : []); })
       .catch((e) => { if (ativa) setErro(e.message); })
       .finally(() => { if (ativa) setCarregando(false); });
     return () => { ativa = false; };
   }, [tipo]);
+
+  const totalPaginas = Math.max(1, Math.ceil(registros.length / porPagina));
+  const paginaAtual = Math.min(pagina, totalPaginas);
+  const registrosVisiveis = registros.slice((paginaAtual - 1) * porPagina, paginaAtual * porPagina);
 
   if (!config) return <p className="aviso aviso-erro">Página não encontrada.</p>;
   if (carregando) return <p className="aviso">Carregando {config.titulo.toLowerCase()}...</p>;
@@ -53,7 +60,7 @@ export default function ConsultaPublica({ tipo }) {
       {tipo === 'atletas' && <p className="nota">Todos os atletas desta versão são personagens fictícios criados para demonstração.</p>}
       {registros.length === 0 ? <p className="aviso">Nenhum registro disponível.</p> : (
         <div className="grade">
-          {registros.map((item) => {
+          {registrosVisiveis.map((item) => {
             const conteudo = (
               <>
                 {tipo === 'atletas' && (
@@ -140,6 +147,17 @@ export default function ConsultaPublica({ tipo }) {
             return <article className="cartao" key={item.id}>{conteudo}</article>;
           })}
         </div>
+      )}
+      {registros.length > porPagina && (
+        <nav className="paginacao" aria-label={`Paginação de ${config.titulo.toLowerCase()}`}>
+          <button type="button" className="botao-secundario" onClick={() => setPagina((p) => Math.max(1, p - 1))} disabled={paginaAtual <= 1}>
+            Anterior
+          </button>
+          <span aria-live="polite">Página {paginaAtual} de {totalPaginas} · {registros.length} registros</span>
+          <button type="button" className="botao-secundario" onClick={() => setPagina((p) => Math.min(totalPaginas, p + 1))} disabled={paginaAtual >= totalPaginas}>
+            Próxima
+          </button>
+        </nav>
       )}
     </section>
   );
