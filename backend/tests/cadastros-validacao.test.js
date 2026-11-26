@@ -94,7 +94,9 @@ describe('validarModalidade', () => {
     assert.equal(validarModalidade({ nome: 'A', tipo: 'esporte' }).erros.length, 1);
   });
 });
-\n\ndescribe('URLs de imagem sem limite de caracteres', () => {
+
+
+describe('URLs de imagem sem limite de caracteres', () => {
   const urlLonga = 'https://cdn.exemplo.com/imagens/' + 'x'.repeat(800) + '.webp?token=' + 't'.repeat(600);
 
   it('aceita URL longa de logo de equipe', () => {
