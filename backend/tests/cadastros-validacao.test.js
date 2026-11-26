@@ -4,7 +4,7 @@
 // =====================================================================
 const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
-const { parseId, validarModalidade, validarEquipe } = require('../src/validacao');
+const { parseId, validarModalidade, validarEquipe, validarAtleta, validarNoticia } = require('../src/validacao');
 
 const equipeValida = {
   nome: 'Falcões do Norte',
@@ -92,5 +92,26 @@ describe('validarModalidade', () => {
 
   it('recusa nome curto', () => {
     assert.equal(validarModalidade({ nome: 'A', tipo: 'esporte' }).erros.length, 1);
+  });
+});
+\n\ndescribe('URLs de imagem sem limite de caracteres', () => {
+  const urlLonga = 'https://cdn.exemplo.com/imagens/' + 'x'.repeat(800) + '.webp?token=' + 't'.repeat(600);
+
+  it('aceita URL longa de logo de equipe', () => {
+    const { erros, dados } = validarEquipe({ ...equipeValida, logo_url: urlLonga });
+    assert.deepEqual(erros, []);
+    assert.equal(dados.logo_url, urlLonga);
+  });
+
+  it('aceita URL longa de foto de atleta', () => {
+    const { erros, dados } = validarAtleta({ nome: 'Atleta Teste', foto_url: urlLonga });
+    assert.deepEqual(erros, []);
+    assert.equal(dados.foto_url, urlLonga);
+  });
+
+  it('aceita URL longa de imagem de notícia', () => {
+    const { erros, dados } = validarNoticia({ titulo: 'Notícia teste', conteudo: 'Conteúdo', imagem_url: urlLonga });
+    assert.deepEqual(erros, []);
+    assert.equal(dados.imagem_url, urlLonga);
   });
 });
