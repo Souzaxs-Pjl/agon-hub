@@ -173,7 +173,7 @@ export default function Comunidade() {
           </div>
           <p style={{ whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' }}>{p.texto}</p>
           <div className="acoes">
-            <button type="button" className="botao-secundario" disabled={!usuario || curtidasPendentes[p.id]} onClick={() => curtir(p.id)}>
+            <button type="button" className={curtidasUsuario[p.id] ? 'botao-curtido' : 'botao-secundario'} disabled={!usuario || curtidasPendentes[p.id]} onClick={() => curtir(p.id)}>
               {curtidasPendentes[p.id] ? 'Atualizando...' : `${curtidasUsuario[p.id] ? 'Curtido' : 'Curtir'} · ${p.curtidas}`}
             </button>
             <button type="button" className="botao-secundario" onClick={() => comentarios[p.id] ? setComentarios(s => { const n={...s}; delete n[p.id]; return n; }) : abrirComentarios(p.id)}>Comentários · {p.comentarios}</button>
