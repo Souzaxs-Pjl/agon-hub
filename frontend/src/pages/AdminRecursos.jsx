@@ -99,12 +99,31 @@ function prepararRegistro(config, registro) {
 }
 
 function resumir(item, tipo) {
-  if (tipo === 'partidas') return `${item.equipe_casa_nome} × ${item.equipe_visitante_nome}`;
-  if (tipo === 'campeonatos') return `${item.edicao} · ${item.modalidade_nome}`;
-  if (tipo === 'atletas') return item.apelido || 'Atleta';
-  if (tipo === 'modalidades') return item.tipo === 'esport' ? 'E-sports' : 'Esporte';
-  if (tipo === 'noticias') return item.resumo || 'Notícia';
-  return '';
+  let resumo = '';
+  if (tipo === 'partidas') resumo = `${item.equipe_casa_nome} × ${item.equipe_visitante_nome}`;
+  else if (tipo === 'campeonatos') resumo = `${item.edicao} · ${item.modalidade_nome}`;
+  else if (tipo === 'atletas') resumo = item.apelido || 'Atleta';
+  else if (tipo === 'modalidades') resumo = item.tipo === 'esport' ? 'E-sports' : 'Esporte';
+  else if (tipo === 'noticias') resumo = item.resumo || 'Notícia';
+  return item.demonstrativo ? `Demonstrativo · ${resumo}` : resumo;
+}
+
+function endpointListaAdministrativa(recurso, config) {
+  if (recurso === 'atletas') return '/atletas/admin';
+  if (['campeonatos', 'partidas', 'noticias'].includes(recurso)) return `${config.endpoint}/admin`;
+  return config.endpoint;
+}
+
+function endpointDetalheAdministrativo(recurso, config, id) {
+  if (recurso === 'atletas') return `/atletas/admin/${id}`;
+  if (['campeonatos', 'partidas', 'noticias'].includes(recurso)) return `${config.endpoint}/admin/${id}`;
+  return `${config.endpoint}/${id}`;
+}
+
+function endpointFonteAdministrativa(fonte) {
+  if (fonte === 'equipes') return '/equipes/admin';
+  if (fonte === 'campeonatos') return '/campeonatos/admin';
+  return `/${fonte}`;
 }
 
 export default function AdminRecursos() {
@@ -139,8 +158,8 @@ export default function AdminRecursos() {
       setCarregando(true);
       try {
         const [lista, ...listasFontes] = await Promise.all([
-          (recurso === 'atletas' ? api('/atletas/admin') : api(config.endpoint)),
-          ...(config.fontes || []).map((fonte) => api(fonte === 'equipes' ? '/equipes/admin' : `/${fonte}`)),
+          api(endpointListaAdministrativa(recurso, config)),
+          ...(config.fontes || []).map((fonte) => api(endpointFonteAdministrativa(fonte))),
         ]);
         setRegistros(lista);
         const mapa = {};
@@ -178,9 +197,7 @@ export default function AdminRecursos() {
     setMensagem({ tipo: '', texto: '' });
     setArquivo(null);
     try {
-      const caminho = recurso === 'atletas'
-        ? `/atletas/admin/${item.id}`
-        : `${config.endpoint}/${item.id}`;
+      const caminho = endpointDetalheAdministrativo(recurso, config, item.id);
       const detalhe = await api(caminho);
       setSelecionado(detalhe);
       setForm(prepararRegistro(config, detalhe));
@@ -238,11 +255,9 @@ export default function AdminRecursos() {
         }
       }
 
-      const caminhoDetalhe = recurso === 'atletas'
-        ? `/atletas/admin/${id}`
-        : `${config.endpoint}/${id}`;
+      const caminhoDetalhe = endpointDetalheAdministrativo(recurso, config, id);
       const [lista, detalhe] = await Promise.all([
-        (recurso === 'atletas' ? api('/atletas/admin') : api(config.endpoint)),
+        api(endpointListaAdministrativa(recurso, config)),
         api(caminhoDetalhe),
       ]);
       setRegistros(lista);
@@ -264,7 +279,7 @@ export default function AdminRecursos() {
     setExcluindoId(item.id);
     try {
       await api(`${config.endpoint}/${item.id}`, { metodo: 'DELETE' });
-      setRegistros(await api(recurso === 'atletas' ? '/atletas/admin' : config.endpoint));
+      setRegistros(await api(endpointListaAdministrativa(recurso, config)));
       if (editandoId === item.id) novoRegistro();
       setMensagem({ tipo: 'ok', texto: 'Registro excluído.' });
     } catch (erro) {
@@ -281,9 +296,7 @@ export default function AdminRecursos() {
     const corpo = { equipe_id: Number(vinculo.id) };
     if (config.relacionar === 'atletas') corpo.funcao = vinculo.funcao;
     try {
-      const caminhoDetalhe = recurso === 'atletas'
-        ? `/atletas/admin/${selecionado.id}`
-        : `${config.endpoint}/${selecionado.id}`;
+      const caminhoDetalhe = endpointDetalheAdministrativo(recurso, config, selecionado.id);
       await api(`${config.endpoint}/${selecionado.id}/equipes`, { metodo: 'POST', corpo });
       setSelecionado(await api(caminhoDetalhe));
       setVinculo({ id: '', funcao: '' });
