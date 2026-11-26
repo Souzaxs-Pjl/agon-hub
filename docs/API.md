@@ -278,7 +278,39 @@ Uma partida precisa referenciar campeonato, equipe mandante e equipe visitante e
 ### `DELETE /api/noticias/:id`
 - Acesso: administrador. Exclui a notícia.
 
-## 11. Upload de imagens
+## 11. Comunidade
+
+O feed retorna as 50 publicações mais recentes. Publicar, curtir e comentar exige autenticação. A API valida autoria para exclusão e vínculos quando a publicação é feita como atleta ou equipe.
+
+### `GET /api/comunidade`
+- Acesso: público. Lista publicações, autor, curtidas e quantidade de comentários.
+
+### `GET /api/comunidade/opcoes-autoria`
+- Acesso: usuário autenticado.
+- Retorna os perfis de atleta e equipes vinculados à conta que podem ser usados como autoria.
+
+### `POST /api/comunidade`
+- Acesso: usuário autenticado.
+- Corpo: `{ "texto": "Publicação", "tipo_autor": "usuario" }`.
+- `tipo_autor`: `usuario`, `atleta` ou `equipe`.
+- Para autoria de atleta, informe `atleta_id`; para equipe, informe `equipe_id`.
+- Texto de 1 a 2000 caracteres.
+
+### `PUT /api/comunidade/:id/curtida`
+- Acesso: usuário autenticado. Alterna a curtida da conta na publicação.
+
+### `GET /api/comunidade/:id/comentarios`
+- Acesso: público. Lista até 100 comentários em ordem cronológica.
+
+### `POST /api/comunidade/:id/comentarios`
+- Acesso: usuário autenticado.
+- Corpo: `{ "texto": "Comentário" }`.
+- Texto de 1 a 1000 caracteres.
+
+### `DELETE /api/comunidade/:id`
+- Acesso: autor da publicação ou administrador. Remove a publicação.
+
+## 12. Upload de imagens
 
 Os endpoints recebem arquivo em `multipart/form-data`, no campo `imagem`. Upload de equipe e atleta exige administrador; o upload de perfil exige autenticação e só altera a foto da própria conta.
 
@@ -311,7 +343,7 @@ const resposta = await fetch('/api/uploads/equipes/1/logo', {
 
 Não defina manualmente `Content-Type` ao enviar `FormData`; o navegador inclui o boundary multipart. Os campos de imagem também aceitam URLs HTTP/HTTPS.
 
-## 12. Observações
+## 13. Observações
 
 - As rotas de escrita são administrativas.
 - As rotas de consulta listadas como públicas não exigem token.
