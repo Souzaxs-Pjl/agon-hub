@@ -24,7 +24,8 @@ const SELECT_PARTIDA = `
   JOIN modalidades mv ON mv.id = ev.modalidade_id
 `;
 
-async function buscarPartida(id) {
+async function buscarPartida(id, incluirDemonstrativo = false) {
+  const filtroPublico = incluirDemonstrativo ? '' : 'AND p.demonstrativo = FALSE';
   const { rows } = await db.query(
     `${SELECT_PARTIDA}
      WHERE p.id = $1`,
@@ -70,6 +71,12 @@ async function validarParticipantes(dados) {
   return null;
 }
 
+router.get('/admin', autenticar, exigirAdmin, async (req, res) => {
+  const { rows } = await db.query(`${SELECT_PARTIDA}
+    ORDER BY p.data_hora NULLS LAST, p.id`);
+  res.json(rows);
+});
+
 router.get('/', async (req, res) => {
   const campeonatoId = req.query.campeonato_id ? parseId(req.query.campeonato_id) : null;
   if (req.query.campeonato_id && campeonatoId === null) {
@@ -83,6 +90,14 @@ router.get('/', async (req, res) => {
         WHERE TRUE
         ORDER BY p.data_hora NULLS LAST, p.id`);
   res.json(rows);
+});
+
+router.get('/admin/:id', autenticar, exigirAdmin, async (req, res) => {
+  const id = parseId(req.params.id);
+  if (id === null) return res.status(400).json({ erro: 'ID inválido.' });
+  const partida = await buscarPartida(id, true);
+  if (!partida) return res.status(404).json({ erro: 'Partida não encontrada.' });
+  res.json(partida);
 });
 
 router.get('/:id', async (req, res) => {
@@ -107,7 +122,7 @@ router.post('/', autenticar, exigirAdmin, async (req, res) => {
       dados.data_hora, dados.fase, dados.placar_casa, dados.placar_visitante,
       dados.status, dados.demonstrativo]
   );
-  res.status(201).json(await buscarPartida(rows[0].id));
+  res.status(201).json(await buscarPartida(rows[0].id, true));
 });
 
 router.put('/:id', autenticar, exigirAdmin, async (req, res) => {
@@ -128,7 +143,7 @@ router.put('/:id', autenticar, exigirAdmin, async (req, res) => {
       dados.status, dados.demonstrativo, id]
   );
   if (!resultado.rowCount) return res.status(404).json({ erro: 'Partida não encontrada.' });
-  res.json(await buscarPartida(id));
+  res.json(await buscarPartida(id, true));
 });
 
 router.delete('/:id', autenticar, exigirAdmin, async (req, res) => {
