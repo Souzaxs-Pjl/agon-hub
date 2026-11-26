@@ -33,8 +33,11 @@ const SQL_EQUIPE = `
 // Busca UMA equipe com seus atletas. Devolve null se não existir.
 // Usada pelo GET /:id e também pelo POST e PUT, para responder sempre
 // no mesmo formato.
-async function buscarEquipe(id) {
-  const { rows } = await db.query(`${SQL_EQUIPE} AND e.id = $1`, [id]);
+async function buscarEquipe(id, incluirDemonstrativo = false) {
+  const consulta = incluirDemonstrativo
+    ? SQL_EQUIPE.replace('WHERE e.demonstrativo = FALSE', 'WHERE TRUE')
+    : SQL_EQUIPE;
+  const { rows } = await db.query(`${consulta} AND e.id = $1`, [id]);
   if (rows.length === 0) return null;
 
   const atletas = await db.query(
@@ -52,6 +55,13 @@ async function buscarEquipe(id) {
 // GET /api/equipes  (pública)
 router.get('/', async (req, res) => {
   const { rows } = await db.query(`${SQL_EQUIPE} ORDER BY e.nome`);
+  res.json(rows);
+});
+
+// GET /api/equipes/admin (admin): inclui equipes demonstrativas para gestão.
+router.get('/admin', autenticar, exigirAdmin, async (req, res) => {
+  const consulta = SQL_EQUIPE.replace('WHERE e.demonstrativo = FALSE', 'WHERE TRUE');
+  const { rows } = await db.query(`${consulta} ORDER BY e.nome`);
   res.json(rows);
 });
 
@@ -85,7 +95,7 @@ router.post('/', autenticar, exigirAdmin, async (req, res) => {
       dados.titulos, dados.cidade, dados.responsavel, dados.cores]
   );
 
-  const equipe = await buscarEquipe(rows[0].id);
+  const equipe = await buscarEquipe(rows[0].id, true);
   res.status(201).json(equipe);
 });
 
@@ -115,7 +125,7 @@ router.put('/:id', autenticar, exigirAdmin, async (req, res) => {
   if (rows.length === 0) return res.status(404).json({ erro: 'Equipe não encontrada.' });
 
   await limparImagemSeNaoUtilizada(anterior.rows[0].logo_url);
-  res.json(await buscarEquipe(id));
+  res.json(await buscarEquipe(id, true));
 });
 
 // DELETE /api/equipes/:id  (admin)
