@@ -15,6 +15,7 @@ export default function Comunidade() {
   const [curtidasUsuario, setCurtidasUsuario] = useState({});
   const [comentariosCarregando, setComentariosCarregando] = useState({});
   const [carregando, setCarregando] = useState(true);
+  const [falhaFeed, setFalhaFeed] = useState(false);
   const [publicando, setPublicando] = useState(false);
   const [curtidasPendentes, setCurtidasPendentes] = useState({});
   const [comentarios, setComentarios] = useState({});
@@ -26,11 +27,13 @@ export default function Comunidade() {
     try {
       const dados = await api('/comunidade', { comToken: false });
       setFeed(Array.isArray(dados) ? dados : []);
+      setFalhaFeed(false);
       if (posicaoScroll !== null) {
         requestAnimationFrame(() => window.scrollTo(0, posicaoScroll));
       }
     } catch (e) {
       setErro(e.message);
+      setFalhaFeed(true);
     } finally {
       setCarregando(false);
     }
@@ -159,7 +162,7 @@ export default function Comunidade() {
       <div className="acoes"><small>{texto.length}/2000</small><button className="botao-primario" disabled={!usuario || publicando || !texto.trim() || (tipoAutor === 'equipe' && !equipeAutor)}>{publicando ? 'Publicando...' : 'Publicar'}</button></div>
       {!usuario && <p className="pequeno"><Link to="/login">Entrar</Link> ou <Link to="/cadastro">criar conta</Link> para participar.</p>}
     </form>
-    {carregando ? <div className="estado-comunidade" role="status"><span className="estado-ponto" />Carregando publicações...</div> : feed.length === 0 ? <div className="estado-comunidade estado-vazio"><span className="estado-simbolo">AGON</span><h2>O feed está começando.</h2><p>As conversas da comunidade aparecem aqui. Publique uma atualização para abrir a discussão.</p></div> :
+    {carregando ? <div className="estado-comunidade" role="status"><span className="estado-ponto" />Carregando publicações...</div> : falhaFeed ? <div className="estado-comunidade estado-vazio"><h2>Não foi possível carregar o feed.</h2><p>Verifique sua conexão e tente novamente.</p><button type="button" className="botao-secundario" onClick={() => carregar()}>Tentar novamente</button></div> : feed.length === 0 ? <div className="estado-comunidade estado-vazio"><span className="estado-simbolo">AGON</span><h2>O feed está começando.</h2><p>As conversas da comunidade aparecem aqui. Publique uma atualização para abrir a discussão.</p></div> :
       <div className="grade">
         {feed.map(p => <article className="cartao" key={p.id}>
           <div className="acoes">
