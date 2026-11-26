@@ -80,9 +80,9 @@ export default function EquipeDetalhe() {
 
       <section>
         <div className="pagina-topo">
-          <div><h2>Elenco</h2><p className="pequeno">{atletas.length} perfil(is) demonstrativo(s)</p></div>
+          <div><h2>Elenco</h2><p className="pequeno">{atletas.length} atleta(s) com perfil público</p></div>
         </div>
-        <p className="nota">Os nomes e perfis individuais exibidos nesta versão são fictícios e foram criados para a apresentação. Os cadastros das equipes e instituições foram mantidos.</p>
+        <p className="nota">O elenco apresenta os atletas com perfil público autorizado e registrado no AGON Hub.</p>
         {atletas.length === 0 ? (
           <p className="aviso">Nenhum perfil individual está público no momento. O elenco só aparece aqui após a autorização de publicação ser confirmada e registrada.</p>
         ) : (
