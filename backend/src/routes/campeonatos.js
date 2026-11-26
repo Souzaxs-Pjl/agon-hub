@@ -30,13 +30,14 @@ const FROM_CAMPEONATO = `
   LEFT JOIN equipes campeao ON campeao.id = vencedor.equipe_id
 `;
 
-async function buscarCampeonato(id) {
+async function buscarCampeonato(id, incluirDemonstrativo = false) {
+  const filtroPublico = incluirDemonstrativo ? '' : 'AND c.demonstrativo = FALSE';
   const resultado = await db.query(
     `SELECT c.id, c.nome, c.edicao, c.modalidade_id, m.nome AS modalidade_nome,
-            c.data_inicio, c.data_fim, c.status, c.descricao,
+            c.data_inicio, c.data_fim, c.status, c.descricao, c.demonstrativo,
             campeao.id AS campeao_equipe_id, campeao.nome AS campeao_equipe_nome
      ${FROM_CAMPEONATO}
-     WHERE c.id = $1`,
+     WHERE c.id = $1 ${filtroPublico}`,
     [id]
   );
   if (!resultado.rows.length) return null;
@@ -51,10 +52,10 @@ async function buscarCampeonato(id) {
   return { ...resultado.rows[0], equipes: equipes.rows };
 }
 
-router.get('/', async (req, res) => {
+router.get('/admin', autenticar, exigirAdmin, async (req, res) => {
   const { rows } = await db.query(
     `SELECT c.id, c.nome, c.edicao, c.modalidade_id, m.nome AS modalidade_nome,
-            c.data_inicio, c.data_fim, c.status, c.descricao,
+            c.data_inicio, c.data_fim, c.status, c.descricao, c.demonstrativo,
             campeao.id AS campeao_equipe_id, campeao.nome AS campeao_equipe_nome,
             COUNT(ce.equipe_id)::int AS total_equipes
      ${FROM_CAMPEONATO}
@@ -63,6 +64,28 @@ router.get('/', async (req, res) => {
      ORDER BY c.data_inicio DESC NULLS LAST, c.nome`
   );
   res.json(rows);
+});
+
+router.get('/', async (req, res) => {
+  const { rows } = await db.query(
+    `SELECT c.id, c.nome, c.edicao, c.modalidade_id, m.nome AS modalidade_nome,
+            c.data_inicio, c.data_fim, c.status, c.descricao,
+            campeao.id AS campeao_equipe_id, campeao.nome AS campeao_equipe_nome,
+            c.demonstrativo, COUNT(ce.equipe_id)::int AS total_equipes
+     ${FROM_CAMPEONATO}
+     LEFT JOIN campeonato_equipes ce ON ce.campeonato_id = c.id
+     GROUP BY c.id, m.nome, campeao.id
+     ORDER BY c.data_inicio DESC NULLS LAST, c.nome`
+  );
+  res.json(rows);
+});
+
+router.get('/admin/:id', autenticar, exigirAdmin, async (req, res) => {
+  const id = parseId(req.params.id);
+  if (id === null) return res.status(400).json({ erro: 'ID inválido.' });
+  const campeonato = await buscarCampeonato(id, true);
+  if (!campeonato) return res.status(404).json({ erro: 'Campeonato não encontrado.' });
+  res.json(campeonato);
 });
 
 router.get('/:id', async (req, res) => {
@@ -82,7 +105,7 @@ router.post('/', autenticar, exigirAdmin, async (req, res) => {
      VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id`,
     [dados.nome, dados.edicao, dados.modalidade_id, dados.data_inicio, dados.data_fim, dados.status, dados.descricao]
   );
-  res.status(201).json(await buscarCampeonato(rows[0].id));
+  res.status(201).json(await buscarCampeonato(rows[0].id, true));
 });
 
 router.put('/:id', autenticar, exigirAdmin, async (req, res) => {
@@ -98,7 +121,7 @@ router.put('/:id', autenticar, exigirAdmin, async (req, res) => {
     [dados.nome, dados.edicao, dados.modalidade_id, dados.data_inicio, dados.data_fim, dados.status, dados.descricao, id]
   );
   if (!resultado.rowCount) return res.status(404).json({ erro: 'Campeonato não encontrado.' });
-  res.json(await buscarCampeonato(id));
+  res.json(await buscarCampeonato(id, true));
 });
 
 router.delete('/:id', autenticar, exigirAdmin, async (req, res) => {
