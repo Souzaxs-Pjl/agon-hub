@@ -16,7 +16,7 @@ O projeto foi desenvolvido individualmente como parte do curso Técnico em Infor
 
 | Área | Situação no código |
 |---|---|
-| Banco PostgreSQL | 9 tabelas, relações 1:N e N:N e seed demonstrativo |
+| Banco PostgreSQL | 12 tabelas, relações 1:N e N:N, seed e schema da Comunidade |
 | API e conexão com o banco | Implementadas |
 | Cadastro, login, JWT e recuperação de sessão | Implementados |
 | Perfis pessoais com edição, foto, privacidade e compartilhamento | Implementados na `main`; atualização da API implantada ainda pendente |
@@ -30,8 +30,8 @@ O projeto foi desenvolvido individualmente como parte do curso Técnico em Infor
 | CRUD de partidas | API e tela administrativa implementadas |
 | CRUD de notícias | API e tela administrativa implementadas |
 | Upload de logos e fotos | API validada por assinatura do arquivo; teste manual de upload ainda necessário |
-| Consultas públicas | Equipes, 693 atletas fictícios, campeonatos, partidas e notícias demonstrativas |
-| Testes automatizados | 77 testes existentes; CI será reexecutado após as alterações desta entrega |
+| Consultas públicas | Equipes, 693 atletas fictícios, campeonatos, partidas, notícias e feed comunitário |
+| Testes automatizados | 77 testes existentes; CI da revisão atual em execução |
 
 A suíte automatizada foi aprovada no GitHub Actions #29 (77 testes, 0 falhas). A conferência visual manual e a demonstração no navegador ainda precisam ser registradas.
 
@@ -119,12 +119,12 @@ agon-hub/
         └── ci.yml
 ```
 
-O backend contém rotas para autenticação, usuários, modalidades, equipes, atletas, campeonatos, partidas, notícias e uploads. O frontend possui páginas públicas, autenticação, painel administrativo de equipes e um painel reutilizável para os demais módulos.
+O backend contém rotas para autenticação, usuários, modalidades, equipes, atletas, campeonatos, partidas, notícias, comunidade e uploads. As migrações 002, 003 e 004 importam os dados demonstrativos, completam os elencos e garantem as tabelas da comunidade sem resetar o banco. O frontend possui páginas públicas, autenticação, painel administrativo de equipes e um painel reutilizável para os demais módulos.
 
 
 ## 5. Modelagem do banco de dados
 
-A estrutura atual possui nove tabelas:
+A estrutura atual possui 12 tabelas:
 
 | Tabela | Responsabilidade |
 |---|---|
@@ -137,6 +137,9 @@ A estrutura atual possui nove tabelas:
 | `campeonato_equipes` | Associação N:N entre campeonatos e equipes |
 | `partidas` | Jogos, datas, fases, placares e situação |
 | `noticias` | Conteúdos editoriais |
+| `publicacoes` | Publicações de usuários, atletas ou equipes |
+| `publicacao_curtidas` | Curtidas únicas por usuário e publicação |
+| `publicacao_comentarios` | Comentários vinculados a uma publicação |
 
 ### Relacionamentos
 
@@ -146,7 +149,8 @@ A estrutura atual possui nove tabelas:
 - Um campeonato pode ter várias equipes e uma equipe pode participar de vários campeonatos (N:N), por meio de `campeonato_equipes`.
 - Um campeonato pode ter várias partidas (1:N).
 - Uma conta de usuário pode estar associada a um cadastro de atleta; essa associação é opcional.
-- Um usuário pode ser autor de várias notícias.
+- Um usuário pode ser autor de várias notícias e publicações.
+- Uma publicação pode receber várias curtidas e comentários (1:N); cada usuário pode curtir uma publicação uma única vez.
 
 A equipe possui uma modalidade principal obrigatória em `modalidade_id`. Os vínculos e as relações são controlados por chaves primárias, chaves estrangeiras, restrições `UNIQUE` e regras `CHECK`.
 
@@ -189,7 +193,7 @@ psql -U postgres -d agon_hub -f database/schema.sql
 psql -U postgres -d agon_hub -f database/seed.sql
 ```
 
-> **Segurança do banco:** o `schema.sql` usa `CREATE TABLE IF NOT EXISTS`, não apaga dados e acrescenta de forma idempotente os campos de perfil ausentes na tabela `usuarios`. O `seed.sql` insere dados demonstrativos e deve ser executado uma única vez em cada banco novo.
+> **Segurança do banco:** o `schema.sql` usa `CREATE TABLE IF NOT EXISTS`, não apaga dados e acrescenta de forma idempotente os campos de perfil ausentes na tabela `usuarios`. O `seed.sql` insere dados demonstrativos e deve ser executado uma única vez em cada banco novo. As tabelas da Comunidade também são criadas por `schema.sql` e verificadas pela migração 004.
 
 ### 6.3. Configurar o backend
 
