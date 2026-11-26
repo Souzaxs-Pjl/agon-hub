@@ -22,6 +22,15 @@ if (process.env.DB_SSL === 'true') {
   configuracao.ssl = { rejectUnauthorized: true };
 }
 
+// Evita conexões e consultas presas indefinidamente em instâncias pequenas.
+Object.assign(configuracao, {
+  max: 5,
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 10000,
+  statement_timeout: 20000,
+  application_name: 'agon-hub-api',
+});
+
 const pool = new Pool(configuracao);
 
 // Atalho para consultas parametrizadas.
