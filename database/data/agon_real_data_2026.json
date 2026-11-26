@@ -1,0 +1,3764 @@
+{
+  "source": "ESP11_Banco_Elencos_CL-002.xlsx; AGON_Equipes_82_Consolidacao_Pendente.xlsx",
+  "reference_date": "2026-10-17",
+  "team_count": 81,
+  "missing_expected_team": 1,
+  "roster_count": 318,
+  "teams": [
+    {
+      "name": "Turquia",
+      "source_code": "TEAM-TDT",
+      "sigla": "TUR",
+      "kind": "ficticia",
+      "institution": "E.E. Antônio Militão de Lima",
+      "city": "São Carlos (SP)",
+      "responsible": "Tatiane",
+      "colors": "Vermelho e branco; alternativa vermelho e preto",
+      "description": "Equipe fundadora do universo AGON. Dados cadastrais de referência de 17/10/2026; informações sujeitas a revalidação."
+    },
+    {
+      "name": "Grota",
+      "source_code": "TEAM-GRO",
+      "sigla": "GRO",
+      "kind": "ficticia",
+      "institution": "IFSP / ETEC",
+      "city": "São Carlos (SP)",
+      "responsible": "Marcilene",
+      "colors": "Verde e preto; alternativa verde e branco",
+      "description": "Equipe fundadora do universo AGON. Dados cadastrais de referência de 17/10/2026; informações sujeitas a revalidação."
+    },
+    {
+      "name": "França",
+      "source_code": "TEAM-FRA",
+      "sigla": "FRA",
+      "kind": "ficticia",
+      "institution": null,
+      "city": "São Carlos (SP)",
+      "responsible": "Marlon (referência do grupo)",
+      "colors": "Azul e branco; alternativa vermelho e branco",
+      "description": "Equipe fundadora do universo AGON. A origem institucional possui descrições divergentes nas fontes e permanece pendente de harmonização."
+    },
+    {
+      "name": "Holanda",
+      "source_code": "TEAM-HOL",
+      "sigla": "HOL",
+      "kind": "ficticia",
+      "institution": "E.E. Antônio Militão de Lima",
+      "city": "São Carlos (SP)",
+      "responsible": "Gabriella (referência técnica)",
+      "colors": "Laranja e branco; alternativa laranja e preto",
+      "description": "Equipe fundadora do universo AGON. Dados cadastrais de referência de 17/10/2026; informações sujeitas a revalidação."
+    },
+    {
+      "name": "Rússia",
+      "source_code": "TEAM-RUS",
+      "sigla": "RUS",
+      "kind": "ficticia",
+      "institution": "E.E. Antônio Militão de Lima",
+      "city": "São Carlos (SP)",
+      "responsible": "Janaina",
+      "colors": "Vermelho e preto; alternativa azul e preto",
+      "description": "Equipe fundadora do universo AGON. Dados cadastrais de referência de 17/10/2026; informações sujeitas a revalidação."
+    },
+    {
+      "name": "Tropa dos Laranjas",
+      "source_code": "TEAM-LAR",
+      "sigla": "N$",
+      "kind": "ficticia",
+      "institution": "IFSP São Carlos",
+      "city": "São Carlos (SP)",
+      "responsible": "Rodrigo Lemes",
+      "colors": null,
+      "description": "Equipe fundadora do universo AGON. Identidade visual em reformulação; sigla N$ conforme referência da temporada 2026."
+    },
+    {
+      "name": "IFSP São Paulo",
+      "source_code": "BASE-001",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "Mackenzie",
+      "source_code": "BASE-002",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "UMC",
+      "source_code": "BASE-003",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "Uni Santanna",
+      "source_code": "BASE-004",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "Laausp",
+      "source_code": "BASE-005",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "Caaso",
+      "source_code": "BASE-006",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "Launaerp",
+      "source_code": "BASE-007",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "Laurp",
+      "source_code": "BASE-008",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "UFSCar",
+      "source_code": "BASE-009",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "Anhanguera Piracicaba",
+      "source_code": "BASE-010",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "LAP PUCCAMP",
+      "source_code": "BASE-011",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "UNESP Rio Claro",
+      "source_code": "BASE-012",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "Axis UFABC",
+      "source_code": "BASE-013",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "Metodista",
+      "source_code": "BASE-014",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "CAAP UFABC",
+      "source_code": "BASE-015",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "Engenharia Mackenzie",
+      "source_code": "BASE-016",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "Leu UNICAMP",
+      "source_code": "BASE-017",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "Poliusp",
+      "source_code": "BASE-018",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "Sanfran",
+      "source_code": "BASE-019",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "FFLCH USP",
+      "source_code": "BASE-020",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "FGV",
+      "source_code": "BASE-021",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "Medicina Einstein",
+      "source_code": "BASE-022",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "Fau Mackenzie",
+      "source_code": "BASE-023",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "Fau USP",
+      "source_code": "BASE-024",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "Icbió USP",
+      "source_code": "BASE-025",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "Each USP",
+      "source_code": "BASE-026",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "Lep Mackenzie",
+      "source_code": "BASE-027",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "ESPM",
+      "source_code": "BASE-028",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "ECA USP",
+      "source_code": "BASE-029",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "Insper",
+      "source_code": "BASE-030",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "Educa USP RP",
+      "source_code": "BASE-031",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "Direito PUCCAMP",
+      "source_code": "BASE-032",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "CEM UNICAMP",
+      "source_code": "BASE-033",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "FEA USP",
+      "source_code": "BASE-034",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "Lep PUCCAMP",
+      "source_code": "BASE-035",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "Faceca PUCCAMP",
+      "source_code": "BASE-036",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "EEFE USP",
+      "source_code": "BASE-037",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "Cásper Líbero",
+      "source_code": "BASE-038",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "Ime USP",
+      "source_code": "BASE-039",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "Economia Mackenzie",
+      "source_code": "BASE-040",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "Fisioterapia Santa Casa",
+      "source_code": "BASE-041",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "Comunicação PUCCAMP",
+      "source_code": "BASE-042",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "Direito Mackenzie",
+      "source_code": "BASE-043",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "FEF UNICAMP",
+      "source_code": "BASE-044",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "Engenharia São Judas",
+      "source_code": "BASE-045",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "Medicina PUCCAMP",
+      "source_code": "BASE-046",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "Direito PUC SP",
+      "source_code": "BASE-047",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "ITA",
+      "source_code": "BASE-048",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "Medicina Santa casa",
+      "source_code": "BASE-049",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "Medicina ABC",
+      "source_code": "BASE-050",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "Medicina USP",
+      "source_code": "BASE-051",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "Geral USCS",
+      "source_code": "BASE-052",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "Direito SBC",
+      "source_code": "BASE-053",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "Medicina PUC SP",
+      "source_code": "BASE-054",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "IBMEC",
+      "source_code": "BASE-055",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "FEI",
+      "source_code": "BASE-056",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "UNIP",
+      "source_code": "BASE-057",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "FECAP",
+      "source_code": "BASE-058",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "Barão de Mauá",
+      "source_code": "BASE-059",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "Arquitetura Mackenzie",
+      "source_code": "BASE-060",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "Grifo",
+      "source_code": "BASE-061",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "FEA PUC",
+      "source_code": "BASE-062",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "Belas Artes",
+      "source_code": "BASE-063",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "FEA odonto",
+      "source_code": "BASE-064",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "Each USP \"B\"",
+      "source_code": "BASE-065",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "Unicesumar",
+      "source_code": "BASE-066",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "Farma USP",
+      "source_code": "BASE-067",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "UFU MG",
+      "source_code": "BASE-068",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "FGV \"B\"",
+      "source_code": "BASE-069",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "UFG GO",
+      "source_code": "BASE-070",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "Direito PUC SP \"B\"",
+      "source_code": "BASE-071",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "Poliusp \"B\"",
+      "source_code": "BASE-072",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "Atena (UEMG)",
+      "source_code": "BASE-073",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "Araras",
+      "source_code": "BASE-074",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    },
+    {
+      "name": "IX Novembro",
+      "source_code": "BASE-075",
+      "sigla": null,
+      "kind": "real",
+      "institution": null,
+      "city": null,
+      "responsible": null,
+      "colors": null,
+      "description": null
+    }
+  ],
+  "roster": [
+    {
+      "source_id": "TDT-001",
+      "name": "Alicia",
+      "team_name": "Turquia",
+      "nickname": "Tur_Alicia",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "TDT-002",
+      "name": "Anna Beatriz",
+      "team_name": "Turquia",
+      "nickname": "Tur_ABeatriz",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "TDT-003",
+      "name": "Camila",
+      "team_name": "Turquia",
+      "nickname": "Tur_Camis",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "TDT-004",
+      "name": "Gabriel Cesar",
+      "team_name": "Turquia",
+      "nickname": "TdT_Cesar",
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "TDT-005",
+      "name": "Geovane",
+      "team_name": "Turquia",
+      "nickname": "Tur_Rui",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "TDT-006",
+      "name": "Gustavo",
+      "team_name": "Turquia",
+      "nickname": "Tur_Jorge",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "TDT-007",
+      "name": "Jeniffer",
+      "team_name": "Turquia",
+      "nickname": "Tur_Velasco",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "TDT-008",
+      "name": "Luís Gustavo",
+      "team_name": "Turquia",
+      "nickname": "TurLGustavo",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "TDT-009",
+      "name": "Maria Eduarda Silva",
+      "team_name": "Turquia",
+      "nickname": "TurSilva",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "TDT-010",
+      "name": "Maria Eduarda Napolitano",
+      "team_name": "Turquia",
+      "nickname": "Tur_Napoli",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "TDT-011",
+      "name": "Mariana",
+      "team_name": "Turquia",
+      "nickname": "Tur_Ymariix",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "TDT-012",
+      "name": "Mariane",
+      "team_name": "Turquia",
+      "nickname": "Tur_Mariane",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "TDT-013",
+      "name": "Rafaela",
+      "team_name": "Turquia",
+      "nickname": "Tur_Rafaela",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "TDT-014",
+      "name": "Ryan Eduardo",
+      "team_name": "Turquia",
+      "nickname": "Tur_Ryanzin",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "TDT-015",
+      "name": "Luiz Guilherme",
+      "team_name": "Turquia",
+      "nickname": "TurGuilherme",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "TDT-016",
+      "name": "Sarah",
+      "team_name": "Turquia",
+      "nickname": "TurSarah",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "TDT-017",
+      "name": "Tom",
+      "team_name": "Turquia",
+      "nickname": "TdT_Ferreira",
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "TDT-018",
+      "name": "Isabella Nascimento",
+      "team_name": "Turquia",
+      "nickname": "Tur_Nascimento",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "TDT-019",
+      "name": "Isabella Garcia",
+      "team_name": "Turquia",
+      "nickname": "TdT_Garcia",
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "TDT-020",
+      "name": "Maria Clara",
+      "team_name": "Turquia",
+      "nickname": "TdT_MClara",
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "GRO-001",
+      "name": "Arianne",
+      "team_name": "Grota",
+      "nickname": "TdG_Anayandra",
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "GRO-002",
+      "name": "Anna Clara",
+      "team_name": "Grota",
+      "nickname": "Gro_Anna",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "GRO-003",
+      "name": "Ana",
+      "team_name": "Grota",
+      "nickname": "Gro_Ana",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "GRO-004",
+      "name": "Samara",
+      "team_name": "Grota",
+      "nickname": "TdG_Samara",
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "GRO-005",
+      "name": "Heloyza",
+      "team_name": "Grota",
+      "nickname": "Gro_Helo",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "GRO-006",
+      "name": "Heloise",
+      "team_name": "Grota",
+      "nickname": "Gro_Loise",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "GRO-007",
+      "name": "Ash",
+      "team_name": "Grota",
+      "nickname": "Gro_Ash",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "GRO-008",
+      "name": "Max",
+      "team_name": "Grota",
+      "nickname": "Gro_Max",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "GRO-009",
+      "name": "Karol",
+      "team_name": "Grota",
+      "nickname": "Gro_Autum",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "GRO-010",
+      "name": "Adriano",
+      "team_name": "Grota",
+      "nickname": "Gro_Adriano",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "GRO-011",
+      "name": "Thales",
+      "team_name": "Grota",
+      "nickname": "TdG_Tale",
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "GRO-012",
+      "name": "Milena",
+      "team_name": "Grota",
+      "nickname": "Gro_Mih",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "GRO-013",
+      "name": "Leonardo",
+      "team_name": "Grota",
+      "nickname": "Gro_Leon",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "GRO-014",
+      "name": "Matheus",
+      "team_name": "Grota",
+      "nickname": "Gro_Math",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "GRO-015",
+      "name": "Luis Otavio",
+      "team_name": "Grota",
+      "nickname": "TdGLotavio",
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "GRO-016",
+      "name": "Stéfany",
+      "team_name": "Grota",
+      "nickname": "GroStefany",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "GRO-017",
+      "name": "Julia",
+      "team_name": "Grota",
+      "nickname": "GroJulia",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "GRO-018",
+      "name": "Pietra",
+      "team_name": "Grota",
+      "nickname": "GroPietra",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "GRO-019",
+      "name": "Vitoria",
+      "team_name": "Grota",
+      "nickname": "GroVih",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "GRO-020",
+      "name": "Maria Eduarda",
+      "team_name": "Grota",
+      "nickname": "GroDuda",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "FRA-001",
+      "name": "Aline",
+      "team_name": "França",
+      "nickname": "FraLine",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "FRA-002",
+      "name": "Annika",
+      "team_name": "França",
+      "nickname": "TdFNika",
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "FRA-003",
+      "name": "Clara",
+      "team_name": "França",
+      "nickname": "TdFNunes",
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "FRA-004",
+      "name": "Ester",
+      "team_name": "França",
+      "nickname": "FraLaura",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "FRA-005",
+      "name": "Filipe",
+      "team_name": "França",
+      "nickname": "FraLipe",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "FRA-006",
+      "name": "Gabriel Guarnieri",
+      "team_name": "França",
+      "nickname": "FraGuarnieri",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "FRA-007",
+      "name": "Heloisa",
+      "team_name": "França",
+      "nickname": "FraLuna",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "FRA-008",
+      "name": "Izabella",
+      "team_name": "França",
+      "nickname": "FraBella",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "FRA-009",
+      "name": "Isabelly",
+      "team_name": "França",
+      "nickname": "FraBelly",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "FRA-010",
+      "name": "Levi",
+      "team_name": "França",
+      "nickname": "TdFSouzxs",
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "FRA-011",
+      "name": "Matheus Ryan",
+      "team_name": "França",
+      "nickname": "FraMathryan",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "FRA-012",
+      "name": "Miguel",
+      "team_name": "França",
+      "nickname": "FraMiguel",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "FRA-013",
+      "name": "Raphael",
+      "team_name": "França",
+      "nickname": "TdFRaph",
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "FRA-014",
+      "name": "Lavinia",
+      "team_name": "França",
+      "nickname": "FraVinia",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "FRA-015",
+      "name": "Leticia",
+      "team_name": "França",
+      "nickname": "FraLehh",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "FRA-016",
+      "name": "Luana",
+      "team_name": "França",
+      "nickname": "FraLuhh",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "FRA-017",
+      "name": "Murilo Gabriel",
+      "team_name": "França",
+      "nickname": "FraMuriloG",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "FRA-018",
+      "name": "Nicolle",
+      "team_name": "França",
+      "nickname": "FraCrescencio",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "FRA-019",
+      "name": "Kamila",
+      "team_name": "França",
+      "nickname": "FraKamis",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "FRA-020",
+      "name": "Lukas",
+      "team_name": "França",
+      "nickname": "FraLukas",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "FRA-021",
+      "name": "Eloísa Guimarães",
+      "team_name": "França",
+      "nickname": "Fra_P.reirwzx",
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "HOL-001",
+      "name": "Ana Júlia",
+      "team_name": "Holanda",
+      "nickname": "HolAnaJu",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "HOL-002",
+      "name": "Ana Victoria",
+      "team_name": "Holanda",
+      "nickname": "HolMonteirox",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "HOL-003",
+      "name": "Angélica",
+      "team_name": "Holanda",
+      "nickname": "HolAngelzs",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "HOL-004",
+      "name": "Beatriz",
+      "team_name": "Holanda",
+      "nickname": "HolBea",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "HOL-005",
+      "name": "Giovanna Tamara",
+      "team_name": "Holanda",
+      "nickname": "HolTamara",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "HOL-006",
+      "name": "Giovanna Martucci",
+      "team_name": "Holanda",
+      "nickname": "HolMartucci",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "HOL-007",
+      "name": "Geovana Rodrigues",
+      "team_name": "Holanda",
+      "nickname": "HolRodrigues",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "HOL-008",
+      "name": "Higor Souza",
+      "team_name": "Holanda",
+      "nickname": "TdHSouza",
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "HOL-009",
+      "name": "João Paulo",
+      "team_name": "Holanda",
+      "nickname": "HolBorges",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "HOL-010",
+      "name": "João Vitor",
+      "team_name": "Holanda",
+      "nickname": "HolJVitor",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "HOL-011",
+      "name": "Rafaella Franchini",
+      "team_name": "Holanda",
+      "nickname": "TdHRafa",
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "HOL-012",
+      "name": "Julia Moura",
+      "team_name": "Holanda",
+      "nickname": "HolMoura",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "HOL-013",
+      "name": "Wallace",
+      "team_name": "Holanda",
+      "nickname": "TdHPatolino",
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "HOL-014",
+      "name": "Thayane",
+      "team_name": "Holanda",
+      "nickname": "TdHThay",
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "HOL-015",
+      "name": "Nicole Grundemann",
+      "team_name": "Holanda",
+      "nickname": "HolNicole",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "HOL-016",
+      "name": "Paola Silva",
+      "team_name": "Holanda",
+      "nickname": "HolPaola",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "HOL-017",
+      "name": "Sthefany",
+      "team_name": "Holanda",
+      "nickname": "HolSmg",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "HOL-018",
+      "name": "Vitória Karoline",
+      "team_name": "Holanda",
+      "nickname": "HolVKaroline",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "HOL-019",
+      "name": "Ryan Emanuel",
+      "team_name": "Holanda",
+      "nickname": "HolRyanzk",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "HOL-020",
+      "name": "Pedro Mangerona",
+      "team_name": "Holanda",
+      "nickname": "HolMangerona",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "RUS-001",
+      "name": "Isabella",
+      "team_name": "Rússia",
+      "nickname": "TdRBella",
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "RUS-002",
+      "name": "Maria Fernanda",
+      "team_name": "Rússia",
+      "nickname": "RusSun",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "RUS-003",
+      "name": "Laura Guimarães",
+      "team_name": "Rússia",
+      "nickname": "RusLGuimarães",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "RUS-004",
+      "name": "Vitória",
+      "team_name": "Rússia",
+      "nickname": "RusVivih",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "RUS-005",
+      "name": "Pietra Camilly",
+      "team_name": "Rússia",
+      "nickname": "TdRPiih",
+      "generation": null,
+      "division": "1ª divisão",
+      "needs_review": false
+    },
+    {
+      "source_id": "RUS-006",
+      "name": "Ana Luísa",
+      "team_name": "Rússia",
+      "nickname": "RusALuisa",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "RUS-007",
+      "name": "Lívia",
+      "team_name": "Rússia",
+      "nickname": "RusBovina",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "RUS-008",
+      "name": "Geovanna Rocha",
+      "team_name": "Rússia",
+      "nickname": "RusGRocha",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "RUS-009",
+      "name": "Victoria",
+      "team_name": "Rússia",
+      "nickname": "RusVic",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "RUS-010",
+      "name": "Carolliny Baldan",
+      "team_name": "Rússia",
+      "nickname": "RusBaldan",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "RUS-011",
+      "name": "Thailane",
+      "team_name": "Rússia",
+      "nickname": "RusThai",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "RUS-012",
+      "name": "Thauany",
+      "team_name": "Rússia",
+      "nickname": "RusTata",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "RUS-013",
+      "name": "Enzo",
+      "team_name": "Rússia",
+      "nickname": "RusAndrade",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "RUS-014",
+      "name": "Breno",
+      "team_name": "Rússia",
+      "nickname": "RusBrenoka",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "RUS-015",
+      "name": "Bianny Couto",
+      "team_name": "Rússia",
+      "nickname": "RusBiaCouto",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "RUS-016",
+      "name": "Emanueli",
+      "team_name": "Rússia",
+      "nickname": "RusManu",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "RUS-017",
+      "name": "Kauan",
+      "team_name": "Rússia",
+      "nickname": "RusKauan",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "RUS-018",
+      "name": "Julia Giromini",
+      "team_name": "Rússia",
+      "nickname": "RusGiromini",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "RUS-019",
+      "name": "Julia",
+      "team_name": "Rússia",
+      "nickname": "RusJukyass",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "RUS-020",
+      "name": "Maria Júlia",
+      "team_name": "Rússia",
+      "nickname": "RusMaju",
+      "generation": null,
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-001",
+      "name": "Adriel",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-002",
+      "name": "Alysson",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-003",
+      "name": "Ana Beatriz",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-004",
+      "name": "Ana Clara",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-005",
+      "name": "Ana Julia",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-006",
+      "name": "Ana Luisa Ribeiro",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-007",
+      "name": "Ana Luiza Alteia",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-008",
+      "name": "Brenda",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-009",
+      "name": "Davi",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-010",
+      "name": "Eloísa",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-011",
+      "name": "Emanuel",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-012",
+      "name": "Emilly Novaes",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-013",
+      "name": "Emily Pitana",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-014",
+      "name": "Eros Olivatto",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-015",
+      "name": "Ester Piscioneri",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-016",
+      "name": "Fernanda",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-017",
+      "name": "Gabriel",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-018",
+      "name": "Gabriel",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-019",
+      "name": "Gabriel Batista",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-020",
+      "name": "Gabriel Davi",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-021",
+      "name": "Gabriel Marques",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-022",
+      "name": "Gabriel Vitor",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-023",
+      "name": "Giulia",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-024",
+      "name": "Gustavo",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-025",
+      "name": "Gustavo Martins",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-026",
+      "name": "Heloisa",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-027",
+      "name": "Henrique",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-028",
+      "name": "Isabelly",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-029",
+      "name": "Isaque Moura",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-030",
+      "name": "Iudy Galli",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-031",
+      "name": "Jorge",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-032",
+      "name": "Júlia",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-033",
+      "name": "Kevin",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-034",
+      "name": "Lara",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-035",
+      "name": "Leonardo",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-036",
+      "name": "Lincoln",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-037",
+      "name": "Luis",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-038",
+      "name": "Manuella",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-039",
+      "name": "Maria Helena",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-040",
+      "name": "Mário",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-041",
+      "name": "Mateus Roque",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-042",
+      "name": "Matheus",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-043",
+      "name": "Mayumi",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-044",
+      "name": "Murillo Henrique",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-045",
+      "name": "Olavo",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-046",
+      "name": "Pedro Henrique",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-047",
+      "name": "Pietro",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-048",
+      "name": "Rafael Pezzunia",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-049",
+      "name": "Ravi",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-050",
+      "name": "Ryan",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-051",
+      "name": "Sarah",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-052",
+      "name": "Sophia Silva",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-053",
+      "name": "Ulisses",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-054",
+      "name": "Victor",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-055",
+      "name": "Victor Barbosa",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-056",
+      "name": "Alexandre",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-057",
+      "name": "Allana Emanuelly",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-058",
+      "name": "Ana Clara",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-059",
+      "name": "Ana Julia Martins",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-060",
+      "name": "Anthony",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-061",
+      "name": "Any",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-062",
+      "name": "Beatriz",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-063",
+      "name": "Bernardo",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-064",
+      "name": "Carlos Eduardo",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-065",
+      "name": "Davi",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-066",
+      "name": "Eduardo",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-067",
+      "name": "Eduardo",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-068",
+      "name": "Emanuelly Barbosa",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-069",
+      "name": "Fábio",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-070",
+      "name": "Fernando",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-071",
+      "name": "Flora",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-072",
+      "name": "Gabriel",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-073",
+      "name": "Giovana",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-074",
+      "name": "Guilherme",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-075",
+      "name": "Guilherme",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-076",
+      "name": "Guilherme",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-077",
+      "name": "Guilherme Santana",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-078",
+      "name": "Gustavo Araujo",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-079",
+      "name": "Henrique",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-080",
+      "name": "Hillary",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-081",
+      "name": "Humberto",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-082",
+      "name": "Hyank",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-083",
+      "name": "Jhenifer Mazzari",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-084",
+      "name": "João Pedro",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-085",
+      "name": "João Vitor Maquedano",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-086",
+      "name": "João Vitor Suriano",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-087",
+      "name": "Kaio",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-088",
+      "name": "Lara",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-089",
+      "name": "Leonardo",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-090",
+      "name": "Luiza",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-091",
+      "name": "Miguel",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-092",
+      "name": "Milena Moura",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-093",
+      "name": "Murilo de Souza",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-094",
+      "name": "Octavio",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-095",
+      "name": "Paulo",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-096",
+      "name": "Pedro",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-097",
+      "name": "Rafaela Ferro",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-098",
+      "name": "Raviel",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-099",
+      "name": "Renata",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-100",
+      "name": "Renato",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-101",
+      "name": "Rhaiany",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-102",
+      "name": "Rhauan",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-103",
+      "name": "Ryan",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-104",
+      "name": "Sabrina",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-105",
+      "name": "Samuel Falcão",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-106",
+      "name": "Sofia Pires",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-107",
+      "name": "Victor",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-108",
+      "name": "Vitor Manoel",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-109",
+      "name": "Wevelly",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-110",
+      "name": "Yuri",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-111",
+      "name": "Ana Laura Kogeyama",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-112",
+      "name": "Aurora",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-113",
+      "name": "Beatrice",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-114",
+      "name": "Calebe",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-115",
+      "name": "Camilly",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-116",
+      "name": "Daniel",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-117",
+      "name": "Danilo",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-118",
+      "name": "Davi",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-119",
+      "name": "Emily Beatriz",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-120",
+      "name": "Enzo Lui",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-121",
+      "name": "Eric",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-122",
+      "name": "Estêvão",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-123",
+      "name": "Felipe",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-124",
+      "name": "Geovana",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-125",
+      "name": "Giovanni",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-126",
+      "name": "Guilherme Oliveira",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-127",
+      "name": "Guilherme Tassinari",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-128",
+      "name": "Gustavo",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-129",
+      "name": "Helder",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-130",
+      "name": "Isabela",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-131",
+      "name": "Isabelly",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": true
+    },
+    {
+      "source_id": "LAR-132",
+      "name": "Isadora",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-133",
+      "name": "João Eduardo",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-134",
+      "name": "João Henrique",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-135",
+      "name": "João Vitor Amorim",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-136",
+      "name": "Julia",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-137",
+      "name": "Kauan",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-138",
+      "name": "Kenae",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-139",
+      "name": "Khayk",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-140",
+      "name": "Laura",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-141",
+      "name": "Letícia Mariano",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-142",
+      "name": "Letícia Martins",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-143",
+      "name": "Leticia Menezes",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-144",
+      "name": "Livia",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-145",
+      "name": "Lucas",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-146",
+      "name": "Lucas",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-147",
+      "name": "Luiz Felipe",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-148",
+      "name": "Luiz Gustavo",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-149",
+      "name": "Manuella",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-150",
+      "name": "Maria Eduarda",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-151",
+      "name": "Marina",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-152",
+      "name": "Matheus Reducino",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-153",
+      "name": "Melissa",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-154",
+      "name": "Pascal",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-155",
+      "name": "Pedro",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-156",
+      "name": "Pedro",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-157",
+      "name": "Pedro Ernesto",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-158",
+      "name": "Richard",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-159",
+      "name": "Richard",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-160",
+      "name": "Samuel",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-161",
+      "name": "Silvia",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-162",
+      "name": "Sofia Lacerda",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-163",
+      "name": "Suéllen",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-164",
+      "name": "Téo",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-165",
+      "name": "Alice Húngaro",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-166",
+      "name": "Alice Francoso",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-167",
+      "name": "Ana Beatriz",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-168",
+      "name": "Ana Elisa",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-169",
+      "name": "Ana Julia Ribeiro",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-170",
+      "name": "Camilly",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-171",
+      "name": "Cauã Ribeiro",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-172",
+      "name": "Davi",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-173",
+      "name": "Eloá",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-174",
+      "name": "Emiliano Amani",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-175",
+      "name": "Enzo",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-176",
+      "name": "Enzo Fratucci",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-177",
+      "name": "Gilson",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-178",
+      "name": "Gustavo",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-179",
+      "name": "Hadryan",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-180",
+      "name": "Helen",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-181",
+      "name": "Isabeli",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-182",
+      "name": "Isabelly",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": true
+    },
+    {
+      "source_id": "LAR-183",
+      "name": "Isac",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-184",
+      "name": "Izabelly",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-185",
+      "name": "João Guilherme",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-186",
+      "name": "João Marcos",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-187",
+      "name": "João Vitor Cardoso",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-188",
+      "name": "João Vitor Marino",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-189",
+      "name": "José Otávio",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-190",
+      "name": "Julia",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-191",
+      "name": "Julio",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-192",
+      "name": "Kauane",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-193",
+      "name": "Leticia Passos",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-194",
+      "name": "Lívia Camargo",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-195",
+      "name": "Lucas",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-196",
+      "name": "Luis",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-197",
+      "name": "Luiz",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-198",
+      "name": "Manuela",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-199",
+      "name": "Maria Eduarda",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-200",
+      "name": "Maria Eduarda",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-201",
+      "name": "Matheus",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-202",
+      "name": "Miguel",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-203",
+      "name": "Nicolly Victoria",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-204",
+      "name": "Nyckollas Antônio",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-205",
+      "name": "Otávio Macoppi",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-206",
+      "name": "Paulo Filho",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-207",
+      "name": "Pedro",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-208",
+      "name": "Pedro",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-209",
+      "name": "Pietra",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-210",
+      "name": "Rafael Gomide",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-211",
+      "name": "Rafaela Ferracini",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "2ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-212",
+      "name": "Raul",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-213",
+      "name": "Ryan",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-214",
+      "name": "Samuel Mota",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-215",
+      "name": "Sofia",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "1ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-216",
+      "name": "Vinicius",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    },
+    {
+      "source_id": "LAR-217",
+      "name": "Wallace",
+      "team_name": "Tropa dos Laranjas",
+      "nickname": null,
+      "generation": "3ª geração",
+      "division": null,
+      "needs_review": false
+    }
+  ]
+}
