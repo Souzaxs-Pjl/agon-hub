@@ -48,9 +48,11 @@ export default function Comunidade() {
       const corpo = { texto: texto.trim(), tipo_autor: tipoAutor };
       if (tipoAutor === 'atleta') corpo.atleta_id = opcoesAutoria.atleta?.id;
       if (tipoAutor === 'equipe') corpo.equipe_id = Number(equipeAutor);
-      await api('/comunidade', { metodo: 'POST', corpo });
+      const publicacao = await api('/comunidade', { metodo: 'POST', corpo });
       setTexto('');
-      await carregar({ preservarScroll: true });
+      setFeed((atual) => [publicacao, ...atual.filter((item) => item.id !== publicacao.id)].slice(0, 50));
+      // Leva o usuário ao início do feed para visualizar a publicação recém-criada.
+      requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: 'smooth' }));
     } catch (e) { setErro(e.message); }
     finally { setPublicando(false); }
   }
