@@ -19,7 +19,7 @@ O projeto foi desenvolvido individualmente como parte do curso Técnico em Infor
 | Banco PostgreSQL | 12 tabelas, relações 1:N e N:N, seed e schema da Comunidade |
 | API e conexão com o banco | Implementadas |
 | Cadastro, login, JWT e recuperação de sessão | Implementados |
-| Perfis pessoais com edição, foto, privacidade e compartilhamento | Implementados na `main`; atualização da API implantada ainda pendente |
+| Perfis pessoais com edição, foto, privacidade e compartilhamento | Implementados no frontend e backend da demonstração |
 | Permissões de administrador no backend | Implementadas |
 | CRUD de modalidades | API e tela administrativa implementadas |
 | CRUD de equipes | API e painel administrativo implementados |
@@ -119,7 +119,7 @@ agon-hub/
         └── ci.yml
 ```
 
-O backend contém rotas para autenticação, usuários, modalidades, equipes, atletas, campeonatos, partidas, notícias, comunidade e uploads. As migrações 002, 003 e 004 importam os dados demonstrativos, completam os elencos e garantem as tabelas da comunidade sem resetar o banco. O frontend possui páginas públicas, autenticação, painel administrativo de equipes e um painel reutilizável para os demais módulos.
+O backend contém rotas para autenticação, usuários, modalidades, equipes, atletas, campeonatos, partidas, notícias, comunidade e uploads. As migrações 002, 003 e 004 importam os dados demonstrativos, completam os elencos, criam campeonatos/partidas/notícias e garantem as tabelas da comunidade sem resetar o banco. O frontend possui páginas públicas, autenticação, painel administrativo de equipes e um painel reutilizável para os demais módulos.
 
 
 ## 5. Modelagem do banco de dados
