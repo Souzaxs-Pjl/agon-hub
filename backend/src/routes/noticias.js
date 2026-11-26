@@ -17,7 +17,7 @@ const SELECT_NOTICIA = `
 
 async function buscarNoticia(id) {
   const { rows } = await db.query(
-    `${SELECT_NOTICIA} WHERE n.id = $1 AND n.demonstrativo = FALSE`,
+    `${SELECT_NOTICIA} WHERE n.id = $1`,
     [id]
   );
   return rows[0] || null;
@@ -25,7 +25,7 @@ async function buscarNoticia(id) {
 
 router.get('/', async (req, res) => {
   const { rows } = await db.query(
-    `${SELECT_NOTICIA} WHERE n.demonstrativo = FALSE ORDER BY n.publicado_em DESC, n.id DESC`
+    `${SELECT_NOTICIA} ORDER BY n.publicado_em DESC, n.id DESC`
   );
   res.json(rows);
 });
