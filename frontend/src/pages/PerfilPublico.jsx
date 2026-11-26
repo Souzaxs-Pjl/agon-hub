@@ -4,6 +4,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { api } from '../api.js';
+import ImagemComFallback from '../components/ImagemComFallback.jsx';
 
 function formatarData(data) {
   if (!data) return '';
@@ -63,7 +64,7 @@ export default function PerfilPublico() {
       <Link to="/" className="pequeno">← Universo AGON</Link>
       <div className="perfil-capa">
         {perfil.foto_url ? (
-          <img src={perfil.foto_url} alt={'Foto de ' + perfil.nome} className="perfil-avatar perfil-avatar-publico" />
+          <ImagemComFallback src={perfil.foto_url} alt={'Foto de ' + perfil.nome} className="perfil-avatar perfil-avatar-publico" fallback={perfil.nome.slice(0, 1).toUpperCase()} />
         ) : (
           <div className="perfil-avatar perfil-avatar-publico perfil-avatar-vazio">
             {perfil.nome.charAt(0).toUpperCase()}
