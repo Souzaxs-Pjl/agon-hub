@@ -78,6 +78,8 @@ async function iniciar() {
     console.log('Schema da comunidade verificado.');
     await require('./migrations/005_calendario_nacional_demo')(db);
     console.log('Calendário demonstrativo verificado.');
+    await require('./migrations/006_urls_imagem_sem_limite')(db);
+    console.log('Campos de URL de imagem sem limite de caracteres verificados.');
   } catch (erro) {
     console.error(
       'ERRO: não foi possível conectar ao PostgreSQL.\n' +

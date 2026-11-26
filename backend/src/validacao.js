@@ -86,8 +86,16 @@ function lerDataOpcional(valor, rotulo, erros) {
 }
 
 function validarUrlImagem(valor, rotulo, erros) {
-  const url = lerTextoOpcional(valor, 255, rotulo, erros);
-  if (url && !REGEX_URL_IMAGEM.test(url)) {
+  if (valor === undefined || valor === null || valor === '') return null;
+  if (typeof valor !== 'string') {
+    erros.push(`${rotulo} deve ser um texto.`);
+    return null;
+  }
+  const url = valor.trim();
+  if (!url) return null;
+  // URLs de imagens podem conter query strings e parâmetros de CDN extensos.
+  // Não aplicar limite de caracteres; validar apenas o formato permitido.
+  if (!REGEX_URL_IMAGEM.test(url)) {
     erros.push(`${rotulo} deve ser uma URL http(s) ou um caminho local /uploads/.`);
   }
   return url;
