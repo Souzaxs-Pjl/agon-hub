@@ -331,7 +331,7 @@ A aplicação fica disponível em `http://localhost:5173`. Durante o desenvolvim
 | Upload e otimização de imagens | JPEG/PNG/WebP, limite de 5 MB e assinatura binária validados; otimização automática não implementada |
 | Open Graph | Metadados sociais dinâmicos não implementados |
 | Code splitting e cache de leitura | Não implementados como otimização dedicada |
-| Paginação | Feed comunitário limita a 50 publicações; paginação geral das listagens não implementada |
+| Paginação | Listagens públicas paginadas em 20 registros por página; feed comunitário limitado às 50 publicações mais recentes |
 | Proporção de imagens e estabilidade visual | Classes de imagem existentes; conferência visual final necessária |
 
 ### Conteúdo da demonstração
@@ -339,7 +339,7 @@ A aplicação fica disponível em `http://localhost:5173`. Durante o desenvolvim
 - 81 equipes preservadas.
 - 693 atletas fictícios com perfis públicos e vínculos distribuídos pelas 81 equipes.
 - Campeonatos demonstrativos, equipes inscritas e partidas geradas pela migração `003_conteudo_demo_2026`.
-- Notícias fictícias sobre campeonatos, equipes e atletas.
+- 15 notícias fictícias sobre campeonatos, equipes e atletas.
 - Comunidade com publicação, curtida, comentário e exclusão pelo autor (ou administrador).
 - Aba Comunidade disponível na navbar.
 - Upload de foto de perfil disponível para usuário autenticado; logos e fotos esportivas são restritos a administrador.
