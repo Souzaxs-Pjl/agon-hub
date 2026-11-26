@@ -27,9 +27,7 @@ const SELECT_PARTIDA = `
 async function buscarPartida(id) {
   const { rows } = await db.query(
     `${SELECT_PARTIDA}
-     WHERE p.id = $1 AND p.demonstrativo = FALSE
-       AND c.demonstrativo = FALSE
-       AND ec.demonstrativo = FALSE AND ev.demonstrativo = FALSE`,
+     WHERE p.id = $1`,
     [id]
   );
   return rows[0] || null;
@@ -80,12 +78,10 @@ router.get('/', async (req, res) => {
   }
   const { rows } = campeonatoId
     ? await db.query(`${SELECT_PARTIDA}
-        WHERE p.campeonato_id = $1 AND p.demonstrativo = FALSE
-          AND c.demonstrativo = FALSE AND ec.demonstrativo = FALSE AND ev.demonstrativo = FALSE
+        WHERE p.campeonato_id = $1
         ORDER BY p.data_hora NULLS LAST, p.id`, [campeonatoId])
     : await db.query(`${SELECT_PARTIDA}
-        WHERE p.demonstrativo = FALSE
-          AND c.demonstrativo = FALSE AND ec.demonstrativo = FALSE AND ev.demonstrativo = FALSE
+        WHERE TRUE
         ORDER BY p.data_hora NULLS LAST, p.id`);
   res.json(rows);
 });
