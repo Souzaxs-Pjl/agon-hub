@@ -20,7 +20,6 @@ const FROM_CAMPEONATO = `
     FROM partidas p
     WHERE p.campeonato_id = c.id
       AND p.status = 'finalizada'
-      AND p.demonstrativo = FALSE
       AND p.placar_casa IS NOT NULL
       AND p.placar_visitante IS NOT NULL
       AND p.placar_casa <> p.placar_visitante
@@ -37,7 +36,7 @@ async function buscarCampeonato(id) {
             c.data_inicio, c.data_fim, c.status, c.descricao,
             campeao.id AS campeao_equipe_id, campeao.nome AS campeao_equipe_nome
      ${FROM_CAMPEONATO}
-     WHERE c.id = $1 AND c.demonstrativo = FALSE`,
+     WHERE c.id = $1`,
     [id]
   );
   if (!resultado.rows.length) return null;
@@ -60,7 +59,6 @@ router.get('/', async (req, res) => {
             COUNT(ce.equipe_id)::int AS total_equipes
      ${FROM_CAMPEONATO}
      LEFT JOIN campeonato_equipes ce ON ce.campeonato_id = c.id
-     WHERE c.demonstrativo = FALSE
      GROUP BY c.id, m.nome, campeao.id
      ORDER BY c.data_inicio DESC NULLS LAST, c.nome`
   );
