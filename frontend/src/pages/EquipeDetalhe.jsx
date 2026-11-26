@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { api } from '../api.js';
+import ImagemComFallback from '../components/ImagemComFallback.jsx';
 
 function siglaPublica(equipe) {
   return equipe.sigla_oficial || (String(equipe.codigo_fonte || '').startsWith('TEAM-') ? equipe.sigla : '');
@@ -41,7 +42,7 @@ export default function EquipeDetalhe() {
       <Link to="/equipes" className="pequeno">← Todas as equipes</Link>
       <header className="detalhe-topo equipe-capa">
         {equipe.logo_url ? (
-          <img src={equipe.logo_url} alt={'Logo de ' + equipe.nome} className="logo logo-grande" />
+          <ImagemComFallback src={equipe.logo_url} alt={'Logo de ' + equipe.nome} className="logo logo-grande" fallback={equipe.sigla || equipe.nome.slice(0, 2).toUpperCase()} />
         ) : (
           <div className="logo logo-grande logo-vazio">{equipe.nome.slice(0, 2).toUpperCase()}</div>
         )}
@@ -79,9 +80,9 @@ export default function EquipeDetalhe() {
 
       <section>
         <div className="pagina-topo">
-          <div><h2>Elenco</h2><p className="pequeno">{atletas.length} perfil(is) demonstrativo(s)</p></div>
+          <div><h2>Elenco</h2><p className="pequeno">{atletas.length} atleta(s) com perfil público</p></div>
         </div>
-        <p className="nota">Os nomes e perfis individuais exibidos nesta versão são fictícios e foram criados para a apresentação. Os cadastros das equipes e instituições foram mantidos.</p>
+        <p className="nota">O elenco apresenta os atletas com perfil público autorizado e registrado no AGON Hub.</p>
         {atletas.length === 0 ? (
           <p className="aviso">Nenhum perfil individual está público no momento. O elenco só aparece aqui após a autorização de publicação ser confirmada e registrada.</p>
         ) : (
@@ -89,7 +90,7 @@ export default function EquipeDetalhe() {
             {atletas.map((atleta) => (
               <Link to={'/atletas/' + atleta.id} className="cartao atleta-cartao" key={atleta.id}>
                 {atleta.foto_url ? (
-                  <img src={atleta.foto_url} alt="" className="foto-card atleta-avatar" />
+                  <ImagemComFallback src={atleta.foto_url} alt={'Foto de ' + atleta.nome} className="foto-card atleta-avatar" fallback={atleta.nome.slice(0, 1).toUpperCase()} />
                 ) : (
                   <div className="foto-card atleta-avatar atleta-avatar-vazio">{atleta.nome.slice(0, 1).toUpperCase()}</div>
                 )}

@@ -5,6 +5,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { api } from '../api.js';
+import ImagemComFallback from '../components/ImagemComFallback.jsx';
 
 const PAGINAS = {
   atletas: { titulo: 'Atletas', endpoint: '/atletas' },
@@ -57,7 +58,6 @@ export default function ConsultaPublica({ tipo }) {
     <section>
       <p className="nota"><Link to="/">Início</Link> / Universo AGON</p>
       <h1>{config.titulo}</h1>
-      {tipo === 'atletas' && <p className="nota">Todos os atletas desta versão são personagens fictícios criados para demonstração.</p>}
       {registros.length === 0 ? <p className="aviso">Nenhum registro disponível.</p> : (
         <div className="grade">
           {registrosVisiveis.map((item) => {
@@ -65,7 +65,7 @@ export default function ConsultaPublica({ tipo }) {
               <>
                 {tipo === 'atletas' && (
                   <>
-                    {item.foto_url && <img src={item.foto_url} alt="" className="foto-card" />}
+                    <ImagemComFallback src={item.foto_url} alt={'Foto de ' + (item.nome || item.apelido || 'atleta')} className="foto-card" fallback={(item.nome || item.apelido || 'AT').slice(0, 2).toUpperCase()} />
                     <h2>{item.nome}</h2>
                     <p className="pequeno">{item.apelido || 'Sem apelido cadastrado'}</p>
                     {item.bio && <p>{item.bio}</p>}
@@ -98,7 +98,7 @@ export default function ConsultaPublica({ tipo }) {
                 )}
                 {tipo === 'noticias' && (
                   <>
-                    {item.imagem_url && <img src={item.imagem_url} alt="" className="imagem-noticia" />}
+                    <ImagemComFallback src={item.imagem_url} alt={'Imagem da notícia: ' + item.titulo} className="imagem-noticia" fallback="AGON" />
                     <h2>{item.titulo}</h2>
                     {item.resumo && <p>{item.resumo}</p>}
                     <p className="pequeno">Por {item.autor_nome || 'Redação AGON'} · {formatarData(item.publicado_em)}</p>

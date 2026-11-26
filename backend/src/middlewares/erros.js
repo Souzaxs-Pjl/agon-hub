@@ -32,6 +32,15 @@ function tratarErros(err, req, res, next) {
         erro: mensagens[err.constraint] || 'Já existe um registro com esse valor.',
       });
     }
+    case '23001':
+      if (req.method === 'DELETE') {
+        return res.status(409).json({
+          erro: 'Não é possível excluir: este registro possui partidas ou outros vínculos. Remova ou atualize os registros dependentes primeiro.',
+        });
+      }
+      return res.status(409).json({
+        erro: 'A operação não pode ser concluída porque há registros dependentes.',
+      });
     case '23503':
       if (req.method === 'DELETE') {
         return res.status(409).json({

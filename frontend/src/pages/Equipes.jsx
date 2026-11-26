@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
+import ImagemComFallback from '../components/ImagemComFallback.jsx';
 import { api } from '../api.js';
 
 function siglaPublica(equipe) {
@@ -67,7 +68,7 @@ export default function Equipes() {
             return (
               <Link key={equipe.id} to={'/equipes/' + equipe.id} className="cartao equipe-cartao">
                 {equipe.logo_url ? (
-                  <img src={equipe.logo_url} alt={'Logo de ' + equipe.nome} className="logo" />
+                  <ImagemComFallback src={equipe.logo_url} alt={'Logo de ' + equipe.nome} className="logo" fallback={equipe.sigla || equipe.nome.slice(0, 2).toUpperCase()} />
                 ) : (
                   <div className="logo logo-vazio">{equipe.nome.slice(0, 2).toUpperCase()}</div>
                 )}

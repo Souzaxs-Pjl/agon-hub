@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { api } from '../api.js';
+import ImagemComFallback from '../components/ImagemComFallback.jsx';
 
 function itensDeTexto(valor) {
   return String(valor || '').split(/\r?\n/).map((item) => item.trim()).filter(Boolean);
@@ -35,14 +36,14 @@ export default function AtletaDetalhe() {
       <Link to="/atletas" className="pequeno">← Todos os atletas</Link>
       <header className="detalhe-topo atleta-capa">
         {atleta.foto_url ? (
-          <img src={atleta.foto_url} alt={'Foto de ' + atleta.nome} className="foto-preview atleta-foto-grande" />
+          <ImagemComFallback src={atleta.foto_url} alt={'Foto de ' + atleta.nome} className="foto-preview atleta-foto-grande" fallback={atleta.nome.slice(0, 1).toUpperCase()} />
         ) : (
           <div className="logo logo-grande logo-vazio">{atleta.nome.slice(0, 1).toUpperCase()}</div>
         )}
         <div>
           <p className="etiqueta">Atleta AGON</p>
           <h1>{atleta.nome}</h1>
-          <p className="nota">Personagem fictício criado exclusivamente para a demonstração do AGON Hub.</p>
+          <p className="nota">Perfil esportivo público no AGON Hub.</p>
           {atleta.apelido && <p className="texto">{atleta.apelido}</p>}
           {atleta.geracao && <span className="etiqueta">{atleta.geracao}</span>}
           {atleta.instagram_url && <p><a href={atleta.instagram_url} target="_blank" rel="noreferrer">Instagram ↗</a></p>}

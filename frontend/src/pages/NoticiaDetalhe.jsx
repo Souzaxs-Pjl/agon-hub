@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { api } from '../api.js';
+import ImagemComFallback from '../components/ImagemComFallback.jsx';
 
 function formatarData(data) {
   if (!data) return '';
@@ -36,7 +37,7 @@ export default function NoticiaDetalhe() {
       <p className="etiqueta">AGON Media</p>
       <h1>{noticia.titulo}</h1>
       <p className="pequeno">Por {noticia.autor_nome || 'Redação AGON'} · {formatarData(noticia.publicado_em)}</p>
-      {noticia.imagem_url && <img src={noticia.imagem_url} alt="" className="noticia-imagem-grande" />}
+      <ImagemComFallback src={noticia.imagem_url} alt={'Imagem da notícia: ' + noticia.titulo} className="noticia-imagem-grande" fallback="AGON" />
       {noticia.resumo && <p className="lead">{noticia.resumo}</p>}
       <div className="noticia-conteudo">{noticia.conteudo}</div>
     </article>

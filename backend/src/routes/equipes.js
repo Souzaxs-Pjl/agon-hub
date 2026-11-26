@@ -23,12 +23,18 @@ const router = express.Router();
 // O JOIN ("juntar tabelas") evita o frontend ter de buscar a modalidade à parte.
 const SQL_EQUIPE = `
   SELECT e.id, e.nome, e.sigla, e.sigla_oficial, e.codigo_fonte,
-         e.tipo, e.instituicao, e.descricao, e.logo_url, e.slogan,
+         e.tipo, e.demonstrativo, e.instituicao, e.descricao, e.logo_url, e.slogan,
          e.instagram_url, e.titulos, e.cidade, e.responsavel, e.cores,
          e.modalidade_id, m.nome AS modalidade_nome, m.tipo AS modalidade_tipo
   FROM equipes e
   JOIN modalidades m ON m.id = e.modalidade_id
   WHERE e.demonstrativo = FALSE`;
+
+// Campos de referência pessoal da equipe ficam restritos ao painel administrativo.
+const SQL_EQUIPE_PUBLICA = SQL_EQUIPE.replace(
+  'e.cidade, e.responsavel, e.cores',
+  'e.cidade, NULL::varchar(150) AS responsavel, e.cores'
+);
 
 // Busca UMA equipe com seus atletas. Devolve null se não existir.
 // Usada pelo GET /:id e também pelo POST e PUT, para responder sempre
@@ -36,7 +42,7 @@ const SQL_EQUIPE = `
 async function buscarEquipe(id, incluirDemonstrativo = false) {
   const consulta = incluirDemonstrativo
     ? SQL_EQUIPE.replace('WHERE e.demonstrativo = FALSE', 'WHERE TRUE')
-    : SQL_EQUIPE;
+    : SQL_EQUIPE_PUBLICA;
   const { rows } = await db.query(`${consulta} AND e.id = $1`, [id]);
   if (rows.length === 0) return null;
 
@@ -54,7 +60,7 @@ async function buscarEquipe(id, incluirDemonstrativo = false) {
 
 // GET /api/equipes  (pública)
 router.get('/', async (req, res) => {
-  const { rows } = await db.query(`${SQL_EQUIPE} ORDER BY e.nome`);
+  const { rows } = await db.query(`${SQL_EQUIPE_PUBLICA} ORDER BY e.nome`);
   res.json(rows);
 });
 

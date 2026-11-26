@@ -80,6 +80,12 @@ async function iniciar() {
     console.log('Calendário demonstrativo verificado.');
     await require('./migrations/006_urls_imagem_sem_limite')(db);
     console.log('Campos de URL de imagem sem limite de caracteres verificados.');
+    const resultadoBasePublica = await require('./migrations/007_publicar_base_real_2026')(db);
+    console.log(
+      resultadoBasePublica.aplicada
+        ? `Base esportiva real publicada: ${resultadoBasePublica.equipes} equipes, ${resultadoBasePublica.atletas} atletas e ${resultadoBasePublica.perfisPublicos} perfis públicos; ${resultadoBasePublica.demonstrativosOcultos} perfis demonstrativos ocultados.`
+        : 'Migração da base esportiva real já aplicada.'
+    );
   } catch (erro) {
     console.error(
       'ERRO: não foi possível conectar ao PostgreSQL.\n' +

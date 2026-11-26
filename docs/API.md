@@ -32,7 +32,7 @@ O backend valida o token e consulta o papel atual do usuário no banco. O campo 
 | 401 | Token ausente, inválido ou expirado |
 | 403 | Usuário autenticado sem permissão administrativa |
 | 404 | Registro ou rota não encontrado |
-| 409 | Conflito de unicidade ou integridade |
+| 409 | Conflito de unicidade ou integridade (inclui exclusão bloqueada por vínculos) |
 | 413 | Arquivo ou corpo maior que o limite |
 | 500 | Erro interno não previsto |
 
@@ -146,6 +146,9 @@ Cada equipe possui uma modalidade principal obrigatória.
 - Acesso: público. Consulta a equipe e os atletas vinculados.
 - Cada atleta contém `id`, `nome`, `apelido` e `funcao`.
 
+### `GET /api/equipes/admin`
+- Acesso: administrador. Lista também equipes marcadas como demonstrativas, para gestão e revisão.
+
 ### `POST /api/equipes`
 - Acesso: administrador.
 - Obrigatórios: `nome`, `sigla`, `tipo`, `modalidade_id`.
@@ -159,19 +162,23 @@ Cada equipe possui uma modalidade principal obrigatória.
 
 ### `DELETE /api/equipes/:id`
 - Acesso: administrador.
-- Exclui a equipe quando não há partidas que impeçam a operação. Vínculos associativos são removidos por cascata.
+- Exclui a equipe quando não há partidas que impeçam a operação. Vínculos associativos são removidos por cascata. Se o PostgreSQL bloquear a exclusão por partidas ou vínculos (`23001`/`23503`), a API responde `409` em vez de erro interno `500`.
 
 ## 7. Atletas
 
 A tabela `atletas` representa pessoas. O vínculo com uma conta em `usuarios` é opcional.
 
 ### `GET /api/atletas`
-- Acesso: público. Lista atletas com nome, apelido, biografia, foto e equipes vinculadas.
+- Acesso: público. Lista somente atletas com `demonstrativo = false` e `perfil_publico = true`.
+- Perfis marcados para revisão cadastral permanecem privados até serem conferidos.
 - Cada item em `equipes` contém `id`, `nome`, `sigla` e `funcao`.
 - Não expõe o vínculo interno com uma conta de usuário.
 
 ### `GET /api/atletas/:id`
 - Acesso: público. Devolve o atleta e as equipes vinculadas, incluindo função.
+
+### `GET /api/atletas/admin`
+- Acesso: administrador. Lista os atletas não demonstrativos, incluindo o estado `perfil_publico`.
 
 ### `GET /api/atletas/admin/:id`
 - Acesso: administrador.
@@ -205,10 +212,16 @@ A tabela `atletas` representa pessoas. O vínculo com uma conta em `usuarios` é
 ## 8. Campeonatos
 
 ### `GET /api/campeonatos`
-- Acesso: público. Lista campeonatos com modalidade e total de equipes inscritas.
+- Acesso: público. Lista apenas campeonatos não demonstrativos.
+
+### `GET /api/campeonatos/admin`
+- Acesso: administrador. Lista todos os campeonatos, inclusive os demonstrativos, para revisão e gestão.
 
 ### `GET /api/campeonatos/:id`
 - Acesso: público. Consulta campeonato e equipes inscritas.
+
+### `GET /api/campeonatos/admin/:id`
+- Acesso: administrador. Consulta também campeonatos demonstrativos.
 
 ### `POST /api/campeonatos`
 - Acesso: administrador.
@@ -238,7 +251,13 @@ A tabela `atletas` representa pessoas. O vínculo com uma conta em `usuarios` é
 Uma partida precisa referenciar campeonato, equipe mandante e equipe visitante existentes. As equipes devem estar inscritas no campeonato e pertencer à mesma modalidade da competição.
 
 ### `GET /api/partidas`
-- Acesso: público. Lista partidas.
+- Acesso: público. Lista somente partidas não demonstrativas.
+
+### `GET /api/partidas/admin`
+- Acesso: administrador. Lista todas as partidas, incluindo registros demonstrativos.
+
+### `GET /api/partidas/admin/:id`
+- Acesso: administrador. Consulta uma partida demonstrativa ou não demonstrativa.
 - Filtro opcional: `?campeonato_id=1`.
 
 ### `GET /api/partidas/:id`
@@ -262,7 +281,13 @@ Uma partida precisa referenciar campeonato, equipe mandante e equipe visitante e
 ## 10. Notícias
 
 ### `GET /api/noticias`
-- Acesso: público. Lista notícias da mais recente para a mais antiga.
+- Acesso: público. Lista somente notícias não demonstrativas.
+
+### `GET /api/noticias/admin`
+- Acesso: administrador. Lista todas as notícias, inclusive as demonstrativas.
+
+### `GET /api/noticias/admin/:id`
+- Acesso: administrador. Consulta qualquer notícia para revisão e gestão.
 
 ### `GET /api/noticias/:id`
 - Acesso: público. Consulta uma notícia.

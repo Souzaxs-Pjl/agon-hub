@@ -281,7 +281,7 @@ export default function Admin() {
           <h2>Equipes cadastradas ({equipes.length})</h2>
           <table className="tabela">
             <thead>
-              <tr><th>Nome</th><th>Sigla</th><th>Modalidade</th><th></th></tr>
+              <tr><th>Nome</th><th>Sigla</th><th>Modalidade</th><th>Situação</th><th></th></tr>
             </thead>
             <tbody>
               {equipes.map((equipe) => (
@@ -289,6 +289,7 @@ export default function Admin() {
                   <td>{equipe.nome}</td>
                   <td>{equipe.sigla_oficial || (String(equipe.codigo_fonte || '').startsWith('TEAM-') ? equipe.sigla : '—')}</td>
                   <td>{equipe.modalidade_nome === 'Multimodal' ? 'Todas as modalidades' : equipe.modalidade_nome}</td>
+                  <td>{equipe.demonstrativo ? 'Demonstração · oculta do público' : 'Pública'}</td>
                   <td className="celula-acoes">
                     <button type="button" className="botao-secundario" onClick={() => iniciarEdicao(equipe)}>
                       Editar
