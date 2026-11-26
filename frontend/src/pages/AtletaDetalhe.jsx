@@ -43,7 +43,7 @@ export default function AtletaDetalhe() {
         <div>
           <p className="etiqueta">Atleta AGON</p>
           <h1>{atleta.nome}</h1>
-          <p className="nota">Personagem fictício criado exclusivamente para a demonstração do AGON Hub.</p>
+          <p className="nota">Perfil esportivo público no AGON Hub.</p>
           {atleta.apelido && <p className="texto">{atleta.apelido}</p>}
           {atleta.geracao && <span className="etiqueta">{atleta.geracao}</span>}
           {atleta.instagram_url && <p><a href={atleta.instagram_url} target="_blank" rel="noreferrer">Instagram ↗</a></p>}
