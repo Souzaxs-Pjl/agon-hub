@@ -408,7 +408,7 @@ Em ambiente local, os testes de integração precisam de PostgreSQL configurado 
 
 Projeto acadêmico individual.
 
-**Estudante:** [preencher nome completo]  
+**Estudante:** Levi Augusto de Souza e Souza 
 **Curso:** Técnico em Informática para Internet  
-**Instituição:** [preencher instituição]  
+**Instituição:** Instituto Federal de São Paulo, Campus São Carlos
 **Ano:** 2026
