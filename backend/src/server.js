@@ -76,6 +76,8 @@ async function iniciar() {
     console.log(resultadoConteudoDemo.aplicada ? `Conteúdo demonstrativo criado: ${resultadoConteudoDemo.atletas} atletas adicionais, ${resultadoConteudoDemo.campeonatos} campeonatos, ${resultadoConteudoDemo.partidas} partidas e ${resultadoConteudoDemo.noticias} notícias.` : 'Migração do conteúdo demonstrativo já aplicada.');
     await require('./migrations/004_schema_comunidade')(db);
     console.log('Schema da comunidade verificado.');
+    await require('./migrations/005_calendario_nacional_demo')(db);
+    console.log('Calendário demonstrativo verificado.');
   } catch (erro) {
     console.error(
       'ERRO: não foi possível conectar ao PostgreSQL.\n' +
