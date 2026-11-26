@@ -408,3 +408,23 @@ textarea { resize: vertical; }
   .rodape-base { flex-direction: column; gap: 0.25rem; }
   .sessao-status { display: none; }
 }
+
+
+/* Paginação das listagens públicas: controles responsivos e fáceis de tocar. */
+.paginacao {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin: 1.5rem 0;
+}
+.paginacao span {
+  color: var(--cinza-claro);
+  text-align: center;
+  font-size: 0.9rem;
+}
+.paginacao button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
