@@ -40,6 +40,18 @@ app.use(cors({
 }));
 app.use(express.json({ limit: '1mb' }));
 
+// Registra somente requisições lentas ou falhas, sem corpos, tokens ou dados pessoais.
+app.use((req, res, next) => {
+  const inicio = Date.now();
+  res.on('finish', () => {
+    const duracao = Date.now() - inicio;
+    if (duracao >= 1500 || res.statusCode >= 500) {
+      console.warn(`[HTTP] ${req.method} ${req.path} ${res.statusCode} ${duracao}ms`);
+    }
+  });
+  next();
+});
+
 // Imagens enviadas por administradores ficam disponíveis em /uploads.
 app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
 
