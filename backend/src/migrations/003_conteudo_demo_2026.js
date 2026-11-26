@@ -143,8 +143,8 @@ module.exports = async function aplicarConteudoDemonstrativo(db) {
     for (const [titulo,resumo,conteudo] of noticias) {
       const r = await client.query(`
         INSERT INTO noticias (titulo,resumo,conteudo,autor_id,demonstrativo)
-        SELECT $1,$2,$3,(SELECT id FROM usuarios ORDER BY id LIMIT 1),TRUE
-        WHERE NOT EXISTS (SELECT 1 FROM noticias WHERE titulo=$1)
+        SELECT $1::varchar(200),$2::varchar(300),$3::text,(SELECT id FROM usuarios ORDER BY id LIMIT 1),TRUE
+        WHERE NOT EXISTS (SELECT 1 FROM noticias WHERE titulo=$1::varchar(200))
         RETURNING id
       `, [titulo,resumo,conteudo]);
     }
@@ -152,16 +152,16 @@ module.exports = async function aplicarConteudoDemonstrativo(db) {
       const titulo = `Equipe ${equipe.nome} entra em foco no universo AGON`;
       await client.query(`
         INSERT INTO noticias (titulo,resumo,conteudo,autor_id,demonstrativo)
-        SELECT $1,$2,$3,(SELECT id FROM usuarios ORDER BY id LIMIT 1),TRUE
-        WHERE NOT EXISTS (SELECT 1 FROM noticias WHERE titulo=$1)
+        SELECT $1::varchar(200),$2::varchar(300),$3::text,(SELECT id FROM usuarios ORDER BY id LIMIT 1),TRUE
+        WHERE NOT EXISTS (SELECT 1 FROM noticias WHERE titulo=$1::varchar(200))
       `, [titulo,`Conheça a equipe ${equipe.nome} no cadastro demonstrativo.`,`A equipe ${equipe.nome} aparece no conteúdo fictício do AGON Hub. Os dados esportivos e resultados apresentados são demonstrativos e não representam notícias oficiais.`]);
     }
     for (const atleta of atletasDestaque.rows) {
       const titulo = `Perfil demonstrativo: ${atleta.nome}`;
       await client.query(`
         INSERT INTO noticias (titulo,resumo,conteudo,autor_id,demonstrativo)
-        SELECT $1,$2,$3,(SELECT id FROM usuarios ORDER BY id LIMIT 1),TRUE
-        WHERE NOT EXISTS (SELECT 1 FROM noticias WHERE titulo=$1)
+        SELECT $1::varchar(200),$2::varchar(300),$3::text,(SELECT id FROM usuarios ORDER BY id LIMIT 1),TRUE
+        WHERE NOT EXISTS (SELECT 1 FROM noticias WHERE titulo=$1::varchar(200))
       `, [titulo,`${atleta.nome} integra o elenco fictício de ${atleta.equipe_nome}.`,`Esta matéria é fictícia e foi criada para demonstrar a relação entre notícias, atletas e equipes no AGON Hub. ${atleta.nome} é um perfil demonstrativo associado à equipe ${atleta.equipe_nome}.`]);
     }
 
