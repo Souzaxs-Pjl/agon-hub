@@ -421,7 +421,7 @@ describe('Upload de imagem', () => {
 
 describe('Remoção dos registros de integração', () => {
   it('remove uma inscrição e exclui o campeonato de teste', async () => {
-    const retirada = await chamar('DELETE', `/api/campeonatos/${campeonatoId}/equipes/2`, {
+    const retirada = await chamar('DELETE', `/api/campeonatos/${campeonatoId}/equipes/${equipeTesteIds[1]}`, {
       token: adminToken,
     });
     assert.equal(retirada.status, 200);
