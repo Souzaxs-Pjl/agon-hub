@@ -74,6 +74,7 @@ router.get('/', async (req, res) => {
             c.demonstrativo, COUNT(ce.equipe_id)::int AS total_equipes
      ${FROM_CAMPEONATO}
      LEFT JOIN campeonato_equipes ce ON ce.campeonato_id = c.id
+     WHERE c.demonstrativo = FALSE
      GROUP BY c.id, m.nome, campeao.id
      ORDER BY c.data_inicio DESC NULLS LAST, c.nome`
   );
@@ -159,7 +160,7 @@ router.post('/:id/equipes', autenticar, exigirAdmin, async (req, res) => {
     'INSERT INTO campeonato_equipes (campeonato_id, equipe_id) VALUES ($1, $2)',
     [campeonatoId, equipeId]
   );
-  res.status(201).json(await buscarCampeonato(campeonatoId));
+  res.status(201).json(await buscarCampeonato(campeonatoId, true));
 });
 
 router.delete('/:id/equipes/:equipeId', autenticar, exigirAdmin, async (req, res) => {
