@@ -37,7 +37,7 @@ export default function NoticiaDetalhe() {
       <p className="etiqueta">AGON Media</p>
       <h1>{noticia.titulo}</h1>
       <p className="pequeno">Por {noticia.autor_nome || 'Redação AGON'} · {formatarData(noticia.publicado_em)}</p>
-      {<ImagemComFallback src={noticia.imagem_url} alt={'Imagem da notícia: ' + noticia.titulo} className="noticia-imagem-grande" fallback="AGON" />}
+      <ImagemComFallback src={noticia.imagem_url} alt={'Imagem da notícia: ' + noticia.titulo} className="noticia-imagem-grande" fallback="AGON" />}
       {noticia.resumo && <p className="lead">{noticia.resumo}</p>}
       <div className="noticia-conteudo">{noticia.conteudo}</div>
     </article>
