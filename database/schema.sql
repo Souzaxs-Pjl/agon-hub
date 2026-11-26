@@ -173,3 +173,42 @@ CREATE TABLE IF NOT EXISTS noticias (
                   REFERENCES usuarios (id) ON DELETE SET NULL,
     publicado_em  TIMESTAMP     NOT NULL DEFAULT NOW()
 );
+
+
+-- ---------------------------------------------------------------------
+-- 11) PUBLICACOES, CURTIDAS E COMENTARIOS (Comunidade)
+-- Conteúdo criado por usuários autenticados; relações são removidas junto
+-- com a publicação, conta, atleta ou equipe correspondente.
+-- ---------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS publicacoes (
+    id               SERIAL       PRIMARY KEY,
+    autor_usuario_id INTEGER      NOT NULL REFERENCES usuarios (id) ON DELETE CASCADE,
+    tipo_autor       VARCHAR(10)  NOT NULL CHECK (tipo_autor IN ('usuario', 'atleta', 'equipe')),
+    atleta_id        INTEGER      REFERENCES atletas (id) ON DELETE CASCADE,
+    equipe_id        INTEGER      REFERENCES equipes (id) ON DELETE CASCADE,
+    texto            VARCHAR(2000) NOT NULL CHECK (char_length(trim(texto)) BETWEEN 1 AND 2000),
+    criado_em        TIMESTAMP    NOT NULL DEFAULT NOW(),
+    CHECK (
+      (tipo_autor = 'usuario' AND atleta_id IS NULL AND equipe_id IS NULL) OR
+      (tipo_autor = 'atleta' AND atleta_id IS NOT NULL AND equipe_id IS NULL) OR
+      (tipo_autor = 'equipe' AND equipe_id IS NOT NULL AND atleta_id IS NULL)
+    )
+);
+
+CREATE TABLE IF NOT EXISTS publicacao_curtidas (
+    publicacao_id INTEGER NOT NULL REFERENCES publicacoes (id) ON DELETE CASCADE,
+    usuario_id    INTEGER NOT NULL REFERENCES usuarios (id) ON DELETE CASCADE,
+    criado_em     TIMESTAMP NOT NULL DEFAULT NOW(),
+    PRIMARY KEY (publicacao_id, usuario_id)
+);
+
+CREATE TABLE IF NOT EXISTS publicacao_comentarios (
+    id            SERIAL        PRIMARY KEY,
+    publicacao_id INTEGER       NOT NULL REFERENCES publicacoes (id) ON DELETE CASCADE,
+    usuario_id    INTEGER       NOT NULL REFERENCES usuarios (id) ON DELETE CASCADE,
+    texto         VARCHAR(1000) NOT NULL CHECK (char_length(trim(texto)) BETWEEN 1 AND 1000),
+    criado_em     TIMESTAMP     NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_publicacoes_criado_em ON publicacoes (criado_em DESC);
+CREATE INDEX IF NOT EXISTS idx_publicacao_comentarios_publicacao_data ON publicacao_comentarios (publicacao_id, criado_em);
