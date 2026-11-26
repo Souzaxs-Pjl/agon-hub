@@ -23,7 +23,7 @@ const router = express.Router();
 // O JOIN ("juntar tabelas") evita o frontend ter de buscar a modalidade à parte.
 const SQL_EQUIPE = `
   SELECT e.id, e.nome, e.sigla, e.sigla_oficial, e.codigo_fonte,
-         e.tipo, e.instituicao, e.descricao, e.logo_url, e.slogan,
+         e.tipo, e.demonstrativo, e.instituicao, e.descricao, e.logo_url, e.slogan,
          e.instagram_url, e.titulos, e.cidade, e.responsavel, e.cores,
          e.modalidade_id, m.nome AS modalidade_nome, m.tipo AS modalidade_tipo
   FROM equipes e
