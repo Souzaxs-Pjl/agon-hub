@@ -8,7 +8,7 @@ O projeto foi desenvolvido individualmente como parte do curso Técnico em Infor
 
 > **Base esportiva pública:** o site apresenta 81 equipes e a base de 318 atletas reais. Os perfis públicos são exibidos conforme autorização registrada; dois cadastros marcados para revisão permanecem privados até a conferência. Os 693 perfis fictícios e os conteúdos de competição/notícias demonstrativos permanecem no banco, mas não aparecem nas consultas públicas.
 >
-> **Branches:** `main` é a versão acadêmica demonstrativa (frontend e backend). `deploy` preserva a versão canônica do universo AGON. Não faça merge entre elas. O Render e a Vercel da demonstração acompanham `main`.
+> **Branches e produção:** `main` é a branch oficial do site e da API. Render e Vercel publicam a partir dela. `deploy` fica preservada como snapshot histórico; não faça merge integral dessa branch de volta. Evoluções futuras entram por branches e PRs revisadas.
 >
 > **Banco compartilhado:** o backend demonstrativo usa o PostgreSQL já configurado no Render. As migrações são idempotentes e não resetam a base; ainda assim, alterações de conta e publicações da comunidade persistem no banco compartilhado. Não execute `seed.sql` nem comandos destrutivos no banco de produção.
 
@@ -344,7 +344,7 @@ A aplicação fica disponível em `http://localhost:5173`. Durante o desenvolvim
 - 693 atletas fictícios permanecem no banco para testes, mas são ocultados das consultas públicas após a migração 007.
 - A base esportiva real contém 318 atletas; 316 perfis ficam públicos e dois aguardam revisão cadastral.
 - Campeonatos demonstrativos, equipes inscritas e partidas geradas pela migração `003_conteudo_demo_2026`, com ajuste de calendário pela migração 005.
-- 15 notícias fictícias sobre campeonatos, equipes e atletas.
+- 18 notícias demonstrativas sobre campeonatos, equipes e atletas, ocultas das consultas públicas.
 - Comunidade com publicação, curtida, comentário e exclusão pelo autor (ou administrador).
 - Aba Comunidade disponível na navbar.
 - Upload de foto de perfil disponível para usuário autenticado; logos e fotos esportivas são restritos a administrador.
@@ -358,9 +358,9 @@ A aplicação fica disponível em `http://localhost:5173`. Durante o desenvolvim
 
 ## 9. Pendências para conclusão da entrega
 
-- Confirmar que o deploy do Render usando a branch `main` concluiu a migração 003 sem erro.
+- Confirmar que o deploy do Render usando a branch `main` concluiu a migração 007 sem erro.
 - Conferir se as 81 equipes exibem os elencos reais e se somente perfis autorizados e sem pendência de revisão abrem publicamente.
-- Conferir campeonatos, partidas e notícias na interface pública.
+- Conferir que campeonatos, partidas e notícias demonstrativos não aparecem como conteúdo oficial na interface pública.
 - Testar login, edição de perfil, publicação, curtida, comentário e exclusão da própria publicação.
 - Testar upload de foto de perfil e confirmar que a imagem aparece após salvar.
 - Fazer uma passada visual em celular e desktop e corrigir apenas problemas bloqueadores.
