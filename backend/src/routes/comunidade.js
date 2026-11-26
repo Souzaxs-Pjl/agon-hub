@@ -134,4 +134,18 @@ router.post('/:id/comentarios', autenticar, async (req, res) => {
   res.status(201).json({ ...rows[0], usuario_id:req.usuario.id, usuario_nome:req.usuario.nome, usuario_foto:req.usuario.foto_url });
 });
 
+router.delete('/:id/comentarios/:comentarioId', autenticar, async (req, res) => {
+  const publicacaoId = Number(req.params.id);
+  const comentarioId = Number(req.params.comentarioId);
+  if (!Number.isInteger(publicacaoId) || publicacaoId < 1 || !Number.isInteger(comentarioId) || comentarioId < 1) {
+    return res.status(400).json({ erro: 'ID inválido.' });
+  }
+  const result = await db.query(
+    'DELETE FROM publicacao_comentarios WHERE id=$1 AND publicacao_id=$2 AND usuario_id=$3',
+    [comentarioId, publicacaoId, req.usuario.id]
+  );
+  if (!result.rowCount) return res.status(404).json({ erro: 'Comentário não encontrado ou você não tem permissão para excluí-lo.' });
+  res.status(204).end();
+});
+
 module.exports = router;
